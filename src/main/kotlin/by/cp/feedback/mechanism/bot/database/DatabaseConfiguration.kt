@@ -5,8 +5,8 @@ import org.jetbrains.exposed.sql.Database
 object DatabaseConfiguration {
 
     val database = Database.connect(
-        "jdbc:pgsql://localhost:5434/postgres", driver = "com.impossibl.postgres.jdbc.PGDriver",
-        user = "postgres", password = "password"
+        System.getenv("DB_HOST") + System.getenv("DB_DATABASE"), driver = "com.impossibl.postgres.jdbc.PGDriver",
+        user = System.getenv("DB_USER"), password = System.getenv("DB_PASSWORD")
     )
 
 }
