@@ -1,0 +1,36 @@
+services:
+  feedback-mechanism-db:
+    image: postgres:15.0
+    restart: always
+    container_name: feedback-mechanism-db
+    environment:
+      POSTGRES_USER: "${DB_USER}"
+      POSTGRES_PASSWORD: "${DB_PASSWORD}"
+      POSTGRES_DB: "${DB_DATABASE}"
+    volumes:
+      - ./docker:/docker-entrypoint-initdb.d
+    ports:
+      - "5432:5432"
+    networks:
+      - cpdata-network
+
+  feedback-mechanism-bot:
+    image: feedback-mechanism-bot:0.1
+    build:
+      context: .
+    container_name: feedback-mechanism-bot
+    depends_on: feedback-mechanism-db
+    environment:
+      DB_HOST: "${DB_HOST}"
+      DB_DATABASE: "${DB_DATABASE}"
+      DB_USER: "${DB_USER}"
+      DB_PASSWORD: "${DB_PASSWORD}"
+      TOKEN: "${TOKEN}"
+      WEBHOOK_URL: "${WEBHOOK_URL}"
+    networks:
+      - cpdata-network
+
+networks:
+  cpdata-network:
+    name: cpdata-network
+    driver: bridge
