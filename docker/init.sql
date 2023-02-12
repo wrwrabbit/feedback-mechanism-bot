@@ -5,14 +5,11 @@ create table users(
 create table polls(
     id bigserial primary key,
     user_id bigint,
+    status text,
     question text,
     options text[],
     allow_multiple_answers boolean,
-    created_at timestamp
-);
-
-create table polls_moderation(
-    poll_id bigint primary key,
+    created_at timestamp,
     approves bigint[] default array[]::bigint[],
     rejection_reason text null
 );

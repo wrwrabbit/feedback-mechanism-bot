@@ -1,38 +1,42 @@
 package by.cp.feedback.mechanism.bot.behaviour
 
 import by.cp.feedback.mechanism.bot.approvalsRequired
-import by.cp.feedback.mechanism.bot.exception.*
-import by.cp.feedback.mechanism.bot.moderatorsChatId
-import by.cp.feedback.mechanism.bot.repository.PollModerationRepository
+import by.cp.feedback.mechanism.bot.exception.AlreadyApprovedException
+import by.cp.feedback.mechanism.bot.exception.CantApproveRejectedException
+import by.cp.feedback.mechanism.bot.exception.PollNotFoundInDbException
+import by.cp.feedback.mechanism.bot.exception.YouAreNotOwnerOfPollException
+import by.cp.feedback.mechanism.bot.model.PollStatus
 import by.cp.feedback.mechanism.bot.repository.PollRepository
-import dev.inmo.tgbotapi.extensions.api.send.reply
 import dev.inmo.tgbotapi.extensions.behaviour_builder.BehaviourContext
-import dev.inmo.tgbotapi.extensions.utils.extensions.raw.from
+import dev.inmo.tgbotapi.extensions.utils.extensions.raw.message
 import dev.inmo.tgbotapi.requests.send.SendTextMessage
-import dev.inmo.tgbotapi.types.message.abstracts.CommonMessage
-import dev.inmo.tgbotapi.types.message.content.TextContent
+import dev.inmo.tgbotapi.types.queries.callback.DataCallbackQuery
 import dev.inmo.tgbotapi.types.toChatId
 
-fun approve(): suspend BehaviourContext.(CommonMessage<TextContent>, Array<String>) -> Unit =
-    { message: CommonMessage<TextContent>, args: Array<String> ->
-        try {
-            if (message.chat.id.chatId != moderatorsChatId) throw NotModeratorsChatException()
-            if (args.size != 1) throw NotOneArgException()
-            val id = args.first().toLong()
-            val pollModeration = PollModerationRepository.getById(id) ?: throw PollNotFoundInDbException()
-            if (pollModeration.rejectionReason != null) throw CantApproveRejectedException()
-            val userId: Long = message.from?.id?.chatId ?: throw FromNotFoundException()
-            if (userId in pollModeration.approves) {
-                throw AlreadyApprovedException()
-            }
-            val resultArray = pollModeration.approves.plus(userId)
-            PollModerationRepository.updateApproves(id, resultArray)
-            if (resultArray.size == approvalsRequired) {
-                val poll = PollRepository.getById(pollModeration.pollId)!!
-                execute(SendTextMessage(poll.userId.toChatId(), "Your poll #${poll.id} approved"))
-            }
-            reply(message, "You approved this poll, current approves ${resultArray.size}/$approvalsRequired")
-        } catch (exception: FeedbackBotException) {
-            reply(message, exception.message)
-        }
+fun approve(): suspend BehaviourContext.(DataCallbackQuery) -> Unit = { callback ->
+    val id = callback.data.substring(8).toLong()
+    val poll = PollRepository.getById(id) ?: throw PollNotFoundInDbException()
+    if (poll.rejectionReason != null) throw CantApproveRejectedException()
+    val userId: Long = callback.user.id.chatId
+    if (userId in poll.approves) {
+        execute(
+            SendTextMessage(
+                callback.message!!.chat.id,
+                "You already approved this poll"
+            )
+        )
+        throw AlreadyApprovedException()
     }
+    val resultArray = poll.approves.plus(userId)
+    PollRepository.updateApproves(id, resultArray)
+    if (resultArray.size == approvalsRequired) {
+        PollRepository.updateStatus(poll.id, PollStatus.READY_FOR_USER_REVIEW)
+        execute(SendTextMessage(poll.userId.toChatId(), "Your poll #${poll.id} approved"))
+    }
+    execute(
+        SendTextMessage(
+            callback.message!!.chat.id,
+            "You approved this poll, current approves ${resultArray.size}/$approvalsRequired"
+        )
+    )
+}

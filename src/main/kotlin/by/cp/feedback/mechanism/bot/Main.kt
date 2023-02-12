@@ -6,6 +6,7 @@ import dev.inmo.tgbotapi.extensions.api.bot.setMyCommands
 import dev.inmo.tgbotapi.extensions.behaviour_builder.buildBehaviour
 import dev.inmo.tgbotapi.extensions.behaviour_builder.triggers_handling.onCommand
 import dev.inmo.tgbotapi.extensions.behaviour_builder.triggers_handling.onCommandWithArgs
+import dev.inmo.tgbotapi.extensions.behaviour_builder.triggers_handling.onDataCallbackQuery
 import dev.inmo.tgbotapi.extensions.utils.updates.retrieving.setWebhookInfoAndStartListenWebhooks
 import dev.inmo.tgbotapi.requests.webhook.SetWebhook
 import dev.inmo.tgbotapi.types.BotCommand
@@ -16,8 +17,12 @@ const val approvalsRequired = 1
 private const val start = "start"
 private const val proposePoll = "propose_poll"
 private const val getChatId = "get_chat_id"
-private const val approve = "approve"
 private const val reject = "reject"
+private const val unreject = "unreject"
+private const val myPolls = "my_polls"
+private const val fixPoll = "fix_poll"
+private const val template = "template"
+private const val getPoll = "get_poll"
 
 suspend fun main() {
     val bot = telegramBot(System.getenv("TOKEN"))
@@ -29,14 +34,18 @@ suspend fun main() {
         onCommand(start, scenarioReceiver = start())
         onCommand(proposePoll, scenarioReceiver = proposePoll())
         onCommand(getChatId, scenarioReceiver = getChatId())
-        onCommandWithArgs(approve, scenarioReceiver = approve())
+        onDataCallbackQuery(Regex("Approve \\d*"), scenarioReceiver = approve())
         onCommandWithArgs(reject, scenarioReceiver = reject())
+        onCommandWithArgs(fixPoll, scenarioReceiver = fixPoll())
+        onCommandWithArgs(getPoll, scenarioReceiver = getPoll())
+        onCommandWithArgs(unreject, scenarioReceiver = unreject())
+        onCommand(myPolls, scenarioReceiver = myPolls())
+        onCommand(template, scenarioReceiver = template())
 
         setMyCommands(
             BotCommand(start, start),
             BotCommand(proposePoll, proposePoll),
             BotCommand(getChatId, getChatId),
-            BotCommand(approve, approve),
             BotCommand(reject, reject)
         )
     }
