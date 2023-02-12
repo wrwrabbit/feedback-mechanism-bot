@@ -12,35 +12,31 @@ object PollModerationRepository {
 
     private val db = DatabaseConfiguration.database
 
-    fun save(pollId: Long, telegramId: Long) = transaction {
+    fun save(id: Long) = transaction {
         PollsModeration.insertAndGetId {
-            it[PollsModeration.id] = pollId
-            it[PollsModeration.telegramId] = telegramId
-            it[PollsModeration.approves] = listOf<Long>().toTypedArray()
-            it[PollsModeration.rejectionReason] = null
+            it[PollsModeration.id] = id
         }.value
     }
 
-    fun getByTelegramId(telegramId: Long): PollsModerationDto? = transaction {
-        PollsModeration.select { PollsModeration.telegramId eq telegramId }
+    fun getById(id: Long): PollsModerationDto? = transaction {
+        PollsModeration.select { PollsModeration.id eq id }
             .map {
                 PollsModerationDto(
                     it[PollsModeration.id].value,
-                    it[PollsModeration.telegramId],
                     it[PollsModeration.approves],
                     it[PollsModeration.rejectionReason]
                 )
             }.firstOrNull()
     }
 
-    fun updateApprovesByTelegramId(telegramId: Long, approves: Array<Long>) = transaction {
-        PollsModeration.update({ PollsModeration.telegramId eq telegramId }) {
+    fun updateApproves(id: Long, approves: Array<Long>) = transaction {
+        PollsModeration.update({ PollsModeration.id eq id }) {
             it[PollsModeration.approves] = approves
         }
     }
 
-    fun updateRejectionReasonByTelegramId(telegramId: Long, rejectionReason: String) = transaction {
-        PollsModeration.update({ PollsModeration.telegramId eq telegramId }) {
+    fun updateRejectionReason(id: Long, rejectionReason: String) = transaction {
+        PollsModeration.update({ PollsModeration.id eq id }) {
             it[PollsModeration.rejectionReason] = rejectionReason
         }
     }

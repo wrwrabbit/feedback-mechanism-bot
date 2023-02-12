@@ -1,3 +1,3 @@
 package by.cp.feedback.mechanism.bot.exception
 
-class TextNotFoundInReplyException(override val message: String) : RuntimeException(message)
+class TextNotFoundInReplyException : FeedbackBotException("Text not found in reply")

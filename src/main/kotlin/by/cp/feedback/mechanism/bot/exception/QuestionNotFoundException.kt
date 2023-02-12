@@ -1,3 +1,3 @@
 package by.cp.feedback.mechanism.bot.exception
 
-class QuestionNotFoundException(override val message: String) : RuntimeException(message)
+class QuestionNotFoundException : FeedbackBotException("Question not found in reply")

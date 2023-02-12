@@ -1,3 +1,3 @@
 package by.cp.feedback.mechanism.bot.exception
 
-class PollNotFoundInDbException(override val message: String) : RuntimeException(message)
+class PollNotFoundInDbException : FeedbackBotException("Poll not found in db")

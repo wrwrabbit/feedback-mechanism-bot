@@ -1,3 +1,3 @@
 package by.cp.feedback.mechanism.bot.exception
 
-class AlreadyApprovedException(override val message: String) : RuntimeException(message)
+class AlreadyApprovedException : FeedbackBotException("You already approved this poll")

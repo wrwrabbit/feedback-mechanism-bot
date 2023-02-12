@@ -13,7 +13,6 @@ create table polls(
 
 create table polls_moderation(
     poll_id bigint primary key,
-    telegram_id bigint,
-    approves bigint[],
+    approves bigint[] default array[]::bigint[],
     rejection_reason text null
 );

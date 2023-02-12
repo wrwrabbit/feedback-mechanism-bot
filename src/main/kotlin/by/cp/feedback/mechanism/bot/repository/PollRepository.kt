@@ -27,6 +27,20 @@ object PollRepository {
             PollDto(id, userId, question, options, allowMultipleAnswers, createdAt)
         }
 
+    fun getById(id: Long): PollDto? = transaction {
+        Polls.select { Polls.id eq id }
+            .map {
+                PollDto(
+                    it[Polls.id].value,
+                    it[Polls.userId],
+                    it[Polls.question],
+                    it[Polls.options],
+                    it[Polls.allowMultipleAnswers],
+                    it[Polls.createdAt]
+                )
+            }.firstOrNull()
+    }
+
     fun lastUserPoll(userId: Long): PollDto? = transaction {
         Polls.select { Polls.userId eq userId }
             .orderBy(Polls.createdAt to SortOrder.DESC)

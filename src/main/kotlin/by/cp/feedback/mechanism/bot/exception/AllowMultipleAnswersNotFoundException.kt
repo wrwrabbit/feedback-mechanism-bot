@@ -1,3 +1,3 @@
 package by.cp.feedback.mechanism.bot.exception
 
-class AllowMultipleAnswersNotFoundException(override val message: String) : RuntimeException(message)
+class AllowMultipleAnswersNotFoundException : FeedbackBotException("AllowMultipleAnswers not found in reply")

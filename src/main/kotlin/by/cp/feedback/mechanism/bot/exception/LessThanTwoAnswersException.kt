@@ -1,3 +1,3 @@
 package by.cp.feedback.mechanism.bot.exception
 
-class LessThanTwoAnswersException(override val message: String) : RuntimeException(message)
+class LessThanTwoAnswersException : FeedbackBotException("Less than two answers")

@@ -1,3 +1,3 @@
 package by.cp.feedback.mechanism.bot.exception
 
-class CantApproveRejectedException(override val message: String) : RuntimeException(message)
+class CantApproveRejectedException : FeedbackBotException("Can't approve rejected poll")
