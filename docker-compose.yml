@@ -19,7 +19,8 @@ services:
     build:
       context: .
     container_name: feedback-mechanism-bot
-    depends_on: feedback-mechanism-db
+    depends_on:
+      - feedback-mechanism-db
     environment:
       DB_HOST: "${DB_HOST}"
       DB_DATABASE: "${DB_DATABASE}"

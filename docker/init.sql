@@ -1,8 +1,19 @@
 create table users(
-    id bigint
+    id bigint primary key
 );
 
-create table users_captcha(
+create table polls(
+    id bigserial primary key,
     user_id bigint,
-    captcha varchar(16)
+    question text,
+    options text[],
+    allow_multiple_answers boolean,
+    created_at timestamp
+);
+
+create table polls_moderation(
+    poll_id bigint primary key,
+    telegram_id bigint,
+    approves bigint[],
+    rejection_reason text null
 );

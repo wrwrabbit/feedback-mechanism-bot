@@ -6,7 +6,7 @@ import org.jetbrains.exposed.sql.select
 import org.jetbrains.exposed.sql.transactions.transaction
 import by.cp.feedback.mechanism.bot.table.Users
 
-class UserRepository {
+object UserRepository {
 
     private val db = DatabaseConfiguration.database
 
