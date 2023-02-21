@@ -1,16 +1,23 @@
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+
 plugins {
+    id("org.springframework.boot") version "2.7.3"
+    id("io.spring.dependency-management") version "1.0.12.RELEASE"
     kotlin("jvm") version "1.8.0"
-    application
+    kotlin("plugin.spring") version "1.8.0"
+    kotlin("plugin.jpa") version "1.8.0"
 }
 
 group = "by.cp.feedback.mechanism.bot"
 version = "1.0-SNAPSHOT"
+java.sourceCompatibility = JavaVersion.VERSION_17
 
 repositories {
     mavenCentral()
 }
 
 dependencies {
+    implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("dev.inmo:tgbotapi:5.1.0")
     implementation("io.ktor:ktor-server-netty:2.2.3")
     implementation("org.jetbrains.exposed:exposed-core:0.41.1")
@@ -21,14 +28,13 @@ dependencies {
     testImplementation(kotlin("test"))
 }
 
+tasks.withType<KotlinCompile> {
+    kotlinOptions {
+        freeCompilerArgs = listOf("-Xjsr305=strict")
+        jvmTarget = "17"
+    }
+}
+
 tasks.test {
     useJUnitPlatform()
-}
-
-kotlin {
-    jvmToolchain(8)
-}
-
-application {
-    mainClass.set("MainKt")
 }

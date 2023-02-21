@@ -19,6 +19,13 @@ fun PollDto.toMessage(): String =
         "${options.map { option -> "Ответ: $option\n" }}\n" +
         "Больше одного ответа: ${allowMultipleAnswers.toAllowMultipleAnswers()}"
 
+fun PollVoteDto.toMessage(): String =
+    "Опрос #$id\n" +
+        "Вопрос: $question\n" +
+        "${options.map { option -> "Ответ: $option\n" }}\n" +
+        "Больше одного ответа: ${allowMultipleAnswers.toAllowMultipleAnswers()}\n" +
+        "Результат: ${results.mapIndexed { index, l -> "${index + 1}: $l" }}"
+
 fun PollDto.toStatusMessage(): String =
     "Опрос #$id," +
         "Статус #$status" +

@@ -9,7 +9,6 @@ import dev.inmo.tgbotapi.extensions.behaviour_builder.BehaviourContext
 import dev.inmo.tgbotapi.extensions.behaviour_builder.expectations.waitTextMessage
 import dev.inmo.tgbotapi.extensions.utils.extensions.raw.from
 import dev.inmo.tgbotapi.requests.abstracts.asMultipartFile
-import dev.inmo.tgbotapi.requests.send.SendTextMessage
 import dev.inmo.tgbotapi.requests.send.media.SendPhoto
 import dev.inmo.tgbotapi.types.message.abstracts.CommonMessage
 import dev.inmo.tgbotapi.types.message.content.TextContent

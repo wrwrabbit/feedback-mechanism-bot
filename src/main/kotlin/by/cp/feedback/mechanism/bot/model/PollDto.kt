@@ -10,6 +10,7 @@ data class PollDto(
     val options: Array<String>,
     val allowMultipleAnswers: Boolean,
     val createdAt: LocalDateTime,
-    val approves: Array<Long>,
+    val moderatorApproves: Array<Long>,
+    val userApproves: Long,
     val rejectionReason: String?
 )

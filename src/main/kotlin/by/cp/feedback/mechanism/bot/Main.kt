@@ -1,7 +1,7 @@
 package by.cp.feedback.mechanism.bot
 
 import by.cp.feedback.mechanism.bot.behaviour.*
-import dev.inmo.tgbotapi.bot.ktor.telegramBot
+import by.cp.feedback.mechanism.bot.model.*
 import dev.inmo.tgbotapi.extensions.api.bot.setMyCommands
 import dev.inmo.tgbotapi.extensions.behaviour_builder.buildBehaviour
 import dev.inmo.tgbotapi.extensions.behaviour_builder.triggers_handling.onCommand
@@ -11,42 +11,53 @@ import dev.inmo.tgbotapi.extensions.utils.updates.retrieving.setWebhookInfoAndSt
 import dev.inmo.tgbotapi.requests.webhook.SetWebhook
 import dev.inmo.tgbotapi.types.BotCommand
 import io.ktor.server.netty.*
+import org.springframework.boot.autoconfigure.SpringBootApplication
+import org.springframework.boot.runApplication
+import org.springframework.scheduling.annotation.EnableScheduling
 
-val moderatorsChatId = System.getenv("MODERATORS_CHAT_ID").toLong()
-const val approvalsRequired = 1
-private const val start = "start"
-private const val proposePoll = "propose_poll"
-private const val getChatId = "get_chat_id"
-private const val reject = "reject"
-private const val unreject = "unreject"
-private const val myPolls = "my_polls"
-private const val fixPoll = "fix_poll"
-private const val template = "template"
-private const val getPoll = "get_poll"
+@SpringBootApplication
+@EnableScheduling
+class FeedbackMechanismBot
 
-suspend fun main() {
-    val bot = telegramBot(System.getenv("TOKEN"))
+suspend fun main(args: Array<String>) {
     val behaviour = bot.buildBehaviour(
         defaultExceptionsHandler = {
             it.printStackTrace()
         }
     ) {
-        onCommand(start, scenarioReceiver = start())
-        onCommand(proposePoll, scenarioReceiver = proposePoll())
-        onCommand(getChatId, scenarioReceiver = getChatId())
-        onDataCallbackQuery(Regex("Approve \\d*"), scenarioReceiver = approve())
-        onCommandWithArgs(reject, scenarioReceiver = reject())
-        onCommandWithArgs(fixPoll, scenarioReceiver = fixPoll())
-        onCommandWithArgs(getPoll, scenarioReceiver = getPoll())
-        onCommandWithArgs(unreject, scenarioReceiver = unreject())
-        onCommand(myPolls, scenarioReceiver = myPolls())
-        onCommand(template, scenarioReceiver = template())
+        onCommand(startCommand, scenarioReceiver = start())
+        onCommand(sendToModeratorsReviewCommand, scenarioReceiver = sendToModeratorsReview())
+        onCommand(getChatIdCommand, scenarioReceiver = getChatId())
+        onDataCallbackQuery(Regex("$moderatorApproveDataCallback\\d*"), scenarioReceiver = moderatorApprove())
+        onDataCallbackQuery(Regex("$userApproveDataCallback\\d*"), scenarioReceiver = userApprove())
+        onDataCallbackQuery(Regex("$userUnApproveDataCallback\\d*"), scenarioReceiver = userUnApprove())
+        onDataCallbackQuery(Regex("$userVoteDataCallback.*"), scenarioReceiver = userVote())
+        onDataCallbackQuery(
+            Regex("$userVoteMultipleAnswersDataCallback.*"),
+            scenarioReceiver = userVoteMultipleAnswers()
+        )
+        onDataCallbackQuery(Regex("$userVoteCheckAnswerDataCallback.*"), scenarioReceiver = userVoteCheckAnswer())
+        onCommandWithArgs(rejectCommand, scenarioReceiver = reject())
+        onCommandWithArgs(fixPollCommand, scenarioReceiver = fixPoll())
+        onCommandWithArgs(sendToUsersReviewCommand, scenarioReceiver = sendToUsersReview())
+        onCommandWithArgs(sendToVoteCommand, scenarioReceiver = sendToVote())
+        onCommandWithArgs(getPollCommand, scenarioReceiver = getPoll())
+        onCommandWithArgs(unrejectCommand, scenarioReceiver = unreject())
+        onCommand(myPollsCommand, scenarioReceiver = myPolls())
+        onCommand(templateCommand, scenarioReceiver = template())
 
         setMyCommands(
-            BotCommand(start, start),
-            BotCommand(proposePoll, proposePoll),
-            BotCommand(getChatId, getChatId),
-            BotCommand(reject, reject)
+            BotCommand(startCommand, startCommand),
+            BotCommand(sendToModeratorsReviewCommand, sendToModeratorsReviewCommand),
+            BotCommand(getChatIdCommand, getChatIdCommand),
+            BotCommand(rejectCommand, rejectCommand),
+            BotCommand(fixPollCommand, fixPollCommand),
+            BotCommand(getPollCommand, getPollCommand),
+            BotCommand(unrejectCommand, unrejectCommand),
+            BotCommand(myPollsCommand, myPollsCommand),
+            BotCommand(templateCommand, templateCommand),
+            BotCommand(sendToUsersReviewCommand, sendToUsersReviewCommand),
+            BotCommand(sendToVoteCommand, sendToVoteCommand),
         )
     }
     bot.setWebhookInfoAndStartListenWebhooks(
@@ -59,4 +70,5 @@ suspend fun main() {
         },
         block = behaviour.asUpdateReceiver
     )
+    runApplication<FeedbackMechanismBot>(*args)
 }

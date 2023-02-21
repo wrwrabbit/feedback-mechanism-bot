@@ -25,17 +25,29 @@ object PollRepository {
                 it[Polls.allowMultipleAnswers] = allowMultipleAnswers
                 it[Polls.createdAt] = createdAt
             }.value
-            PollDto(id, userId, status, question, options, allowMultipleAnswers, createdAt, arrayOf(), null)
+            PollDto(
+                id,
+                userId,
+                status,
+                question,
+                options,
+                allowMultipleAnswers,
+                createdAt,
+                arrayOf(),
+                0,
+                null
+            )
         }
 
-    fun updatePoll(id: Long, question: String, options: Array<String>, allowMultipleAnswers: Boolean): PollDto = transaction {
-        Polls.update({ Polls.id eq id }) {
-            it[Polls.question] = question
-            it[Polls.options] = options
-            it[Polls.allowMultipleAnswers] = allowMultipleAnswers
+    fun updatePoll(id: Long, question: String, options: Array<String>, allowMultipleAnswers: Boolean): PollDto =
+        transaction {
+            Polls.update({ Polls.id eq id }) {
+                it[Polls.question] = question
+                it[Polls.options] = options
+                it[Polls.allowMultipleAnswers] = allowMultipleAnswers
+            }
+            getById(id)!!
         }
-        getById(id)!!
-    }
 
     fun updateStatus(id: Long, status: PollStatus) = transaction {
         Polls.update({ Polls.id eq id }) {
@@ -43,9 +55,23 @@ object PollRepository {
         }
     }
 
+    fun updateMessageId(id: Long, messageId: Long) = transaction {
+        Polls.update({ Polls.id eq id }) {
+            it[Polls.messageId] = messageId
+        }
+    }
+
     fun updateApproves(id: Long, approves: Array<Long>) = transaction {
         Polls.update({ Polls.id eq id }) {
-            it[Polls.approves] = approves
+            it[moderatorApproves] = approves
+        }
+    }
+
+    fun addUserApprove(id: Long) = transaction {
+        Polls.update({ Polls.id eq id }) {
+            with(SqlExpressionBuilder) {
+                it.update(userApproves, userApproves + 1)
+            }
         }
     }
 
@@ -82,7 +108,8 @@ object PollRepository {
         it[Polls.options],
         it[Polls.allowMultipleAnswers],
         it[Polls.createdAt],
-        it[Polls.approves],
+        it[Polls.moderatorApproves],
+        it[Polls.userApproves],
         it[Polls.rejectionReason]
     )
 

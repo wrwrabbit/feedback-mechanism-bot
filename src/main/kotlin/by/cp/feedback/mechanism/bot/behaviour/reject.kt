@@ -6,7 +6,7 @@ import by.cp.feedback.mechanism.bot.exception.NotModeratorsChatException
 import by.cp.feedback.mechanism.bot.exception.NotTwoArgException
 import by.cp.feedback.mechanism.bot.exception.PollNotFoundInDbException
 import by.cp.feedback.mechanism.bot.model.PollStatus
-import by.cp.feedback.mechanism.bot.moderatorsChatId
+import by.cp.feedback.mechanism.bot.model.moderatorsChatId
 import by.cp.feedback.mechanism.bot.repository.PollRepository
 import dev.inmo.tgbotapi.extensions.api.send.reply
 import dev.inmo.tgbotapi.extensions.behaviour_builder.BehaviourContext

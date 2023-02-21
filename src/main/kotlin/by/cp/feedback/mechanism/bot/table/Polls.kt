@@ -16,6 +16,8 @@ object Polls : LongIdTable(name = "polls") {
     val options: Column<Array<String>> = array("options", columnType = TextColumnType())
     val allowMultipleAnswers: Column<Boolean> = bool("allow_multiple_answers")
     val createdAt: Column<LocalDateTime> = datetime("created_at")
-    val approves: Column<Array<Long>> = array("approves", columnType = LongColumnType())
+    val moderatorApproves: Column<Array<Long>> = array("moderator_approves", columnType = LongColumnType())
+    val userApproves: Column<Long> = long("user_approves")
     val rejectionReason: Column<String?> = text("rejection_reason").nullable()
+    val messageId: Column<Long?> = long("message_id").nullable()
 }

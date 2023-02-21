@@ -4,9 +4,10 @@ import by.cp.feedback.mechanism.bot.behaviour.utils.tryF
 import by.cp.feedback.mechanism.bot.exception.FromNotFoundException
 import by.cp.feedback.mechanism.bot.exception.LessSevenDaysFromLastPollException
 import by.cp.feedback.mechanism.bot.exception.TextNotFoundInReplyException
+import by.cp.feedback.mechanism.bot.model.moderatorApproveDataCallback
+import by.cp.feedback.mechanism.bot.model.moderatorsChatId
 import by.cp.feedback.mechanism.bot.model.parsePoll
 import by.cp.feedback.mechanism.bot.model.toMessage
-import by.cp.feedback.mechanism.bot.moderatorsChatId
 import by.cp.feedback.mechanism.bot.repository.PollRepository
 import dev.inmo.tgbotapi.extensions.api.send.reply
 import dev.inmo.tgbotapi.extensions.behaviour_builder.BehaviourContext
@@ -24,7 +25,7 @@ import java.time.Duration
 import java.time.LocalDateTime
 import java.time.ZoneOffset
 
-fun proposePoll(): suspend BehaviourContext.(CommonMessage<TextContent>) -> Unit = tryF { message ->
+fun sendToModeratorsReview(): suspend BehaviourContext.(CommonMessage<TextContent>) -> Unit = tryF { message ->
     val text = message.replyTo?.text ?: throw TextNotFoundInReplyException()
     val (question, options, allowMultipleAnswers) = parsePoll(text)
     val userId: Long = message.from?.id?.chatId ?: throw FromNotFoundException()
@@ -43,7 +44,10 @@ fun proposePoll(): suspend BehaviourContext.(CommonMessage<TextContent>) -> Unit
     val markup = InlineKeyboardMarkup(
         matrix {
             row {
-                +CallbackDataInlineKeyboardButton("Approve", callbackData = "Approve ${savedPoll.id}")
+                +CallbackDataInlineKeyboardButton(
+                    "Approve",
+                    callbackData = "$moderatorApproveDataCallback${savedPoll.id}"
+                )
             }
         }
     )
