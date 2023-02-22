@@ -1,8 +1,41 @@
 create table users(
-    id bigint
+    id bigint primary key
 );
 
-create table users_captcha(
+create table polls(
+    id bigserial primary key,
     user_id bigint,
-    captcha varchar(16)
+    status text,
+    question text,
+    options text[],
+    allow_multiple_answers boolean,
+    created_at timestamp,
+    moderator_approves bigint[] default array[]::bigint[],
+    user_approves bigint default 0,
+    rejection_reason text null,
+    message_id bigint
+);
+
+create table poll_user_review(
+    user_id bigint,
+    poll_id bigint
+);
+
+create table poll_user_vote(
+    user_id bigint,
+    poll_id bigint
+);
+
+create table poll_vote(
+    poll_id bigint,
+    option_1 bigint default 0,
+    option_2 bigint default 0,
+    option_3 bigint default 0,
+    option_4 bigint default 0,
+    option_5 bigint default 0,
+    option_6 bigint default 0,
+    option_7 bigint default 0,
+    option_8 bigint default 0,
+    option_9 bigint default 0,
+    option_10 bigint default 0
 );
