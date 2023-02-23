@@ -6,6 +6,7 @@ import by.cp.feedback.mechanism.bot.exception.NotModeratorsChatException
 import by.cp.feedback.mechanism.bot.exception.NotTwoArgException
 import by.cp.feedback.mechanism.bot.exception.PollNotFoundInDbException
 import by.cp.feedback.mechanism.bot.model.PollStatus
+import by.cp.feedback.mechanism.bot.model.langCode
 import by.cp.feedback.mechanism.bot.model.moderatorsChatId
 import by.cp.feedback.mechanism.bot.repository.PollRepository
 import dev.inmo.tgbotapi.extensions.api.send.reply
@@ -24,6 +25,11 @@ fun reject(): suspend BehaviourContext.(CommonMessage<TextContent>, Array<String
     if (poll.rejectionReason != null) throw CantRejectRejectedException()
     PollRepository.updateRejectionReason(id, rejectionReason)
     PollRepository.updateStatus(poll.id, PollStatus.REJECTED)
-    execute(SendTextMessage(poll.userId.toChatId(), "Your poll #${poll.id} rejected"))
+    execute(SendTextMessage(poll.userId.toChatId(), yourPollRejectedText(poll.id, message.langCode())))
     reply(message, "You rejected poll #${poll.id}")
+}
+
+fun yourPollRejectedText(pollId: Long, langCode: String) = when (langCode) {
+    "be" -> "Ваша апытанне #$pollId адмоўлена"
+    else -> "Ваш опрос #$pollId отклонён"
 }

@@ -2,9 +2,7 @@ package by.cp.feedback.mechanism.bot.behaviour
 
 import by.cp.feedback.mechanism.bot.behaviour.utils.tryF
 import by.cp.feedback.mechanism.bot.exception.*
-import by.cp.feedback.mechanism.bot.model.moderatorsChatId
-import by.cp.feedback.mechanism.bot.model.parsePoll
-import by.cp.feedback.mechanism.bot.model.toMessage
+import by.cp.feedback.mechanism.bot.model.*
 import by.cp.feedback.mechanism.bot.repository.PollRepository
 import dev.inmo.tgbotapi.extensions.api.send.reply
 import dev.inmo.tgbotapi.extensions.behaviour_builder.BehaviourContext
@@ -24,20 +22,19 @@ fun fixPoll(): suspend BehaviourContext.(CommonMessage<TextContent>, Array<Strin
     val id = args.first().toLong()
     val poll = PollRepository.getById(id) ?: throw PollNotFoundInDbException()
     val userId: Long = message.from?.id?.chatId ?: throw FromNotFoundException()
-    if (userId != poll.userId) {
-        throw YouAreNotOwnerOfPollException()
-    }
+    if (userId != poll.userId) throw YouAreNotOwnerOfPollException()
     if (poll.rejectionReason == null) throw PollNotRejectedException()
     val text = message.replyTo?.text ?: throw TextNotFoundInReplyException()
-    val (question, options, allowMultipleAnswers) = parsePoll(text)
+    val langCode = message.langCode()
+    val (question, options, allowMultipleAnswers) = parsePoll(text, langCode)
     val updatedPoll = PollRepository.updatePoll(id, question, options, allowMultipleAnswers)
     val markup = InlineKeyboardMarkup(
         matrix {
             row {
-                +CallbackDataInlineKeyboardButton("Approve", callbackData = "Approve $id")
+                +CallbackDataInlineKeyboardButton("✅", callbackData = "Approve $id")
             }
         }
     )
-    execute(SendTextMessage(moderatorsChatId.toChatId(), updatedPoll.toMessage(), replyMarkup = markup))
-    reply(message, "Your fixed poll sent to moderators")
+    execute(SendTextMessage(moderatorsChatId.toChatId(), updatedPoll.toMessage(langCode), replyMarkup = markup))
+    reply(message, sentToModeratorsText(langCode))
 }

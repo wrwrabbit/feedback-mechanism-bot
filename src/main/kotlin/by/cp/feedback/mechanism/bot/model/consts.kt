@@ -4,11 +4,6 @@ import dev.inmo.tgbotapi.bot.ktor.telegramBot
 
 val bot = telegramBot(System.getenv("TOKEN"))
 
-const val pollTemplate = "Вопрос: Сколько?\n" +
-    "Ответ: 10\n" +
-    "...\n" +
-    "Ответ: 12\n" +
-    "Больше одного ответа: Да"
 val moderatorsChatId = System.getenv("MODERATORS_CHAT_ID").toLong()
 val postChatId = System.getenv("POST_CHAT_ID").toLong()
 const val moderatorsApprovalsRequired = 1

@@ -6,6 +6,7 @@ import by.cp.feedback.mechanism.bot.exception.NotOneArgException
 import by.cp.feedback.mechanism.bot.exception.PollNotFoundInDbException
 import by.cp.feedback.mechanism.bot.exception.PollNotRejectedException
 import by.cp.feedback.mechanism.bot.model.PollStatus
+import by.cp.feedback.mechanism.bot.model.langCode
 import by.cp.feedback.mechanism.bot.model.moderatorsChatId
 import by.cp.feedback.mechanism.bot.repository.PollRepository
 import dev.inmo.tgbotapi.extensions.api.send.reply
@@ -23,6 +24,11 @@ fun unreject(): suspend BehaviourContext.(CommonMessage<TextContent>, Array<Stri
     if (poll.rejectionReason == null) throw PollNotRejectedException()
     PollRepository.updateRejectionReason(id, null)
     PollRepository.updateStatus(poll.id, PollStatus.ON_MODERATOR_REVIEW)
-    execute(SendTextMessage(poll.userId.toChatId(), "Your poll #${poll.id} unrejected"))
+    execute(SendTextMessage(poll.userId.toChatId(), yourPollUnRejectedText(poll.id, message.langCode())))
     reply(message, "You unrejected poll #${poll.id}")
+}
+
+fun yourPollUnRejectedText(pollId: Long, langCode: String) = when (langCode) {
+    "be" -> "Ваша апытанне #$pollId прынята"
+    else -> "Ваш опрос #$pollId принято"
 }

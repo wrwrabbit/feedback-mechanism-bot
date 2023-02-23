@@ -2,7 +2,9 @@ package by.cp.feedback.mechanism.bot.behaviour
 
 import by.cp.feedback.mechanism.bot.behaviour.utils.tryF
 import by.cp.feedback.mechanism.bot.captcha.CaptchaService
+import by.cp.feedback.mechanism.bot.exception.AlreadyRegisteredException
 import by.cp.feedback.mechanism.bot.exception.FromNotFoundException
+import by.cp.feedback.mechanism.bot.model.langCode
 import by.cp.feedback.mechanism.bot.repository.UserRepository
 import dev.inmo.tgbotapi.extensions.api.send.reply
 import dev.inmo.tgbotapi.extensions.behaviour_builder.BehaviourContext
@@ -19,23 +21,37 @@ import javax.imageio.ImageIO
 
 fun start(): suspend BehaviourContext.(CommonMessage<TextContent>) -> Unit = tryF { message ->
     val userId: Long = message.from?.id?.chatId ?: throw FromNotFoundException()
-    if (UserRepository.exists(userId)) {
-        reply(message, "Hello")
-    }
+    val langCode = message.langCode()
+    if (UserRepository.exists(userId)) throw AlreadyRegisteredException()
     val (image, text) = CaptchaService.getCaptcha()
     val file = ByteArrayOutputStream().let {
         ImageIO.write(image, "jpg", it)
         it.toByteArray()
     }.asMultipartFile("captcha")
     var userCaptchaMessage = waitTextMessage(
-        SendPhoto(userId.toChatId(), file, "Send me captcha")
+        SendPhoto(userId.toChatId(), file, sendMeCaptchaText(langCode))
     ).first()
     while (userCaptchaMessage.content.text != text) {
-        reply(userCaptchaMessage, "Wrong captcha")
+        reply(userCaptchaMessage, wrongCaptchaText(langCode))
         userCaptchaMessage = waitTextMessage(
-            SendPhoto(userId.toChatId(), file, "Send me captcha")
+            SendPhoto(userId.toChatId(), file, sendMeCaptchaText(langCode))
         ).first()
     }
-    UserRepository.save(userId)
-    reply(userCaptchaMessage, "Hello")
+    UserRepository.save(userId, langCode)
+    reply(userCaptchaMessage, helloText(langCode))
+}
+
+fun sendMeCaptchaText(langCode: String) = when (langCode) {
+    "be" -> "Адышліце капчу"
+    else -> "Отошлите капчу"
+}
+
+fun wrongCaptchaText(langCode: String) = when (langCode) {
+    "be" -> "Неправільная капча"
+    else -> "Неправильная капча"
+}
+
+fun helloText(langCode: String) = when (langCode) {
+    "be" -> "Прывітанне"
+    else -> "Привет"
 }

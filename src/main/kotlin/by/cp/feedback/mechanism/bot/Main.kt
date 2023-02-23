@@ -47,17 +47,17 @@ suspend fun main(args: Array<String>) {
         onCommand(templateCommand, scenarioReceiver = template())
 
         setMyCommands(
-            BotCommand(startCommand, startCommand),
-            BotCommand(sendToModeratorsReviewCommand, sendToModeratorsReviewCommand),
-            BotCommand(getChatIdCommand, getChatIdCommand),
-            BotCommand(rejectCommand, rejectCommand),
-            BotCommand(fixPollCommand, fixPollCommand),
-            BotCommand(getPollCommand, getPollCommand),
-            BotCommand(unrejectCommand, unrejectCommand),
-            BotCommand(myPollsCommand, myPollsCommand),
-            BotCommand(templateCommand, templateCommand),
-            BotCommand(sendToUsersReviewCommand, sendToUsersReviewCommand),
-            BotCommand(sendToVoteCommand, sendToVoteCommand),
+            BotCommand(startCommand, "startCommand"),
+            BotCommand(sendToModeratorsReviewCommand, "sendToModeratorsReviewCommand"),
+            BotCommand(getChatIdCommand, "getChatIdCommand"),
+            BotCommand(rejectCommand, "rejectCommand"),
+            BotCommand(fixPollCommand, "fixPollCommand"),
+            BotCommand(getPollCommand, "getPollCommand"),
+            BotCommand(unrejectCommand, "unrejectCommand"),
+            BotCommand(myPollsCommand, "myPollsCommand"),
+            BotCommand(templateCommand, "templateCommand"),
+            BotCommand(sendToUsersReviewCommand, "sendToUsersReviewCommand"),
+            BotCommand(sendToVoteCommand, "sendToVoteCommand"),
         )
     }
     bot.setWebhookInfoAndStartListenWebhooks(

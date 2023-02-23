@@ -5,6 +5,7 @@ import by.cp.feedback.mechanism.bot.exception.FromNotFoundException
 import by.cp.feedback.mechanism.bot.exception.NotOneArgException
 import by.cp.feedback.mechanism.bot.exception.PollNotFoundInDbException
 import by.cp.feedback.mechanism.bot.exception.YouAreNotOwnerOfPollException
+import by.cp.feedback.mechanism.bot.model.langCode
 import by.cp.feedback.mechanism.bot.model.toMessage
 import by.cp.feedback.mechanism.bot.repository.PollRepository
 import dev.inmo.tgbotapi.extensions.api.send.reply
@@ -18,8 +19,6 @@ fun getPoll(): suspend BehaviourContext.(CommonMessage<TextContent>, Array<Strin
     val id = args.first().toLong()
     val poll = PollRepository.getById(id) ?: throw PollNotFoundInDbException()
     val userId: Long = message.from?.id?.chatId ?: throw FromNotFoundException()
-    if (userId != poll.userId) {
-        throw YouAreNotOwnerOfPollException()
-    }
-    reply(message, poll.toMessage())
+    if (userId != poll.userId) throw YouAreNotOwnerOfPollException()
+    reply(message, poll.toMessage(message.langCode()))
 }

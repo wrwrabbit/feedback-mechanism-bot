@@ -6,6 +6,7 @@ import by.cp.feedback.mechanism.bot.model.userApproveDataCallback
 import by.cp.feedback.mechanism.bot.model.userUnApproveDataCallback
 import by.cp.feedback.mechanism.bot.repository.PollRepository
 import by.cp.feedback.mechanism.bot.repository.PollUserReviewRepository
+import by.cp.feedback.mechanism.bot.repository.UserRepository
 import dev.inmo.tgbotapi.requests.send.SendTextMessage
 import dev.inmo.tgbotapi.types.buttons.InlineKeyboardButtons.CallbackDataInlineKeyboardButton
 import dev.inmo.tgbotapi.types.buttons.InlineKeyboardMarkup
@@ -28,7 +29,8 @@ class SendToUserReviewScheduler {
                 runBlocking {
                     bot.execute(SendTextMessage(
                         chatId = review.userId.toChatId(),
-                        text = PollRepository.getById(review.pollId)!!.toMessage(),
+                        text = PollRepository.getById(review.pollId)!!
+                            .toMessage(UserRepository.langCodeById(review.userId)),
                         replyMarkup = InlineKeyboardMarkup(
                             matrix {
                                 row {
@@ -44,8 +46,8 @@ class SendToUserReviewScheduler {
                             }
                         )))
                 }
+                PollUserReviewRepository.delete(review)
             }
-            PollUserReviewRepository.deleteList(reviews)
         }
     }
 }
