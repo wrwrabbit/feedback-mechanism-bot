@@ -26,10 +26,11 @@ class SendToUserVoteScheduler {
             reviews.forEach { review ->
                 runBlocking {
                     val poll = PollRepository.getById(review.pollId)!!
+                    val langCode = UserRepository.langCodeById(review.userId)
                     bot.execute(
                         SendTextMessage(
                             chatId = review.userId.toChatId(),
-                            text = poll.toMessage(UserRepository.langCodeById(review.userId)),
+                            text = poll.toMessage(langCode),
                             replyMarkup = questionsToMarkup(
                                 options = poll.options,
                                 pollId = poll.id,
@@ -38,8 +39,8 @@ class SendToUserVoteScheduler {
                         )
                     )
                 }
+                PollUserVoteRepository.delete(review)
             }
-            PollUserVoteRepository.deleteList(reviews)
         }
     }
 

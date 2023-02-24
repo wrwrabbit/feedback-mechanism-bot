@@ -1,4 +1,4 @@
-package by.cp.feedback.mechanism.bot.behaviour
+package by.cp.feedback.mechanism.bot.behaviour.common
 
 import dev.inmo.tgbotapi.extensions.api.send.reply
 import dev.inmo.tgbotapi.extensions.behaviour_builder.BehaviourContext

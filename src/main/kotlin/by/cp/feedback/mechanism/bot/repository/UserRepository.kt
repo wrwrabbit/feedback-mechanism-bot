@@ -5,6 +5,7 @@ import by.cp.feedback.mechanism.bot.table.Users
 import org.jetbrains.exposed.sql.insertAndGetId
 import org.jetbrains.exposed.sql.select
 import org.jetbrains.exposed.sql.transactions.transaction
+import org.jetbrains.exposed.sql.update
 
 object UserRepository {
 
@@ -15,6 +16,12 @@ object UserRepository {
             it[Users.id] = userId
             it[Users.langCode] = langCode
         }.value
+    }
+
+    fun updateLangCode(id: Long, langCode: String) = transaction {
+        Users.update({ Users.id eq id }) {
+            it[Users.langCode] = langCode
+        }
     }
 
     fun exists(userId: Long): Boolean = transaction {

@@ -1,4 +1,4 @@
-package by.cp.feedback.mechanism.bot.behaviour
+package by.cp.feedback.mechanism.bot.behaviour.review
 
 import by.cp.feedback.mechanism.bot.exception.PollNotFoundInDbException
 import by.cp.feedback.mechanism.bot.model.PollStatus
@@ -21,10 +21,11 @@ fun userApprove(): suspend BehaviourContext.(DataCallbackQuery) -> Unit = { call
     if (poll.userApproves + 1 == usersApprovalsRequired) {
         PollRepository.updateStatus(poll.id, PollStatus.READY_FOR_VOTING)
         PollUserReviewRepository.delete(poll.id)
+        val langCode = UserRepository.langCodeById(poll.userId)
         execute(
             SendTextMessage(
                 poll.userId.toChatId(),
-                pollReadyForVoting(poll.id, UserRepository.langCodeById(poll.userId))
+                pollReadyForVoting(poll.id, langCode)
             )
         )
     }

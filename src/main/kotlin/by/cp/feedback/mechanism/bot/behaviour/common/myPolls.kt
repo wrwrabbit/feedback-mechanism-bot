@@ -1,11 +1,11 @@
-package by.cp.feedback.mechanism.bot.behaviour
+package by.cp.feedback.mechanism.bot.behaviour.common
 
 import by.cp.feedback.mechanism.bot.behaviour.utils.tryF
 import by.cp.feedback.mechanism.bot.exception.FromNotFoundException
 import by.cp.feedback.mechanism.bot.model.PollDto
 import by.cp.feedback.mechanism.bot.model.PollStatus
-import by.cp.feedback.mechanism.bot.model.langCode
 import by.cp.feedback.mechanism.bot.repository.PollRepository
+import by.cp.feedback.mechanism.bot.repository.UserRepository
 import dev.inmo.tgbotapi.extensions.api.send.reply
 import dev.inmo.tgbotapi.extensions.behaviour_builder.BehaviourContext
 import dev.inmo.tgbotapi.extensions.utils.extensions.raw.from
@@ -14,8 +14,9 @@ import dev.inmo.tgbotapi.types.message.content.TextContent
 
 fun myPolls(): suspend BehaviourContext.(CommonMessage<TextContent>) -> Unit = tryF { message ->
     val userId: Long = message.from?.id?.chatId ?: throw FromNotFoundException()
+    val langCode = UserRepository.langCodeById(userId)
     val polls = PollRepository.getByUserId(userId)
-    val response = polls.joinToString("\n") { it.toStatusMessage(message.langCode()) + "\n" }
+    val response = polls.joinToString("\n") { it.toStatusMessage(langCode) + "\n" }
     reply(message, response)
 }
 

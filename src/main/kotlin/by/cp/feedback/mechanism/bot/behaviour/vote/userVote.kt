@@ -1,4 +1,4 @@
-package by.cp.feedback.mechanism.bot.behaviour
+package by.cp.feedback.mechanism.bot.behaviour.vote
 
 import by.cp.feedback.mechanism.bot.model.userVoteDataCallback
 import by.cp.feedback.mechanism.bot.repository.PollVoteRepository

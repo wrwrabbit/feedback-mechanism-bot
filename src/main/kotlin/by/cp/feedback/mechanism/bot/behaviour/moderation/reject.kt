@@ -1,4 +1,4 @@
-package by.cp.feedback.mechanism.bot.behaviour
+package by.cp.feedback.mechanism.bot.behaviour.moderation
 
 import by.cp.feedback.mechanism.bot.behaviour.utils.tryF
 import by.cp.feedback.mechanism.bot.exception.CantRejectRejectedException
@@ -6,9 +6,9 @@ import by.cp.feedback.mechanism.bot.exception.NotModeratorsChatException
 import by.cp.feedback.mechanism.bot.exception.NotTwoArgException
 import by.cp.feedback.mechanism.bot.exception.PollNotFoundInDbException
 import by.cp.feedback.mechanism.bot.model.PollStatus
-import by.cp.feedback.mechanism.bot.model.langCode
 import by.cp.feedback.mechanism.bot.model.moderatorsChatId
 import by.cp.feedback.mechanism.bot.repository.PollRepository
+import by.cp.feedback.mechanism.bot.repository.UserRepository
 import dev.inmo.tgbotapi.extensions.api.send.reply
 import dev.inmo.tgbotapi.extensions.behaviour_builder.BehaviourContext
 import dev.inmo.tgbotapi.requests.send.SendTextMessage
@@ -25,7 +25,8 @@ fun reject(): suspend BehaviourContext.(CommonMessage<TextContent>, Array<String
     if (poll.rejectionReason != null) throw CantRejectRejectedException()
     PollRepository.updateRejectionReason(id, rejectionReason)
     PollRepository.updateStatus(poll.id, PollStatus.REJECTED)
-    execute(SendTextMessage(poll.userId.toChatId(), yourPollRejectedText(poll.id, message.langCode())))
+    val langCode = UserRepository.langCodeById(poll.userId)
+    execute(SendTextMessage(poll.userId.toChatId(), yourPollRejectedText(poll.id, langCode)))
     reply(message, "You rejected poll #${poll.id}")
 }
 

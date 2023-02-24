@@ -27,10 +27,10 @@ class SendToUserReviewScheduler {
         if (reviews.isNotEmpty()) {
             reviews.forEach { review ->
                 runBlocking {
+                    val langCode = UserRepository.langCodeById(review.userId)
                     bot.execute(SendTextMessage(
                         chatId = review.userId.toChatId(),
-                        text = PollRepository.getById(review.pollId)!!
-                            .toMessage(UserRepository.langCodeById(review.userId)),
+                        text = PollRepository.getById(review.pollId)!!.toMessage(langCode),
                         replyMarkup = InlineKeyboardMarkup(
                             matrix {
                                 row {
