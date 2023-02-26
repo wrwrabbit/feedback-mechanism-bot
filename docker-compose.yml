@@ -28,6 +28,11 @@ services:
       DB_PASSWORD: "${DB_PASSWORD}"
       TOKEN: "${TOKEN}"
       WEBHOOK_URL: "${WEBHOOK_URL}"
+      WEBHOOK_ROUTE: "${WEBHOOK_ROUTE}"
+      WEBHOOK_PORT: "${WEBHOOK_PORT}"
+      MODERATORS_CHAT_ID: "${MODERATORS_CHAT_ID}"
+      POST_CHAT_ID: "${POST_CHAT_ID}"
+      
     networks:
       - cpdata-network
 
