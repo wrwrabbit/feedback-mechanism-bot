@@ -1,4 +1,4 @@
-package by.cp.feedback.mechanism.bot.behaviour
+package by.cp.feedback.mechanism.bot.behaviour.moderation
 
 import by.cp.feedback.mechanism.bot.behaviour.utils.tryF
 import by.cp.feedback.mechanism.bot.exception.CantRejectRejectedException
@@ -8,6 +8,7 @@ import by.cp.feedback.mechanism.bot.exception.PollNotFoundInDbException
 import by.cp.feedback.mechanism.bot.model.PollStatus
 import by.cp.feedback.mechanism.bot.model.moderatorsChatId
 import by.cp.feedback.mechanism.bot.repository.PollRepository
+import by.cp.feedback.mechanism.bot.repository.UserRepository
 import dev.inmo.tgbotapi.extensions.api.send.reply
 import dev.inmo.tgbotapi.extensions.behaviour_builder.BehaviourContext
 import dev.inmo.tgbotapi.requests.send.SendTextMessage
@@ -24,6 +25,12 @@ fun reject(): suspend BehaviourContext.(CommonMessage<TextContent>, Array<String
     if (poll.rejectionReason != null) throw CantRejectRejectedException()
     PollRepository.updateRejectionReason(id, rejectionReason)
     PollRepository.updateStatus(poll.id, PollStatus.REJECTED)
-    execute(SendTextMessage(poll.userId.toChatId(), "Your poll #${poll.id} rejected"))
+    val langCode = UserRepository.langCodeById(poll.userId)
+    execute(SendTextMessage(poll.userId.toChatId(), yourPollRejectedText(poll.id, langCode)))
     reply(message, "You rejected poll #${poll.id}")
+}
+
+fun yourPollRejectedText(pollId: Long, langCode: String) = when (langCode) {
+    "be" -> "Ваша апытанне #$pollId адмоўлена"
+    else -> "Ваш опрос #$pollId отклонён"
 }

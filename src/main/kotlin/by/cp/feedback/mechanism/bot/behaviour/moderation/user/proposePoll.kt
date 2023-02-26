@@ -1,14 +1,12 @@
-package by.cp.feedback.mechanism.bot.behaviour
+package by.cp.feedback.mechanism.bot.behaviour.moderation.user
 
 import by.cp.feedback.mechanism.bot.behaviour.utils.tryF
 import by.cp.feedback.mechanism.bot.exception.FromNotFoundException
 import by.cp.feedback.mechanism.bot.exception.LessSevenDaysFromLastPollException
 import by.cp.feedback.mechanism.bot.exception.TextNotFoundInReplyException
-import by.cp.feedback.mechanism.bot.model.moderatorApproveDataCallback
-import by.cp.feedback.mechanism.bot.model.moderatorsChatId
-import by.cp.feedback.mechanism.bot.model.parsePoll
-import by.cp.feedback.mechanism.bot.model.toMessage
+import by.cp.feedback.mechanism.bot.model.*
 import by.cp.feedback.mechanism.bot.repository.PollRepository
+import by.cp.feedback.mechanism.bot.repository.UserRepository
 import dev.inmo.tgbotapi.extensions.api.send.reply
 import dev.inmo.tgbotapi.extensions.behaviour_builder.BehaviourContext
 import dev.inmo.tgbotapi.extensions.utils.extensions.raw.from
@@ -27,16 +25,16 @@ import java.time.ZoneOffset
 
 fun sendToModeratorsReview(): suspend BehaviourContext.(CommonMessage<TextContent>) -> Unit = tryF { message ->
     val text = message.replyTo?.text ?: throw TextNotFoundInReplyException()
-    val (question, options, allowMultipleAnswers) = parsePoll(text)
     val userId: Long = message.from?.id?.chatId ?: throw FromNotFoundException()
+    val langCode = UserRepository.langCodeById(userId)
+    val (question, options, allowMultipleAnswers) = parsePoll(text, langCode)
     val lastUserPollTime = PollRepository.lastUserPoll(userId)?.createdAt
     if (lastUserPollTime != null) {
         val currentTime = LocalDateTime.now(ZoneOffset.UTC)
         val duration = Duration.between(currentTime, lastUserPollTime.plusDays(7))
         if (duration.toDays() < 7) {
             throw LessSevenDaysFromLastPollException(
-                "Time till next available poll suggestion: days=${duration.toDays()} " +
-                    "hours=${duration.toHours()} minutes=${duration.toMinutes()}"
+                timeTillNexPollText(duration.toDays(), duration.toHours(), duration.toMinutes(), langCode)
             )
         }
     }
@@ -45,12 +43,20 @@ fun sendToModeratorsReview(): suspend BehaviourContext.(CommonMessage<TextConten
         matrix {
             row {
                 +CallbackDataInlineKeyboardButton(
-                    "Approve",
+                    "✅ 0/$moderatorsApprovalsRequired",
                     callbackData = "$moderatorApproveDataCallback${savedPoll.id}"
                 )
             }
         }
     )
-    execute(SendTextMessage(moderatorsChatId.toChatId(), savedPoll.toMessage(), replyMarkup = markup))
-    reply(message, "Your poll sent to moderators")
+    execute(SendTextMessage(moderatorsChatId.toChatId(), savedPoll.toMessage("be"), replyMarkup = markup))
+    reply(message, sentToModeratorsText(langCode))
+}
+
+fun timeTillNexPollText(days: Long, hours: Long, minutes: Long, langCode: String) = when (langCode) {
+    "be" -> "Час да наступнай магчымасці прапанаваць апытанне: дні=$days " +
+        "гадзіны=$hours хвіліны=$minutes"
+
+    else -> "Время до следующей возможности предложить опрос: дни=$days " +
+        "часы=$hours минуты=$minutes"
 }

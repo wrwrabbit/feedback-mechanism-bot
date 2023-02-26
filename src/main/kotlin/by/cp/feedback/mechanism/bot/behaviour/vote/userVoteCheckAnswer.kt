@@ -1,4 +1,4 @@
-package by.cp.feedback.mechanism.bot.behaviour
+package by.cp.feedback.mechanism.bot.behaviour.vote
 
 import by.cp.feedback.mechanism.bot.model.userVoteCheckAnswerDataCallback
 import dev.inmo.tgbotapi.extensions.api.edit.edit
@@ -28,6 +28,5 @@ fun userVoteCheckAnswer(): suspend BehaviourContext.(DataCallbackQuery) -> Unit 
             }
         }
     }
-    val newMarkup = InlineKeyboardMarkup(matrix)
-    edit(message.chat, message.messageId, newMarkup)
+    edit(message.chat, message.messageId, InlineKeyboardMarkup(matrix))
 }
