@@ -16,8 +16,18 @@ fun myPolls(): suspend BehaviourContext.(CommonMessage<TextContent>) -> Unit = t
     val userId: Long = message.from?.id?.chatId ?: throw FromNotFoundException()
     val langCode = UserRepository.langCodeById(userId)
     val polls = PollRepository.getByUserId(userId)
-    val response = polls.joinToString("\n") { it.toStatusMessage(langCode) + "\n" }
+    val pollsResponse = polls.joinToString("\n") { it.toStatusMessage(langCode) + "\n" }
+    val response = if (pollsResponse.isNotEmpty()) {
+        pollsResponse
+    } else {
+        emptyPollsMessage(langCode)
+    }
     reply(message, response)
+}
+
+fun emptyPollsMessage(langCode: String): String = when (langCode) {
+    "be" -> "У вас няма апытанняў"
+    else -> "У вас нет опросов"
 }
 
 fun PollDto.toStatusMessage(langCode: String): String = when (langCode) {
