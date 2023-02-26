@@ -6,8 +6,9 @@ val bot = telegramBot(System.getenv("TOKEN"))
 
 val moderatorsChatId = System.getenv("MODERATORS_CHAT_ID").toLong()
 val postChatId = System.getenv("POST_CHAT_ID").toLong()
-const val moderatorsApprovalsRequired = 1
-const val usersApprovalsRequired = 1L
+val moderatorsApprovalsRequired = System.getenv("MODERATORS_APPROVALS_REQUIRED").toInt()
+val usersApprovalsRequired = System.getenv("USERS_APPROVALS_REQUIRED").toLong()
+val daysBetweenPolls = System.getenv("DAYS_BETWEEN_POLLS").toLong()
 
 //DATA_CALLBACK
 const val moderatorApproveDataCallback = "ModeratorsApproveDataCallback"
