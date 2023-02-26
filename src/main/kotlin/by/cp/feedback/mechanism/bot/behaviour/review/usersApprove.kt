@@ -34,5 +34,5 @@ fun userApprove(): suspend BehaviourContext.(DataCallbackQuery) -> Unit = { call
 
 fun pollReadyForVoting(pollId: Long, langCode: String) = when (langCode) {
     "be" -> "Ваша апытанне #$pollId гатова, дзеля галасавання"
-    else -> "Ваш опрос #$pollId готово для голосования"
+    else -> "Ваш опрос #$pollId готов для голосования"
 }
