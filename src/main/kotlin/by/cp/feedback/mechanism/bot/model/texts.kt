@@ -12,7 +12,7 @@ fun CommonMessage<*>.langCode() =
     (this.from!! as CommonUser).ietfLanguageCode?.code ?: "ru"
 
 fun question(langCode: String) = when (langCode) {
-    "be" -> "Патанне"
+    "be" -> "Пытанне"
     else -> "Вопрос"
 }
 
