@@ -1,5 +1,6 @@
 create table users(
-    id bigint primary key
+    id bigint primary key,
+    lang_code text
 );
 
 create table polls(

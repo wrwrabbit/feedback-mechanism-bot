@@ -3,6 +3,7 @@ package by.cp.feedback.mechanism.bot.scheduler
 import by.cp.feedback.mechanism.bot.model.*
 import by.cp.feedback.mechanism.bot.repository.PollRepository
 import by.cp.feedback.mechanism.bot.repository.PollUserVoteRepository
+import by.cp.feedback.mechanism.bot.repository.UserRepository
 import dev.inmo.tgbotapi.requests.send.SendTextMessage
 import dev.inmo.tgbotapi.types.buttons.InlineKeyboardButtons.CallbackDataInlineKeyboardButton
 import dev.inmo.tgbotapi.types.buttons.InlineKeyboardMarkup
@@ -25,10 +26,11 @@ class SendToUserVoteScheduler {
             reviews.forEach { review ->
                 runBlocking {
                     val poll = PollRepository.getById(review.pollId)!!
+                    val langCode = UserRepository.langCodeById(review.userId)
                     bot.execute(
                         SendTextMessage(
                             chatId = review.userId.toChatId(),
-                            text = poll.toMessage(),
+                            text = poll.toMessage(langCode),
                             replyMarkup = questionsToMarkup(
                                 options = poll.options,
                                 pollId = poll.id,
@@ -37,8 +39,8 @@ class SendToUserVoteScheduler {
                         )
                     )
                 }
+                PollUserVoteRepository.delete(review)
             }
-            PollUserVoteRepository.deleteList(reviews)
         }
     }
 

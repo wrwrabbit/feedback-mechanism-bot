@@ -1,4 +1,4 @@
-package by.cp.feedback.mechanism.bot.behaviour
+package by.cp.feedback.mechanism.bot.behaviour.vote
 
 import by.cp.feedback.mechanism.bot.behaviour.utils.tryF
 import by.cp.feedback.mechanism.bot.exception.FromNotFoundException
@@ -12,6 +12,7 @@ import by.cp.feedback.mechanism.bot.model.toMessage
 import by.cp.feedback.mechanism.bot.repository.PollRepository
 import by.cp.feedback.mechanism.bot.repository.PollUserVoteRepository
 import by.cp.feedback.mechanism.bot.repository.PollVoteRepository
+import by.cp.feedback.mechanism.bot.repository.UserRepository
 import dev.inmo.tgbotapi.extensions.api.send.reply
 import dev.inmo.tgbotapi.extensions.behaviour_builder.BehaviourContext
 import dev.inmo.tgbotapi.extensions.utils.extensions.raw.from
@@ -26,9 +27,8 @@ fun sendToVote(): suspend BehaviourContext.(CommonMessage<TextContent>, Array<St
         val id = args.first().toLong()
         val poll = PollRepository.getById(id) ?: throw PollNotFoundInDbException()
         val userId: Long = message.from?.id?.chatId ?: throw FromNotFoundException()
-        if (userId != poll.userId) {
-            throw YouAreNotOwnerOfPollException()
-        }
+        val langCode = UserRepository.langCodeById(userId)
+        if (userId != poll.userId) throw YouAreNotOwnerOfPollException()
         PollRepository.updateStatus(poll.id, PollStatus.VOTING)
         PollVoteRepository.save(poll.id)
         PollUserVoteRepository.save(poll.id)
@@ -39,9 +39,14 @@ fun sendToVote(): suspend BehaviourContext.(CommonMessage<TextContent>, Array<St
                     question = poll.question,
                     allowMultipleAnswers = poll.allowMultipleAnswers,
                     options = poll.options,
-                    results = poll.options.map { 0 }).toMessage()
+                    results = poll.options.map { 0 }).toMessage("be")
             )
         )
         PollRepository.updateMessageId(id, message1.messageId)
-        reply(message, "Your poll sent to vote")
+        reply(message, sentToUsersVoteText(langCode))
     }
+
+fun sentToUsersVoteText(langCode: String) = when (langCode) {
+    "be" -> "Ваша апытанне адпраўлена на галасаванне карыстальнікам"
+    else -> "Ваш опрос отправлен на голосование пользователям"
+}

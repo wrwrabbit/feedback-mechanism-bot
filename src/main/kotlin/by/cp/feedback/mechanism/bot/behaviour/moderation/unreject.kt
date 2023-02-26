@@ -1,4 +1,4 @@
-package by.cp.feedback.mechanism.bot.behaviour
+package by.cp.feedback.mechanism.bot.behaviour.moderation
 
 import by.cp.feedback.mechanism.bot.behaviour.utils.tryF
 import by.cp.feedback.mechanism.bot.exception.NotModeratorsChatException
@@ -8,6 +8,7 @@ import by.cp.feedback.mechanism.bot.exception.PollNotRejectedException
 import by.cp.feedback.mechanism.bot.model.PollStatus
 import by.cp.feedback.mechanism.bot.model.moderatorsChatId
 import by.cp.feedback.mechanism.bot.repository.PollRepository
+import by.cp.feedback.mechanism.bot.repository.UserRepository
 import dev.inmo.tgbotapi.extensions.api.send.reply
 import dev.inmo.tgbotapi.extensions.behaviour_builder.BehaviourContext
 import dev.inmo.tgbotapi.requests.send.SendTextMessage
@@ -23,6 +24,12 @@ fun unreject(): suspend BehaviourContext.(CommonMessage<TextContent>, Array<Stri
     if (poll.rejectionReason == null) throw PollNotRejectedException()
     PollRepository.updateRejectionReason(id, null)
     PollRepository.updateStatus(poll.id, PollStatus.ON_MODERATOR_REVIEW)
-    execute(SendTextMessage(poll.userId.toChatId(), "Your poll #${poll.id} unrejected"))
+    val langCode = UserRepository.langCodeById(poll.userId)
+    execute(SendTextMessage(poll.userId.toChatId(), yourPollUnRejectedText(poll.id, langCode)))
     reply(message, "You unrejected poll #${poll.id}")
+}
+
+fun yourPollUnRejectedText(pollId: Long, langCode: String) = when (langCode) {
+    "be" -> "Ваша апытанне #$pollId прынята"
+    else -> "Ваш опрос #$pollId принят"
 }

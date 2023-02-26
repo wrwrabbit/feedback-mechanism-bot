@@ -29,12 +29,8 @@ object PollUserReviewRepository {
         PollUserReview.deleteWhere { PollUserReview.pollId eq pollId }
     }
 
-    fun deleteList(reviewsDto: List<PollForUserReviewDto>) = transaction {
-        PollUserReview.deleteWhere {
-            reviewsDto.map {
-                (pollId eq it.pollId) and (userId eq it.userId)
-            }.reduce { acc, op -> acc and op }
-        }
+    fun delete(reviewDto: PollForUserReviewDto) = transaction {
+        PollUserReview.deleteWhere { (pollId eq reviewDto.pollId) and (userId eq reviewDto.userId) }
     }
 
     private fun pollForUserReviewDto(it: ResultRow) = PollForUserReviewDto(

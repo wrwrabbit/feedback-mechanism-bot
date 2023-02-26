@@ -22,7 +22,7 @@ class PollPostScheduler {
                 bot.edit(
                     chatId = postChatId.toChatId(),
                     messageId = poll.messageId!!,
-                    text = poll.toMessage()
+                    text = poll.toMessage("be")
                 )
             }
         }

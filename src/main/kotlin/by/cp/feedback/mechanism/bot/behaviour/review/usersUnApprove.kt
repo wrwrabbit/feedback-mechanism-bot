@@ -1,4 +1,4 @@
-package by.cp.feedback.mechanism.bot.behaviour
+package by.cp.feedback.mechanism.bot.behaviour.review
 
 import dev.inmo.tgbotapi.extensions.api.delete
 import dev.inmo.tgbotapi.extensions.behaviour_builder.BehaviourContext
