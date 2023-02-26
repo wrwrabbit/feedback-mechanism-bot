@@ -31,5 +31,5 @@ fun unreject(): suspend BehaviourContext.(CommonMessage<TextContent>, Array<Stri
 
 fun yourPollUnRejectedText(pollId: Long, langCode: String) = when (langCode) {
     "be" -> "Ваша апытанне #$pollId прынята"
-    else -> "Ваш опрос #$pollId принято"
+    else -> "Ваш опрос #$pollId принят"
 }
