@@ -89,7 +89,7 @@ suspend fun main(args: Array<String>) {
         )
     }
     bot.setWebhookInfoAndStartListenWebhooks(
-        listenPort = System.getenv("WEBHOOK_PORT").toInt(),
+        listenPort = 8080,
         listenRoute = System.getenv("WEBHOOK_ROUTE"),
         engineFactory = Netty,
         setWebhookRequest = SetWebhook(url = System.getenv("WEBHOOK_URL")),
