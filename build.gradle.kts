@@ -18,6 +18,7 @@ repositories {
 
 dependencies {
     implementation("org.springframework.boot:spring-boot-starter-web")
+    implementation("io.github.microutils:kotlin-logging-jvm:3.0.5")
     implementation("dev.inmo:tgbotapi:5.1.0")
     implementation("io.ktor:ktor-server-netty:2.2.3")
     implementation("org.jetbrains.exposed:exposed-core:0.41.1")
