@@ -44,7 +44,7 @@ fun start(): suspend BehaviourContext.(CommonMessage<TextContent>) -> Unit = try
             ).first()
         }
         UserRepository.save(userId, langCode)
-        reply(userCaptchaMessage, helloText(langCode), replyMarkup = InlineKeyboardMarkup(
+        reply(userCaptchaMessage, helloLangText(langCode), replyMarkup = InlineKeyboardMarkup(
             matrix {
                 row {
                     +CallbackDataInlineKeyboardButton(
@@ -71,7 +71,12 @@ fun wrongCaptchaText(langCode: String) = when (langCode) {
     else -> "Неправильная капча"
 }
 
-fun helloText(langCode: String) = when (langCode) {
+fun helloLangText(langCode: String) = when (langCode) {
     "be" -> "Прывітанне\nАбярыце мову"
     else -> "Привет\nВыберете язык"
+}
+
+fun helloText(langCode: String) = when (langCode) {
+    "be" -> "Прывітанне"
+    else -> "Привет"
 }
