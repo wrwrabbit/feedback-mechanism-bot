@@ -32,7 +32,7 @@ fun sendToModeratorsReview(): suspend BehaviourContext.(CommonMessage<TextConten
     if (lastUserPollTime != null) {
         val currentTime = LocalDateTime.now(ZoneOffset.UTC)
         val duration = Duration.between(currentTime, lastUserPollTime.plusSeconds(secondsBetweenPolls))
-        if (duration.toSeconds() < secondsBetweenPolls) {
+        if (duration.toSeconds() > 0 && duration.toSeconds() < secondsBetweenPolls) {
             throw LessSevenDaysFromLastPollException(
                 timeTillNexPollText(duration.toDays(), duration.toHours(), duration.toMinutes(), langCode)
             )
