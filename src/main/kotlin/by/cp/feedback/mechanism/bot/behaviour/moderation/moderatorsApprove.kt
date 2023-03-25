@@ -24,7 +24,9 @@ fun moderatorApprove(): suspend BehaviourContext.(DataCallbackQuery) -> Unit = {
     val poll = PollRepository.getById(id) ?: throw PollNotFoundInDbException()
     if (poll.rejectionReason != null) throw CantApproveRejectedException()
     val userId: Long = callback.user.id.chatId
-    val langCode = UserRepository.langCodeById(userId)
+    // TODO return on behaviour finish
+//    val langCode = UserRepository.langCodeById(userId)
+    val langCode = "ru"
     if (userId in poll.moderatorApproves) throw AlreadyApprovedException()
     val resultArray = poll.moderatorApproves.plus(userId)
     PollRepository.updateApproves(id, resultArray)

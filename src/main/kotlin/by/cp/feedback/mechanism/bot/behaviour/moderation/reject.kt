@@ -25,7 +25,9 @@ fun reject(): suspend BehaviourContext.(CommonMessage<TextContent>, Array<String
     if (poll.rejectionReason != null) throw CantRejectRejectedException()
     PollRepository.updateRejectionReason(id, rejectionReason)
     PollRepository.updateStatus(poll.id, PollStatus.REJECTED)
-    val langCode = UserRepository.langCodeById(poll.userId)
+    // TODO return on behaviour finish
+//    val langCode = UserRepository.langCodeById(userId)
+    val langCode = "ru"
     execute(SendTextMessage(poll.userId.toChatId(), yourPollRejectedText(poll.id, langCode)))
     reply(message, "You rejected poll #${poll.id}")
 }

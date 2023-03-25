@@ -21,7 +21,9 @@ fun userApprove(): suspend BehaviourContext.(DataCallbackQuery) -> Unit = { call
     if (poll.userApproves + 1 == usersApprovalsRequired) {
         PollRepository.updateStatus(poll.id, PollStatus.READY_FOR_VOTING)
         PollUserReviewRepository.delete(poll.id)
-        val langCode = UserRepository.langCodeById(poll.userId)
+        // TODO return on behaviour finish
+//    val langCode = UserRepository.langCodeById(userId)
+        val langCode = "ru"
         execute(
             SendTextMessage(
                 poll.userId.toChatId(),

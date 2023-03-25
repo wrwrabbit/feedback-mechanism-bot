@@ -27,7 +27,9 @@ fun sendToVote(): suspend BehaviourContext.(CommonMessage<TextContent>, Array<St
         val id = args.first().toLong()
         val poll = PollRepository.getById(id) ?: throw PollNotFoundInDbException()
         val userId: Long = message.from?.id?.chatId ?: throw FromNotFoundException()
-        val langCode = UserRepository.langCodeById(userId)
+        // TODO return on behaviour finish
+//    val langCode = UserRepository.langCodeById(userId)
+        val langCode = "ru"
         if (userId != poll.userId) throw YouAreNotOwnerOfPollException()
         PollRepository.updateStatus(poll.id, PollStatus.VOTING)
         PollVoteRepository.save(poll.id)

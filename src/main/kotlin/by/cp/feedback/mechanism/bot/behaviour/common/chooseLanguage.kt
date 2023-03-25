@@ -7,9 +7,10 @@ import dev.inmo.tgbotapi.extensions.behaviour_builder.BehaviourContext
 import dev.inmo.tgbotapi.types.queries.callback.DataCallbackQuery
 import dev.inmo.tgbotapi.types.queries.callback.MessageDataCallbackQuery
 
-fun chooseLanguage(): suspend BehaviourContext.(DataCallbackQuery) -> Unit = { callback ->
-    val langCode = callback.data.substring(languageDataCallback.length)
-    val userId: Long = callback.user.id.chatId
-    UserRepository.updateLangCode(userId, langCode)
-    delete((callback as MessageDataCallbackQuery).message)
-}
+// TODO return on behaviour finish
+//fun chooseLanguage(): suspend BehaviourContext.(DataCallbackQuery) -> Unit = { callback ->
+//    val langCode = callback.data.substring(languageDataCallback.length)
+//    val userId: Long = callback.user.id.chatId
+//    UserRepository.updateLangCode(userId, langCode)
+//    delete((callback as MessageDataCallbackQuery).message)
+//}

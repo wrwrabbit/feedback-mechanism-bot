@@ -19,6 +19,7 @@ import dev.inmo.tgbotapi.extensions.behaviour_builder.buildBehaviour
 import dev.inmo.tgbotapi.extensions.behaviour_builder.triggers_handling.onCommand
 import dev.inmo.tgbotapi.extensions.behaviour_builder.triggers_handling.onCommandWithArgs
 import dev.inmo.tgbotapi.extensions.behaviour_builder.triggers_handling.onDataCallbackQuery
+import dev.inmo.tgbotapi.extensions.behaviour_builder.triggers_handling.onText
 import dev.inmo.tgbotapi.extensions.utils.updates.retrieving.setWebhookInfoAndStartListenWebhooks
 import dev.inmo.tgbotapi.requests.webhook.SetWebhook
 import dev.inmo.tgbotapi.types.BotCommand
@@ -41,7 +42,8 @@ const val unrejectCommand = "unreject"
 const val myPollsCommand = "my_polls"
 const val fixPollCommand = "fix_poll"
 const val templateCommand = "template"
-const val languageCommand = "language"
+
+//const val languageCommand = "language"
 const val getPollCommand = "get_poll"
 
 suspend fun main(args: Array<String>) {
@@ -51,10 +53,10 @@ suspend fun main(args: Array<String>) {
         }
     ) {
         onCommand(startCommand, scenarioReceiver = start())
-        onCommand(sendToModeratorsReviewCommand, scenarioReceiver = sendToModeratorsReview())
+        onText(initialFilter = { it.content.text == "✍️ создать опрос" }, scenarioReceiver = sendToModeratorsReview())
         onCommand(getChatIdCommand, scenarioReceiver = getChatId())
         onDataCallbackQuery(Regex("$moderatorApproveDataCallback\\d*"), scenarioReceiver = moderatorApprove())
-        onDataCallbackQuery(Regex("$languageDataCallback.*"), scenarioReceiver = chooseLanguage())
+//        onDataCallbackQuery(Regex("$languageDataCallback.*"), scenarioReceiver = chooseLanguage())
         onDataCallbackQuery(Regex("$userApproveDataCallback\\d*"), scenarioReceiver = userApprove())
         onDataCallbackQuery(Regex("$userUnApproveDataCallback\\d*"), scenarioReceiver = userUnApprove())
         onDataCallbackQuery(Regex("$userVoteDataCallback.*"), scenarioReceiver = userVote())
@@ -71,7 +73,7 @@ suspend fun main(args: Array<String>) {
         onCommandWithArgs(unrejectCommand, scenarioReceiver = unreject())
         onCommand(myPollsCommand, scenarioReceiver = myPolls())
         onCommand(templateCommand, scenarioReceiver = template())
-        onCommand(languageCommand, scenarioReceiver = language())
+//        onCommand(languageCommand, scenarioReceiver = language())
 
         setMyCommands(
             BotCommand(startCommand, "startCommand"),
@@ -85,7 +87,7 @@ suspend fun main(args: Array<String>) {
             BotCommand(templateCommand, "templateCommand"),
             BotCommand(sendToUsersReviewCommand, "sendToUsersReviewCommand"),
             BotCommand(sendToVoteCommand, "sendToVoteCommand"),
-            BotCommand(languageCommand, "languageCommand"),
+//            BotCommand(languageCommand, "languageCommand"),
         )
     }
     bot.setWebhookInfoAndStartListenWebhooks(

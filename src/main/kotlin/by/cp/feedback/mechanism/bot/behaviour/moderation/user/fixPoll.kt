@@ -26,7 +26,9 @@ fun fixPoll(): suspend BehaviourContext.(CommonMessage<TextContent>, Array<Strin
     val id = args.first().toLong()
     val poll = PollRepository.getById(id) ?: throw PollNotFoundInDbException()
     val userId: Long = message.from?.id?.chatId ?: throw FromNotFoundException()
-    val langCode = UserRepository.langCodeById(userId)
+    // TODO return on behaviour finish
+//    val langCode = UserRepository.langCodeById(userId)
+    val langCode = "ru"
     if (userId != poll.userId) throw YouAreNotOwnerOfPollException()
     if (poll.rejectionReason == null) throw PollNotRejectedException()
     val text = message.replyTo?.text ?: throw TextNotFoundInReplyException()

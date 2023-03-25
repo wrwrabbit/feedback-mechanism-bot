@@ -24,7 +24,9 @@ fun unreject(): suspend BehaviourContext.(CommonMessage<TextContent>, Array<Stri
     if (poll.rejectionReason == null) throw PollNotRejectedException()
     PollRepository.updateRejectionReason(id, null)
     PollRepository.updateStatus(poll.id, PollStatus.ON_MODERATOR_REVIEW)
-    val langCode = UserRepository.langCodeById(poll.userId)
+    // TODO return on behaviour finish
+//    val langCode = UserRepository.langCodeById(userId)
+    val langCode = "ru"
     execute(SendTextMessage(poll.userId.toChatId(), yourPollUnRejectedText(poll.id, langCode)))
     reply(message, "You unrejected poll #${poll.id}")
 }

@@ -26,7 +26,9 @@ import java.time.ZoneOffset
 fun sendToModeratorsReview(): suspend BehaviourContext.(CommonMessage<TextContent>) -> Unit = tryF { message ->
     val text = message.replyTo?.text ?: throw TextNotFoundInReplyException()
     val userId: Long = message.from?.id?.chatId ?: throw FromNotFoundException()
-    val langCode = UserRepository.langCodeById(userId)
+    // TODO return on behaviour finish
+//    val langCode = UserRepository.langCodeById(userId)
+    val langCode = "ru"
     val (question, options, allowMultipleAnswers) = parsePoll(text, langCode)
     val lastUserPollTime = PollRepository.lastUserPoll(userId)?.createdAt
     if (lastUserPollTime != null) {
