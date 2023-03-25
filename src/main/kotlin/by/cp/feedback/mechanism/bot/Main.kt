@@ -1,15 +1,16 @@
 package by.cp.feedback.mechanism.bot
 
-import by.cp.feedback.mechanism.bot.behaviour.common.*
+import by.cp.feedback.mechanism.bot.behaviour.common.getChatId
+import by.cp.feedback.mechanism.bot.behaviour.common.getPoll
+import by.cp.feedback.mechanism.bot.behaviour.common.myPolls
+import by.cp.feedback.mechanism.bot.behaviour.common.start
 import by.cp.feedback.mechanism.bot.behaviour.moderation.moderatorApprove
 import by.cp.feedback.mechanism.bot.behaviour.moderation.reject
 import by.cp.feedback.mechanism.bot.behaviour.moderation.unreject
 import by.cp.feedback.mechanism.bot.behaviour.moderation.user.fixPoll
-import by.cp.feedback.mechanism.bot.behaviour.moderation.user.sendToModeratorsReview
-import by.cp.feedback.mechanism.bot.behaviour.review.sendToUsersReview
+import by.cp.feedback.mechanism.bot.behaviour.moderation.user.proposePoll
 import by.cp.feedback.mechanism.bot.behaviour.review.userApprove
 import by.cp.feedback.mechanism.bot.behaviour.review.userUnApprove
-import by.cp.feedback.mechanism.bot.behaviour.vote.sendToVote
 import by.cp.feedback.mechanism.bot.behaviour.vote.userVote
 import by.cp.feedback.mechanism.bot.behaviour.vote.userVoteCheckAnswer
 import by.cp.feedback.mechanism.bot.behaviour.vote.userVoteMultipleAnswers
@@ -33,15 +34,12 @@ import org.springframework.scheduling.annotation.EnableScheduling
 class FeedbackMechanismBot
 
 const val startCommand = "start"
-const val sendToUsersReviewCommand = "send_to_users_review"
-const val sendToModeratorsReviewCommand = "send_to_moderators_review"
-const val sendToVoteCommand = "send_to_vote"
+const val proposePollCommand = "propose_poll"
 const val getChatIdCommand = "get_chat_id"
 const val rejectCommand = "reject"
 const val unrejectCommand = "unreject"
 const val myPollsCommand = "my_polls"
 const val fixPollCommand = "fix_poll"
-const val templateCommand = "template"
 
 //const val languageCommand = "language"
 const val getPollCommand = "get_poll"
@@ -53,7 +51,10 @@ suspend fun main(args: Array<String>) {
         }
     ) {
         onCommand(startCommand, scenarioReceiver = start())
-        onText(initialFilter = { it.content.text == "✍️ создать опрос" }, scenarioReceiver = sendToModeratorsReview())
+        onCommand(myPollsCommand, scenarioReceiver = myPolls())
+        onText(initialFilter = { it.content.text == "\uD83D\uDDC2 мои опросы" }, scenarioReceiver = myPolls())
+        onCommand(proposePollCommand, scenarioReceiver = proposePoll())
+        onText(initialFilter = { it.content.text == "✍️ создать опрос" }, scenarioReceiver = proposePoll())
         onCommand(getChatIdCommand, scenarioReceiver = getChatId())
         onDataCallbackQuery(Regex("$moderatorApproveDataCallback\\d*"), scenarioReceiver = moderatorApprove())
 //        onDataCallbackQuery(Regex("$languageDataCallback.*"), scenarioReceiver = chooseLanguage())
@@ -67,26 +68,19 @@ suspend fun main(args: Array<String>) {
         onDataCallbackQuery(Regex("$userVoteCheckAnswerDataCallback.*"), scenarioReceiver = userVoteCheckAnswer())
         onCommandWithArgs(rejectCommand, scenarioReceiver = reject())
         onCommandWithArgs(fixPollCommand, scenarioReceiver = fixPoll())
-        onCommandWithArgs(sendToUsersReviewCommand, scenarioReceiver = sendToUsersReview())
-        onCommandWithArgs(sendToVoteCommand, scenarioReceiver = sendToVote())
         onCommandWithArgs(getPollCommand, scenarioReceiver = getPoll())
         onCommandWithArgs(unrejectCommand, scenarioReceiver = unreject())
-        onCommand(myPollsCommand, scenarioReceiver = myPolls())
-        onCommand(templateCommand, scenarioReceiver = template())
 //        onCommand(languageCommand, scenarioReceiver = language())
 
         setMyCommands(
             BotCommand(startCommand, "startCommand"),
-            BotCommand(sendToModeratorsReviewCommand, "sendToModeratorsReviewCommand"),
+            BotCommand(proposePollCommand, "proposePollCommand"),
             BotCommand(getChatIdCommand, "getChatIdCommand"),
             BotCommand(rejectCommand, "rejectCommand"),
             BotCommand(fixPollCommand, "fixPollCommand"),
             BotCommand(getPollCommand, "getPollCommand"),
             BotCommand(unrejectCommand, "unrejectCommand"),
             BotCommand(myPollsCommand, "myPollsCommand"),
-            BotCommand(templateCommand, "templateCommand"),
-            BotCommand(sendToUsersReviewCommand, "sendToUsersReviewCommand"),
-            BotCommand(sendToVoteCommand, "sendToVoteCommand"),
 //            BotCommand(languageCommand, "languageCommand"),
         )
     }

@@ -7,7 +7,7 @@ import by.cp.feedback.mechanism.bot.model.PollStatus
 import by.cp.feedback.mechanism.bot.model.moderatorApproveDataCallback
 import by.cp.feedback.mechanism.bot.model.moderatorsApprovalsRequired
 import by.cp.feedback.mechanism.bot.repository.PollRepository
-import by.cp.feedback.mechanism.bot.repository.UserRepository
+import by.cp.feedback.mechanism.bot.repository.PollUserReviewRepository
 import dev.inmo.tgbotapi.extensions.api.edit.edit
 import dev.inmo.tgbotapi.extensions.behaviour_builder.BehaviourContext
 import dev.inmo.tgbotapi.requests.send.SendTextMessage
@@ -31,13 +31,9 @@ fun moderatorApprove(): suspend BehaviourContext.(DataCallbackQuery) -> Unit = {
     val resultArray = poll.moderatorApproves.plus(userId)
     PollRepository.updateApproves(id, resultArray)
     if (resultArray.size == moderatorsApprovalsRequired) {
-        PollRepository.updateStatus(poll.id, PollStatus.READY_FOR_USER_REVIEW)
-        execute(
-            SendTextMessage(
-                poll.userId.toChatId(),
-                pollApprovedByModeratorsText(poll.id, langCode)
-            )
-        )
+        PollRepository.updateStatus(poll.id, PollStatus.ON_USER_REVIEW)
+        PollUserReviewRepository.save(poll.id)
+        execute(SendTextMessage(poll.userId.toChatId(), sentToUsersReviewText(langCode)))
     }
     val message = (callback as MessageDataCallbackQuery).message
     val matrix = matrix {
@@ -51,7 +47,7 @@ fun moderatorApprove(): suspend BehaviourContext.(DataCallbackQuery) -> Unit = {
     edit(message.chat, message.messageId, InlineKeyboardMarkup(matrix))
 }
 
-fun pollApprovedByModeratorsText(pollId: Long, langCode: String) = when (langCode) {
-    "be" -> "Ваша апытанне #$pollId зацверджана мадэратарамі"
-    else -> "Ваш опрос #$pollId утверждён модераторами"
+fun sentToUsersReviewText(langCode: String) = when (langCode) {
+    "be" -> "Ваша апытанне адпраўлена на перагляд карыстальнікам"
+    else -> "Ваш опрос отправлен на пересмотр пользователям"
 }

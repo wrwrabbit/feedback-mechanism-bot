@@ -4,8 +4,14 @@ import by.cp.feedback.mechanism.bot.exception.AllowMultipleAnswersNotFoundExcept
 import by.cp.feedback.mechanism.bot.exception.LessThanTwoAnswersException
 import by.cp.feedback.mechanism.bot.exception.QuestionNotFoundException
 import dev.inmo.tgbotapi.extensions.utils.extensions.raw.from
+import dev.inmo.tgbotapi.types.buttons.InlineKeyboardButtons.CallbackDataInlineKeyboardButton
+import dev.inmo.tgbotapi.types.buttons.InlineKeyboardMarkup
+import dev.inmo.tgbotapi.types.buttons.ReplyKeyboardMarkup
+import dev.inmo.tgbotapi.types.buttons.SimpleKeyboardButton
 import dev.inmo.tgbotapi.types.chat.CommonUser
 import dev.inmo.tgbotapi.types.message.abstracts.CommonMessage
+import dev.inmo.tgbotapi.utils.matrix
+import dev.inmo.tgbotapi.utils.row
 import io.ktor.util.*
 
 fun CommonMessage<*>.langCode() =
@@ -108,3 +114,47 @@ fun parsePoll(text: String, langCode: String): Triple<String, Array<String>, Boo
             }
     return Triple(question, options, allowMultipleAnswers)
 }
+
+fun menuMarkup() = ReplyKeyboardMarkup(
+    keyboard = matrix {
+        row {
+            +SimpleKeyboardButton("✍️ создать опрос")
+        }
+        row {
+            +SimpleKeyboardButton("\uD83D\uDDC2 мои опросы")
+        }
+    },
+    resizeKeyboard = true
+)
+
+fun endMarkup() = ReplyKeyboardMarkup(
+    keyboard = matrix {
+        row {
+            +SimpleKeyboardButton("Завершить")
+        }
+    },
+    oneTimeKeyboard = true,
+    resizeKeyboard = true
+)
+
+fun yesNoMarkup() = ReplyKeyboardMarkup(
+    keyboard = matrix {
+        row {
+            +SimpleKeyboardButton("Да")
+            +SimpleKeyboardButton("Нет")
+        }
+    },
+    oneTimeKeyboard = true,
+    resizeKeyboard = true
+)
+
+fun moderatorsReviewMarkup(pollId: Long) = InlineKeyboardMarkup(
+    matrix {
+        row {
+            +CallbackDataInlineKeyboardButton(
+                "✅ 0/$moderatorsApprovalsRequired",
+                callbackData = "$moderatorApproveDataCallback$pollId"
+            )
+        }
+    }
+)

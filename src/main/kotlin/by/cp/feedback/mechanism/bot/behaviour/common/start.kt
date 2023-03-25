@@ -3,6 +3,7 @@ package by.cp.feedback.mechanism.bot.behaviour.common
 import by.cp.feedback.mechanism.bot.behaviour.utils.tryF
 import by.cp.feedback.mechanism.bot.captcha.CaptchaService
 import by.cp.feedback.mechanism.bot.exception.FromNotFoundException
+import by.cp.feedback.mechanism.bot.model.menuMarkup
 import by.cp.feedback.mechanism.bot.repository.UserRepository
 import dev.inmo.tgbotapi.extensions.api.send.reply
 import dev.inmo.tgbotapi.extensions.behaviour_builder.BehaviourContext
@@ -10,13 +11,9 @@ import dev.inmo.tgbotapi.extensions.behaviour_builder.expectations.waitTextMessa
 import dev.inmo.tgbotapi.extensions.utils.extensions.raw.from
 import dev.inmo.tgbotapi.requests.abstracts.asMultipartFile
 import dev.inmo.tgbotapi.requests.send.media.SendPhoto
-import dev.inmo.tgbotapi.types.buttons.ReplyKeyboardMarkup
-import dev.inmo.tgbotapi.types.buttons.SimpleKeyboardButton
 import dev.inmo.tgbotapi.types.message.abstracts.CommonMessage
 import dev.inmo.tgbotapi.types.message.content.TextContent
 import dev.inmo.tgbotapi.types.toChatId
-import dev.inmo.tgbotapi.utils.matrix
-import dev.inmo.tgbotapi.utils.row
 import kotlinx.coroutines.flow.first
 import java.io.ByteArrayOutputStream
 import javax.imageio.ImageIO
@@ -26,9 +23,7 @@ fun start(): suspend BehaviourContext.(CommonMessage<TextContent>) -> Unit = try
     // TODO return on behaviour finish
 //    val langCode = UserRepository.langCodeById(userId)
     val langCode = "ru"
-    if (UserRepository.exists(userId)) {
-        reply(message, helloText(langCode))
-    } else {
+    if (!UserRepository.exists(userId)) {
         val (image, text) = CaptchaService.getCaptcha()
         val file = ByteArrayOutputStream().let {
             ImageIO.write(image, "jpg", it)
@@ -44,16 +39,6 @@ fun start(): suspend BehaviourContext.(CommonMessage<TextContent>) -> Unit = try
             ).first()
         }
         UserRepository.save(userId, langCode)
-        reply(userCaptchaMessage, helloText(langCode), replyMarkup = ReplyKeyboardMarkup(
-            matrix {
-                row {
-                    +SimpleKeyboardButton("✍️ создать опрос")
-                }
-                row {
-                    +SimpleKeyboardButton("\uD83D\uDDC2 мои опросы")
-                }
-            }
-        ))
 // TODO return on behaviour finish
 //        reply(userCaptchaMessage, helloLangText(langCode), replyMarkup = InlineKeyboardMarkup(
 //            matrix {
@@ -70,6 +55,7 @@ fun start(): suspend BehaviourContext.(CommonMessage<TextContent>) -> Unit = try
 //            }
 //        ))
     }
+    reply(message, helloText(langCode), replyMarkup = menuMarkup())
 }
 
 fun sendMeCaptchaText(langCode: String) = when (langCode) {

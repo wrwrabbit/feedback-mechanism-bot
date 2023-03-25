@@ -5,7 +5,6 @@ import by.cp.feedback.mechanism.bot.exception.FromNotFoundException
 import by.cp.feedback.mechanism.bot.model.PollDto
 import by.cp.feedback.mechanism.bot.model.PollStatus
 import by.cp.feedback.mechanism.bot.repository.PollRepository
-import by.cp.feedback.mechanism.bot.repository.UserRepository
 import dev.inmo.tgbotapi.extensions.api.send.reply
 import dev.inmo.tgbotapi.extensions.behaviour_builder.BehaviourContext
 import dev.inmo.tgbotapi.extensions.utils.extensions.raw.from
@@ -37,7 +36,8 @@ fun PollDto.toStatusMessage(langCode: String): String = when (langCode) {
         "Статус #$status" +
         if (status == PollStatus.REJECTED) ",Прычына адмовы: $rejectionReason" else ""
 
-    else -> "Опрос #$id," +
-        "Статус #$status" +
+    else -> "Опрос #$id," + "\n" +
+        "Вопрос $question," + "\n" +
+        "Статус #$status" + "\n" +
         if (status == PollStatus.REJECTED) ",Причина отказа: $rejectionReason" else ""
 }
