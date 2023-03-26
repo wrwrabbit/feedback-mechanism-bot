@@ -76,12 +76,12 @@ fun sendToUserReviewMarkup(pollId: Long) = InlineKeyboardMarkup(
 
 
 
-fun userModerationReviewMarkup(pollId: Long) = InlineKeyboardMarkup(
+fun userModerationReviewMarkup(pollId: Long, fixedPoll: String) = InlineKeyboardMarkup(
     matrix {
         row {
             +CallbackDataInlineKeyboardButton(
                 "✅",
-                callbackData = "$userApproveModerationDC$pollId"
+                callbackData = "${userApproveModerationDC}_${pollId}_$fixedPoll"
             )
             +CallbackDataInlineKeyboardButton(
                 "❎",

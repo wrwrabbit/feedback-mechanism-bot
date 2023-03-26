@@ -8,6 +8,8 @@ import by.cp.feedback.mechanism.bot.behaviour.moderation.moderatorApprove
 import by.cp.feedback.mechanism.bot.behaviour.moderation.moderatorFix
 import by.cp.feedback.mechanism.bot.behaviour.moderation.moderatorReject
 import by.cp.feedback.mechanism.bot.behaviour.moderation.user.proposePoll
+import by.cp.feedback.mechanism.bot.behaviour.moderation.user.userApproveModeration
+import by.cp.feedback.mechanism.bot.behaviour.moderation.user.userRejectModeration
 import by.cp.feedback.mechanism.bot.behaviour.review.userApprove
 import by.cp.feedback.mechanism.bot.behaviour.review.userUnApprove
 import by.cp.feedback.mechanism.bot.behaviour.vote.userVote
@@ -56,6 +58,8 @@ suspend fun main(args: Array<String>) {
         onDataCallbackQuery(Regex("$moderatorApproveDC\\d*"), scenarioReceiver = moderatorApprove())
         onDataCallbackQuery(Regex("$moderatorFixDC.*"), scenarioReceiver = moderatorFix())
         onDataCallbackQuery(Regex("$moderatorRejectDC.*"), scenarioReceiver = moderatorReject())
+        onDataCallbackQuery(Regex("$userApproveModerationDC.*"), scenarioReceiver = userApproveModeration())
+        onDataCallbackQuery(Regex("$userRejectModerationDC.*"), scenarioReceiver = userRejectModeration())
         //REVIEW
         onDataCallbackQuery(Regex("$userApproveDC\\d*"), scenarioReceiver = userApprove())
         onDataCallbackQuery(Regex("$userUnApproveDC\\d*"), scenarioReceiver = userUnApprove())

@@ -24,7 +24,7 @@ fun moderatorFix(): suspend BehaviourContext.(DataCallbackQuery) -> Unit = { cal
         SendTextMessage(
             poll.userId.toChatId(),
             "Модераторы предложили другую версию вашего опроса:\n$fixedPoll",
-            replyMarkup = userModerationReviewMarkup(id)
+            replyMarkup = userModerationReviewMarkup(id, fixedPoll)
         )
     )
     execute(SendTextMessage(chatId.toChatId(), "Вы предложили исправленную версию опроса"))
