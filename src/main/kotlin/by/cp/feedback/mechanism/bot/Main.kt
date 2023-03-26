@@ -15,6 +15,7 @@ import by.cp.feedback.mechanism.bot.behaviour.review.userUnApprove
 import by.cp.feedback.mechanism.bot.behaviour.vote.userVote
 import by.cp.feedback.mechanism.bot.behaviour.vote.userVoteCheckAnswer
 import by.cp.feedback.mechanism.bot.behaviour.vote.userVoteMultipleAnswers
+import by.cp.feedback.mechanism.bot.exception.FeedbackBotException
 import by.cp.feedback.mechanism.bot.model.*
 import dev.inmo.tgbotapi.extensions.api.bot.setMyCommands
 import dev.inmo.tgbotapi.extensions.behaviour_builder.buildBehaviour
@@ -26,6 +27,8 @@ import dev.inmo.tgbotapi.extensions.utils.updates.retrieving.setWebhookInfoAndSt
 import dev.inmo.tgbotapi.requests.webhook.SetWebhook
 import dev.inmo.tgbotapi.types.BotCommand
 import io.ktor.server.netty.*
+import kotlinx.coroutines.CancellationException
+import mu.KotlinLogging
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.runApplication
 import org.springframework.scheduling.annotation.EnableScheduling
@@ -40,10 +43,18 @@ const val getChatIdCommand = "get_chat_id"
 const val myPollsCommand = "my_polls"
 const val getPollCommand = "get_poll"
 
+private val logger = KotlinLogging.logger { }
+
 suspend fun main(args: Array<String>) {
     val behaviour = bot.buildBehaviour(
         defaultExceptionsHandler = {
-            it.printStackTrace()
+            when (it) {
+                is CancellationException -> {}
+                is FeedbackBotException -> {}
+                else -> {
+                    logger.error(it) { "Exception in bot" }
+                }
+            }
         }
     ) {
         //COMMON
