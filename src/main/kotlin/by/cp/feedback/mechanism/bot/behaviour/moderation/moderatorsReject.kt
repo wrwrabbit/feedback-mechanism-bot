@@ -4,6 +4,7 @@ import by.cp.feedback.mechanism.bot.exception.CantRejectRejectedException
 import by.cp.feedback.mechanism.bot.exception.PollNotFoundInDbException
 import by.cp.feedback.mechanism.bot.model.PollStatus
 import by.cp.feedback.mechanism.bot.model.moderatorApproveDC
+import by.cp.feedback.mechanism.bot.model.moderatorRejectDC
 import by.cp.feedback.mechanism.bot.repository.PollRepository
 import dev.inmo.tgbotapi.extensions.behaviour_builder.BehaviourContext
 import dev.inmo.tgbotapi.extensions.behaviour_builder.expectations.waitTextMessage
@@ -13,7 +14,7 @@ import dev.inmo.tgbotapi.types.toChatId
 import kotlinx.coroutines.flow.first
 
 fun moderatorReject(): suspend BehaviourContext.(DataCallbackQuery) -> Unit = { callback ->
-    val id = callback.data.substring(moderatorApproveDC.length).toLong()
+    val id = callback.data.substring(moderatorRejectDC.length).toLong()
     val poll = PollRepository.getById(id) ?: throw PollNotFoundInDbException()
     if (poll.rejectionReason != null) throw CantRejectRejectedException()
     val chatId: Long = callback.from.id.chatId

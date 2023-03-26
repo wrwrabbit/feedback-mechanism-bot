@@ -74,6 +74,23 @@ fun sendToUserReviewMarkup(pollId: Long) = InlineKeyboardMarkup(
     }
 )
 
+
+
+fun userModerationReviewMarkup(pollId: Long) = InlineKeyboardMarkup(
+    matrix {
+        row {
+            +CallbackDataInlineKeyboardButton(
+                "✅",
+                callbackData = "$userApproveModerationDC$pollId"
+            )
+            +CallbackDataInlineKeyboardButton(
+                "❎",
+                callbackData = "$userRejectModerationDC$pollId"
+            )
+        }
+    }
+)
+
 fun userVoteMultipleAnswersMarkup(options: Array<String>, pollId: Long) = InlineKeyboardMarkup(
     matrix {
         options.mapIndexed { index, it ->

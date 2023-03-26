@@ -20,8 +20,6 @@ import javax.imageio.ImageIO
 
 fun start(): suspend BehaviourContext.(CommonMessage<TextContent>) -> Unit = tryF { message ->
     val userId: Long = message.from?.id?.chatId ?: throw FromNotFoundException()
-    // TODO return on behaviour finish
-//    val langCode = UserRepository.langCodeById(userId)
     val langCode = "ru"
     if (!UserRepository.exists(userId)) {
         val (image, text) = CaptchaService.getCaptcha()

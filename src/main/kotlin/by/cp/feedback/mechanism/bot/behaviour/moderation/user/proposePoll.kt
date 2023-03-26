@@ -20,8 +20,6 @@ import java.time.ZoneOffset
 
 fun proposePoll(): suspend BehaviourContext.(CommonMessage<TextContent>) -> Unit = tryF { message ->
     val userId: Long = message.from?.id?.chatId ?: throw FromNotFoundException()
-    // TODO return on behaviour finish
-//    val langCode = UserRepository.langCodeById(userId)
     val langCode = "ru"
     val question = waitTextMessage(
         SendTextMessage(userId.toChatId(), "Отправьте вопрос")

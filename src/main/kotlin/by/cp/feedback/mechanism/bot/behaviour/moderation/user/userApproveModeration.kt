@@ -1,12 +1,10 @@
-package by.cp.feedback.mechanism.bot.behaviour.moderation
+package by.cp.feedback.mechanism.bot.behaviour.moderation.user
 
 import by.cp.feedback.mechanism.bot.exception.AlreadyApprovedException
 import by.cp.feedback.mechanism.bot.exception.CantApproveRejectedException
 import by.cp.feedback.mechanism.bot.exception.PollNotFoundInDbException
-import by.cp.feedback.mechanism.bot.model.PollStatus
+import by.cp.feedback.mechanism.bot.model.*
 import by.cp.feedback.mechanism.bot.model.moderatorApproveDC
-import by.cp.feedback.mechanism.bot.model.moderatorsApprovalsRequired
-import by.cp.feedback.mechanism.bot.model.moderatorsApproveMarkup
 import by.cp.feedback.mechanism.bot.repository.PollRepository
 import by.cp.feedback.mechanism.bot.repository.PollUserReviewRepository
 import dev.inmo.tgbotapi.extensions.api.edit.edit
@@ -16,8 +14,8 @@ import dev.inmo.tgbotapi.types.queries.callback.DataCallbackQuery
 import dev.inmo.tgbotapi.types.queries.callback.MessageDataCallbackQuery
 import dev.inmo.tgbotapi.types.toChatId
 
-fun moderatorApprove(): suspend BehaviourContext.(DataCallbackQuery) -> Unit = { callback ->
-    val id = callback.data.substring(moderatorApproveDC.length).toLong()
+fun userApproveModeration(): suspend BehaviourContext.(DataCallbackQuery) -> Unit = { callback ->
+    val id = callback.data.substring(userApproveModerationDC.length).toLong()
     val poll = PollRepository.getById(id) ?: throw PollNotFoundInDbException()
     if (poll.rejectionReason != null) throw CantApproveRejectedException()
     val userId: Long = callback.user.id.chatId
