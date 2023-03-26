@@ -1,6 +1,6 @@
 package by.cp.feedback.mechanism.bot.behaviour.vote
 
-import by.cp.feedback.mechanism.bot.model.userVoteCheckAnswerDataCallback
+import by.cp.feedback.mechanism.bot.model.userVoteCheckAnswerDC
 import dev.inmo.tgbotapi.extensions.api.edit.edit
 import dev.inmo.tgbotapi.extensions.behaviour_builder.BehaviourContext
 import dev.inmo.tgbotapi.extensions.utils.extensions.raw.reply_markup
@@ -10,7 +10,7 @@ import dev.inmo.tgbotapi.types.queries.callback.DataCallbackQuery
 import dev.inmo.tgbotapi.types.queries.callback.MessageDataCallbackQuery
 
 fun userVoteCheckAnswer(): suspend BehaviourContext.(DataCallbackQuery) -> Unit = { callback ->
-    val (pollId, index) = callback.data.substring(userVoteCheckAnswerDataCallback.length).split("_")
+    val (pollId, index) = callback.data.substring(userVoteCheckAnswerDC.length).split("_")
         .let { it[0].toLong() to it[1].toInt() }
     val message = (callback as MessageDataCallbackQuery).message
     val matrix = message.reply_markup!!.keyboard.mapIndexed { ix, buttons ->

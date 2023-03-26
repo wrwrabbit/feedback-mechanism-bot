@@ -10,11 +10,18 @@ val moderatorsApprovalsRequired = System.getenv("MODERATORS_APPROVALS_REQUIRED")
 val usersApprovalsRequired = System.getenv("USERS_APPROVALS_REQUIRED").toLong()
 val secondsBetweenPolls = System.getenv("SECONDS_BETWEEN_POLLS").toLong()
 
-//DATA_CALLBACK
-const val moderatorApproveDataCallback = "ModeratorsApproveDataCallback"
-const val userUnApproveDataCallback = "UsersUnApproveDataCallback"
-const val userApproveDataCallback = "UsersApproveDataCallback"
-const val userVoteDataCallback = "UserVoteDataCallback"
-const val userVoteMultipleAnswersDataCallback = "UserVoteMultipleAnswersDataCallback"
-const val userVoteCheckAnswerDataCallback = "UserVoteCheckAnswerDataCallback"
-const val languageDataCallback = "LanguageDataCallback"
+//MODERATION
+const val moderatorApproveDC = "ModeratorsApproveDC"
+const val moderatorFixDC = "ModeratorsFixDC"
+const val moderatorRejectDC = "ModeratorsRejectDC"
+const val userApproveModerationDC = "UserApproveModerationDC"
+const val userRejectModerationDC = "UserRejectModerationDC"
+
+//REVIEW
+const val userUnApproveDC = "UsersUnApproveDC"
+const val userApproveDC = "UsersApproveDC"
+
+//VOTE
+const val userVoteDC = "UserVoteDC"
+const val userVoteMultipleAnswersDC = "UserVoteMultipleAnswersDC"
+const val userVoteCheckAnswerDC = "UserVoteCheckAnswerDC"

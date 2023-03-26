@@ -1,15 +1,17 @@
 package by.cp.feedback.mechanism.bot
 
-import by.cp.feedback.mechanism.bot.behaviour.common.*
+import by.cp.feedback.mechanism.bot.behaviour.common.getChatId
+import by.cp.feedback.mechanism.bot.behaviour.common.getPoll
+import by.cp.feedback.mechanism.bot.behaviour.common.myPolls
+import by.cp.feedback.mechanism.bot.behaviour.common.start
 import by.cp.feedback.mechanism.bot.behaviour.moderation.moderatorApprove
-import by.cp.feedback.mechanism.bot.behaviour.moderation.reject
-import by.cp.feedback.mechanism.bot.behaviour.moderation.unreject
-import by.cp.feedback.mechanism.bot.behaviour.moderation.user.fixPoll
-import by.cp.feedback.mechanism.bot.behaviour.moderation.user.sendToModeratorsReview
-import by.cp.feedback.mechanism.bot.behaviour.review.sendToUsersReview
+import by.cp.feedback.mechanism.bot.behaviour.moderation.moderatorFix
+import by.cp.feedback.mechanism.bot.behaviour.moderation.moderatorReject
+import by.cp.feedback.mechanism.bot.behaviour.moderation.user.proposePoll
+import by.cp.feedback.mechanism.bot.behaviour.moderation.user.userApproveModeration
+import by.cp.feedback.mechanism.bot.behaviour.moderation.user.userRejectModeration
 import by.cp.feedback.mechanism.bot.behaviour.review.userApprove
 import by.cp.feedback.mechanism.bot.behaviour.review.userUnApprove
-import by.cp.feedback.mechanism.bot.behaviour.vote.sendToVote
 import by.cp.feedback.mechanism.bot.behaviour.vote.userVote
 import by.cp.feedback.mechanism.bot.behaviour.vote.userVoteCheckAnswer
 import by.cp.feedback.mechanism.bot.behaviour.vote.userVoteMultipleAnswers
@@ -19,6 +21,7 @@ import dev.inmo.tgbotapi.extensions.behaviour_builder.buildBehaviour
 import dev.inmo.tgbotapi.extensions.behaviour_builder.triggers_handling.onCommand
 import dev.inmo.tgbotapi.extensions.behaviour_builder.triggers_handling.onCommandWithArgs
 import dev.inmo.tgbotapi.extensions.behaviour_builder.triggers_handling.onDataCallbackQuery
+import dev.inmo.tgbotapi.extensions.behaviour_builder.triggers_handling.onText
 import dev.inmo.tgbotapi.extensions.utils.updates.retrieving.setWebhookInfoAndStartListenWebhooks
 import dev.inmo.tgbotapi.requests.webhook.SetWebhook
 import dev.inmo.tgbotapi.types.BotCommand
@@ -32,16 +35,9 @@ import org.springframework.scheduling.annotation.EnableScheduling
 class FeedbackMechanismBot
 
 const val startCommand = "start"
-const val sendToUsersReviewCommand = "send_to_users_review"
-const val sendToModeratorsReviewCommand = "send_to_moderators_review"
-const val sendToVoteCommand = "send_to_vote"
+const val proposePollCommand = "propose_poll"
 const val getChatIdCommand = "get_chat_id"
-const val rejectCommand = "reject"
-const val unrejectCommand = "unreject"
 const val myPollsCommand = "my_polls"
-const val fixPollCommand = "fix_poll"
-const val templateCommand = "template"
-const val languageCommand = "language"
 const val getPollCommand = "get_poll"
 
 suspend fun main(args: Array<String>) {
@@ -50,42 +46,37 @@ suspend fun main(args: Array<String>) {
             it.printStackTrace()
         }
     ) {
-        onCommand(startCommand, scenarioReceiver = start())
-        onCommand(sendToModeratorsReviewCommand, scenarioReceiver = sendToModeratorsReview())
+        //COMMON
         onCommand(getChatIdCommand, scenarioReceiver = getChatId())
-        onDataCallbackQuery(Regex("$moderatorApproveDataCallback\\d*"), scenarioReceiver = moderatorApprove())
-        onDataCallbackQuery(Regex("$languageDataCallback.*"), scenarioReceiver = chooseLanguage())
-        onDataCallbackQuery(Regex("$userApproveDataCallback\\d*"), scenarioReceiver = userApprove())
-        onDataCallbackQuery(Regex("$userUnApproveDataCallback\\d*"), scenarioReceiver = userUnApprove())
-        onDataCallbackQuery(Regex("$userVoteDataCallback.*"), scenarioReceiver = userVote())
+        onCommandWithArgs(getPollCommand, scenarioReceiver = getPoll())
+        onCommand(startCommand, scenarioReceiver = start())
+        onCommand(myPollsCommand, scenarioReceiver = myPolls())
+        onText(initialFilter = { it.content.text == "\uD83D\uDDC2 мои опросы" }, scenarioReceiver = myPolls())
+        //MODERATION
+        onCommand(proposePollCommand, scenarioReceiver = proposePoll())
+        onText(initialFilter = { it.content.text == "✍️ создать опрос" }, scenarioReceiver = proposePoll())
+        onDataCallbackQuery(Regex("$moderatorApproveDC\\d*"), scenarioReceiver = moderatorApprove())
+        onDataCallbackQuery(Regex("$moderatorFixDC.*"), scenarioReceiver = moderatorFix())
+        onDataCallbackQuery(Regex("$moderatorRejectDC.*"), scenarioReceiver = moderatorReject())
+        onDataCallbackQuery(Regex("$userApproveModerationDC.*"), scenarioReceiver = userApproveModeration())
+        onDataCallbackQuery(Regex("$userRejectModerationDC.*"), scenarioReceiver = userRejectModeration())
+        //REVIEW
+        onDataCallbackQuery(Regex("$userApproveDC\\d*"), scenarioReceiver = userApprove())
+        onDataCallbackQuery(Regex("$userUnApproveDC\\d*"), scenarioReceiver = userUnApprove())
+        //VOTE
+        onDataCallbackQuery(Regex("$userVoteDC.*"), scenarioReceiver = userVote())
         onDataCallbackQuery(
-            Regex("$userVoteMultipleAnswersDataCallback.*"),
+            Regex("$userVoteMultipleAnswersDC.*"),
             scenarioReceiver = userVoteMultipleAnswers()
         )
-        onDataCallbackQuery(Regex("$userVoteCheckAnswerDataCallback.*"), scenarioReceiver = userVoteCheckAnswer())
-        onCommandWithArgs(rejectCommand, scenarioReceiver = reject())
-        onCommandWithArgs(fixPollCommand, scenarioReceiver = fixPoll())
-        onCommandWithArgs(sendToUsersReviewCommand, scenarioReceiver = sendToUsersReview())
-        onCommandWithArgs(sendToVoteCommand, scenarioReceiver = sendToVote())
-        onCommandWithArgs(getPollCommand, scenarioReceiver = getPoll())
-        onCommandWithArgs(unrejectCommand, scenarioReceiver = unreject())
-        onCommand(myPollsCommand, scenarioReceiver = myPolls())
-        onCommand(templateCommand, scenarioReceiver = template())
-        onCommand(languageCommand, scenarioReceiver = language())
+        onDataCallbackQuery(Regex("$userVoteCheckAnswerDC.*"), scenarioReceiver = userVoteCheckAnswer())
 
         setMyCommands(
             BotCommand(startCommand, "startCommand"),
-            BotCommand(sendToModeratorsReviewCommand, "sendToModeratorsReviewCommand"),
+            BotCommand(proposePollCommand, "proposePollCommand"),
             BotCommand(getChatIdCommand, "getChatIdCommand"),
-            BotCommand(rejectCommand, "rejectCommand"),
-            BotCommand(fixPollCommand, "fixPollCommand"),
             BotCommand(getPollCommand, "getPollCommand"),
-            BotCommand(unrejectCommand, "unrejectCommand"),
-            BotCommand(myPollsCommand, "myPollsCommand"),
-            BotCommand(templateCommand, "templateCommand"),
-            BotCommand(sendToUsersReviewCommand, "sendToUsersReviewCommand"),
-            BotCommand(sendToVoteCommand, "sendToVoteCommand"),
-            BotCommand(languageCommand, "languageCommand"),
+            BotCommand(myPollsCommand, "myPollsCommand")
         )
     }
     bot.setWebhookInfoAndStartListenWebhooks(
