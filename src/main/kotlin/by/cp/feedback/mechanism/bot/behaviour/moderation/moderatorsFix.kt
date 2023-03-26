@@ -18,7 +18,7 @@ fun moderatorFix(): suspend BehaviourContext.(DataCallbackQuery) -> Unit = { cal
     val chatId: Long = callback.from.id.chatId
     val langCode = "ru"
     val fixedPoll = waitTextMessage(
-        SendTextMessage(chatId.toChatId(), "Отправьте исправленный опрос в формате\n${pollTemplateText(langCode)}")
+        SendTextMessage(moderatorsChatId.toChatId(), "Отправьте исправленный опрос в формате\n${pollTemplateText(langCode)}")
     ).first().content.text
     execute(
         SendTextMessage(
@@ -27,7 +27,7 @@ fun moderatorFix(): suspend BehaviourContext.(DataCallbackQuery) -> Unit = { cal
             replyMarkup = userModerationReviewMarkup(id, fixedPoll)
         )
     )
-    execute(SendTextMessage(chatId.toChatId(), "Вы предложили исправленную версию опроса"))
+    execute(SendTextMessage(moderatorsChatId.toChatId(), "Вы предложили исправленную версию опроса"))
 }
 
 fun pollTemplateText(langCode: String) = when (langCode) {

@@ -81,7 +81,7 @@ fun userModerationReviewMarkup(pollId: Long, fixedPoll: String) = InlineKeyboard
         row {
             +CallbackDataInlineKeyboardButton(
                 "✅",
-                callbackData = "${userApproveModerationDC}_${pollId}_$fixedPoll"
+                callbackData = "${userApproveModerationDC}${pollId}"
             )
             +CallbackDataInlineKeyboardButton(
                 "❎",

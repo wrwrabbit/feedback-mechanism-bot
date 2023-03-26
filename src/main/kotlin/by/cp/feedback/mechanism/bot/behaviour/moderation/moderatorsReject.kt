@@ -5,6 +5,7 @@ import by.cp.feedback.mechanism.bot.exception.PollNotFoundInDbException
 import by.cp.feedback.mechanism.bot.model.PollStatus
 import by.cp.feedback.mechanism.bot.model.moderatorApproveDC
 import by.cp.feedback.mechanism.bot.model.moderatorRejectDC
+import by.cp.feedback.mechanism.bot.model.moderatorsChatId
 import by.cp.feedback.mechanism.bot.repository.PollRepository
 import dev.inmo.tgbotapi.extensions.behaviour_builder.BehaviourContext
 import dev.inmo.tgbotapi.extensions.behaviour_builder.expectations.waitTextMessage
@@ -20,12 +21,12 @@ fun moderatorReject(): suspend BehaviourContext.(DataCallbackQuery) -> Unit = { 
     val chatId: Long = callback.from.id.chatId
     val langCode = "ru"
     val rejectionReason = waitTextMessage(
-        SendTextMessage(chatId.toChatId(), "Отправьте причину отклонения")
+        SendTextMessage(moderatorsChatId.toChatId(), "Отправьте причину отклонения")
     ).first().content.text
     PollRepository.updateRejectionReason(id, rejectionReason)
     PollRepository.updateStatus(poll.id, PollStatus.REJECTED)
     execute(SendTextMessage(poll.userId.toChatId(), yourPollRejectedText(poll.id, langCode)))
-    execute(SendTextMessage(chatId.toChatId(), "Вы отклонили опрос"))
+    execute(SendTextMessage(moderatorsChatId.toChatId(), "Вы отклонили опрос"))
 }
 
 fun yourPollRejectedText(pollId: Long, langCode: String) = when (langCode) {

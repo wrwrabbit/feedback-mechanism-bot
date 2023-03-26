@@ -8,13 +8,16 @@ import by.cp.feedback.mechanism.bot.model.userApproveModerationDC
 import by.cp.feedback.mechanism.bot.repository.PollRepository
 import by.cp.feedback.mechanism.bot.repository.PollUserReviewRepository
 import dev.inmo.tgbotapi.extensions.behaviour_builder.BehaviourContext
+import dev.inmo.tgbotapi.extensions.utils.textContentOrThrow
 import dev.inmo.tgbotapi.requests.send.SendTextMessage
 import dev.inmo.tgbotapi.types.queries.callback.DataCallbackQuery
+import dev.inmo.tgbotapi.types.queries.callback.MessageDataCallbackQuery
 import dev.inmo.tgbotapi.types.toChatId
 
 fun userApproveModeration(): suspend BehaviourContext.(DataCallbackQuery) -> Unit = { callback ->
-    val (id, fixedPoll) = callback.data.substring(userApproveModerationDC.length).split("_")
-        .let { it[1].toLong() to it[2] }
+    val id = callback.data.substring(userApproveModerationDC.length).toLong()
+    val fixedPoll = (callback as MessageDataCallbackQuery).message.content.textContentOrThrow().text
+        .split("\n").let { it.subList(1, it.size) }.joinToString("\n")
     val poll = PollRepository.getById(id) ?: throw PollNotFoundInDbException()
     val langCode = "ru"
     val (question, options, allowMultipleAnswers) = parsePoll(fixedPoll, langCode)
