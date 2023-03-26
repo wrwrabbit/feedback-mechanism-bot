@@ -35,7 +35,7 @@ fun proposePoll(): suspend BehaviourContext.(CommonMessage<TextContent>) -> Unit
         ).first().content.text
     }
     val allowMultipleAnswers = waitTextMessage(
-        SendTextMessage(userId.toChatId(), "Можно ли голоосовать за много вариантов?", replyMarkup = yesNoMarkup())
+        SendTextMessage(userId.toChatId(), "Можно ли голосовать за больше чем один вариант?", replyMarkup = yesNoMarkup())
     ).first().content.text.lowercase().fromAllowMultipleAnswers(langCode)
     val lastUserPollTime = PollRepository.lastUserPoll(userId)?.createdAt
     if (lastUserPollTime != null) {
