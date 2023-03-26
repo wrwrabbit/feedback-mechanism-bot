@@ -25,11 +25,11 @@ fun moderatorReject(): suspend BehaviourContext.(DataCallbackQuery) -> Unit = { 
     ).first().content.text
     PollRepository.updateRejectionReason(id, rejectionReason)
     PollRepository.updateStatus(poll.id, PollStatus.REJECTED)
-    execute(SendTextMessage(poll.userId.toChatId(), yourPollRejectedText(poll.id, langCode)))
+    execute(SendTextMessage(poll.userId.toChatId(), yourPollRejectedText(poll.id, langCode, rejectionReason)))
     execute(SendTextMessage(moderatorsChatId.toChatId(), "Вы отклонили опрос"))
 }
 
-fun yourPollRejectedText(pollId: Long, langCode: String) = when (langCode) {
+fun yourPollRejectedText(pollId: Long, langCode: String, rejectionReason: String) = when (langCode) {
     "be" -> "Ваша апытанне #$pollId адмоўлена"
-    else -> "Ваш опрос #$pollId отклонён"
+    else -> "Ваш опрос #$pollId отклонён. Причина: $rejectionReason"
 }

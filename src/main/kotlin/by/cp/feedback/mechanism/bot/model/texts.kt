@@ -34,28 +34,39 @@ fun sentToModeratorsText(langCode: String) = when (langCode) {
 fun PollVoteDto.toMessage(langCode: String): String = when (langCode) {
     "be" -> "Апытанне #$id\n" +
         "${question(langCode)}: $question\n" +
-        "${options.map { option -> "${answer(langCode)}: $option\n" }}\n" +
-        "${moreThanOneAnswer(langCode)}: ${allowMultipleAnswers.toAllowMultipleAnswers(langCode)}\n" +
-        "Рэзультат: ${results.mapIndexed { index, l -> "${index + 1}: $l" }}"
+        this.results() +
+        "${moreThanOneAnswer(langCode)}: ${allowMultipleAnswers.toAllowMultipleAnswers(langCode)}\n"
 
     else -> "Опрос #$id\n" +
         "${question(langCode)}: $question\n" +
-        "${options.map { option -> "${answer(langCode)}: $option\n" }}\n" +
-        "${moreThanOneAnswer(langCode)}: ${allowMultipleAnswers.toAllowMultipleAnswers(langCode)}\n" +
-        "Результат: ${results.mapIndexed { index, l -> "${index + 1}: $l" }}"
+        this.results() +
+        "${moreThanOneAnswer(langCode)}: ${allowMultipleAnswers.toAllowMultipleAnswers(langCode)}\n"
 }
+
+fun PollVoteDto.results(): String = results.reduce { acc, next -> acc + next }
+    .let { allAnswers ->
+        options.mapIndexed { index, option ->
+            val answersCount = results[index]
+            val percents = if (allAnswers == 0L) {
+                0
+            } else {
+                answersCount / allAnswers * 100
+            }
+            "- $answersCount/$allAnswers $percents% - $option"
+        }.joinToString("\n") + "\n"
+    }
 
 fun PollDto.toMessage(langCode: String): String = when (langCode) {
     "be" -> "Апытанне #$id\n" +
         "Статус #$status\n" +
         "${question(langCode)}: $question\n" +
-        "${options.map { option -> "${answer(langCode)}: $option\n" }}\n" +
+        "${options.map { option -> "${answer(langCode)}: $option" }.joinToString("\n")}\n" +
         "${moreThanOneAnswer(langCode)}: ${allowMultipleAnswers.toAllowMultipleAnswers(langCode)}"
 
     else -> "Опрос #$id\n" +
         "Статус #$status\n" +
         "${question(langCode)}: $question\n" +
-        "${options.map { option -> "${answer(langCode)}: $option\n" }}\n" +
+        "${options.map { option -> "${answer(langCode)}: $option" }.joinToString("\n")}\n" +
         "${moreThanOneAnswer(langCode)}: ${allowMultipleAnswers.toAllowMultipleAnswers(langCode)}"
 }
 
