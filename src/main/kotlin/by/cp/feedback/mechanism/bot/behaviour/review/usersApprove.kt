@@ -2,9 +2,11 @@ package by.cp.feedback.mechanism.bot.behaviour.review
 
 import by.cp.feedback.mechanism.bot.exception.PollNotFoundInDbException
 import by.cp.feedback.mechanism.bot.model.*
-import by.cp.feedback.mechanism.bot.repository.*
+import by.cp.feedback.mechanism.bot.repository.PollRepository
+import by.cp.feedback.mechanism.bot.repository.PollUserReviewRepository
+import by.cp.feedback.mechanism.bot.repository.PollUserVoteRepository
+import by.cp.feedback.mechanism.bot.repository.PollVoteRepository
 import dev.inmo.tgbotapi.extensions.api.delete
-import dev.inmo.tgbotapi.extensions.api.send.reply
 import dev.inmo.tgbotapi.extensions.behaviour_builder.BehaviourContext
 import dev.inmo.tgbotapi.requests.send.SendTextMessage
 import dev.inmo.tgbotapi.types.queries.callback.DataCallbackQuery
@@ -12,7 +14,7 @@ import dev.inmo.tgbotapi.types.queries.callback.MessageDataCallbackQuery
 import dev.inmo.tgbotapi.types.toChatId
 
 fun userApprove(): suspend BehaviourContext.(DataCallbackQuery) -> Unit = { callback ->
-    val id = callback.data.substring(userApproveDataCallback.length).toLong()
+    val id = callback.data.substring(userApproveDC.length).toLong()
     val poll = PollRepository.getById(id) ?: throw PollNotFoundInDbException()
     PollRepository.addUserApprove(id)
     if (poll.userApproves + 1 == usersApprovalsRequired) {

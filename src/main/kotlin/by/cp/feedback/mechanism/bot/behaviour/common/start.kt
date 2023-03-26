@@ -39,21 +39,6 @@ fun start(): suspend BehaviourContext.(CommonMessage<TextContent>) -> Unit = try
             ).first()
         }
         UserRepository.save(userId, langCode)
-// TODO return on behaviour finish
-//        reply(userCaptchaMessage, helloLangText(langCode), replyMarkup = InlineKeyboardMarkup(
-//            matrix {
-//                row {
-//                    +CallbackDataInlineKeyboardButton(
-//                        "\uD83E\uDD0D❤️\uD83E\uDD0D",
-//                        callbackData = "${languageDataCallback}be"
-//                    )
-//                    +CallbackDataInlineKeyboardButton(
-//                        "\uD83E\uDD0D\uD83D\uDC99❤️",
-//                        callbackData = "${languageDataCallback}ru"
-//                    )
-//                }
-//            }
-//        ))
     }
     reply(message, helloText(langCode), replyMarkup = menuMarkup())
 }

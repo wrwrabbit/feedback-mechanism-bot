@@ -1,35 +1,30 @@
 package by.cp.feedback.mechanism.bot.behaviour.moderation
 
-import by.cp.feedback.mechanism.bot.behaviour.utils.tryF
 import by.cp.feedback.mechanism.bot.exception.CantRejectRejectedException
-import by.cp.feedback.mechanism.bot.exception.NotModeratorsChatException
-import by.cp.feedback.mechanism.bot.exception.NotTwoArgException
 import by.cp.feedback.mechanism.bot.exception.PollNotFoundInDbException
 import by.cp.feedback.mechanism.bot.model.PollStatus
-import by.cp.feedback.mechanism.bot.model.moderatorsChatId
+import by.cp.feedback.mechanism.bot.model.moderatorApproveDC
 import by.cp.feedback.mechanism.bot.repository.PollRepository
-import by.cp.feedback.mechanism.bot.repository.UserRepository
-import dev.inmo.tgbotapi.extensions.api.send.reply
 import dev.inmo.tgbotapi.extensions.behaviour_builder.BehaviourContext
+import dev.inmo.tgbotapi.extensions.behaviour_builder.expectations.waitTextMessage
 import dev.inmo.tgbotapi.requests.send.SendTextMessage
-import dev.inmo.tgbotapi.types.message.abstracts.CommonMessage
-import dev.inmo.tgbotapi.types.message.content.TextContent
+import dev.inmo.tgbotapi.types.queries.callback.DataCallbackQuery
 import dev.inmo.tgbotapi.types.toChatId
+import kotlinx.coroutines.flow.first
 
-fun reject(): suspend BehaviourContext.(CommonMessage<TextContent>, Array<String>) -> Unit = tryF { message, args ->
-    if (message.chat.id.chatId != moderatorsChatId) throw NotModeratorsChatException()
-    if (args.size != 2) throw NotTwoArgException()
-    val id = args.first().toLong()
-    val rejectionReason = args[1]
+fun moderatorReject(): suspend BehaviourContext.(DataCallbackQuery) -> Unit = { callback ->
+    val id = callback.data.substring(moderatorApproveDC.length).toLong()
     val poll = PollRepository.getById(id) ?: throw PollNotFoundInDbException()
     if (poll.rejectionReason != null) throw CantRejectRejectedException()
+    val chatId: Long = callback.from.id.chatId
+    val langCode = "ru"
+    val rejectionReason = waitTextMessage(
+        SendTextMessage(chatId.toChatId(), "Отправьте причину отклонения")
+    ).first().content.text
     PollRepository.updateRejectionReason(id, rejectionReason)
     PollRepository.updateStatus(poll.id, PollStatus.REJECTED)
-    // TODO return on behaviour finish
-//    val langCode = UserRepository.langCodeById(userId)
-    val langCode = "ru"
     execute(SendTextMessage(poll.userId.toChatId(), yourPollRejectedText(poll.id, langCode)))
-    reply(message, "You rejected poll #${poll.id}")
+    execute(SendTextMessage(chatId.toChatId(), "Вы отклонили опрос"))
 }
 
 fun yourPollRejectedText(pollId: Long, langCode: String) = when (langCode) {

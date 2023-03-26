@@ -5,9 +5,8 @@ import by.cp.feedback.mechanism.bot.behaviour.common.getPoll
 import by.cp.feedback.mechanism.bot.behaviour.common.myPolls
 import by.cp.feedback.mechanism.bot.behaviour.common.start
 import by.cp.feedback.mechanism.bot.behaviour.moderation.moderatorApprove
-import by.cp.feedback.mechanism.bot.behaviour.moderation.reject
-import by.cp.feedback.mechanism.bot.behaviour.moderation.unreject
-import by.cp.feedback.mechanism.bot.behaviour.moderation.user.fixPoll
+import by.cp.feedback.mechanism.bot.behaviour.moderation.moderatorFix
+import by.cp.feedback.mechanism.bot.behaviour.moderation.moderatorReject
 import by.cp.feedback.mechanism.bot.behaviour.moderation.user.proposePoll
 import by.cp.feedback.mechanism.bot.behaviour.review.userApprove
 import by.cp.feedback.mechanism.bot.behaviour.review.userUnApprove
@@ -36,12 +35,7 @@ class FeedbackMechanismBot
 const val startCommand = "start"
 const val proposePollCommand = "propose_poll"
 const val getChatIdCommand = "get_chat_id"
-const val rejectCommand = "reject"
-const val unrejectCommand = "unreject"
 const val myPollsCommand = "my_polls"
-const val fixPollCommand = "fix_poll"
-
-//const val languageCommand = "language"
 const val getPollCommand = "get_poll"
 
 suspend fun main(args: Array<String>) {
@@ -50,38 +44,35 @@ suspend fun main(args: Array<String>) {
             it.printStackTrace()
         }
     ) {
+        //COMMON
+        onCommand(getChatIdCommand, scenarioReceiver = getChatId())
+        onCommandWithArgs(getPollCommand, scenarioReceiver = getPoll())
         onCommand(startCommand, scenarioReceiver = start())
         onCommand(myPollsCommand, scenarioReceiver = myPolls())
         onText(initialFilter = { it.content.text == "\uD83D\uDDC2 мои опросы" }, scenarioReceiver = myPolls())
+        //MODERATION
         onCommand(proposePollCommand, scenarioReceiver = proposePoll())
         onText(initialFilter = { it.content.text == "✍️ создать опрос" }, scenarioReceiver = proposePoll())
-        onCommand(getChatIdCommand, scenarioReceiver = getChatId())
-        onDataCallbackQuery(Regex("$moderatorApproveDataCallback\\d*"), scenarioReceiver = moderatorApprove())
-//        onDataCallbackQuery(Regex("$languageDataCallback.*"), scenarioReceiver = chooseLanguage())
-        onDataCallbackQuery(Regex("$userApproveDataCallback\\d*"), scenarioReceiver = userApprove())
-        onDataCallbackQuery(Regex("$userUnApproveDataCallback\\d*"), scenarioReceiver = userUnApprove())
-        onDataCallbackQuery(Regex("$userVoteDataCallback.*"), scenarioReceiver = userVote())
+        onDataCallbackQuery(Regex("$moderatorApproveDC\\d*"), scenarioReceiver = moderatorApprove())
+        onDataCallbackQuery(Regex("$moderatorFixDC.*"), scenarioReceiver = moderatorFix())
+        onDataCallbackQuery(Regex("$moderatorRejectDC.*"), scenarioReceiver = moderatorReject())
+        //REVIEW
+        onDataCallbackQuery(Regex("$userApproveDC\\d*"), scenarioReceiver = userApprove())
+        onDataCallbackQuery(Regex("$userUnApproveDC\\d*"), scenarioReceiver = userUnApprove())
+        //VOTE
+        onDataCallbackQuery(Regex("$userVoteDC.*"), scenarioReceiver = userVote())
         onDataCallbackQuery(
-            Regex("$userVoteMultipleAnswersDataCallback.*"),
+            Regex("$userVoteMultipleAnswersDC.*"),
             scenarioReceiver = userVoteMultipleAnswers()
         )
-        onDataCallbackQuery(Regex("$userVoteCheckAnswerDataCallback.*"), scenarioReceiver = userVoteCheckAnswer())
-        onCommandWithArgs(rejectCommand, scenarioReceiver = reject())
-        onCommandWithArgs(fixPollCommand, scenarioReceiver = fixPoll())
-        onCommandWithArgs(getPollCommand, scenarioReceiver = getPoll())
-        onCommandWithArgs(unrejectCommand, scenarioReceiver = unreject())
-//        onCommand(languageCommand, scenarioReceiver = language())
+        onDataCallbackQuery(Regex("$userVoteCheckAnswerDC.*"), scenarioReceiver = userVoteCheckAnswer())
 
         setMyCommands(
             BotCommand(startCommand, "startCommand"),
             BotCommand(proposePollCommand, "proposePollCommand"),
             BotCommand(getChatIdCommand, "getChatIdCommand"),
-            BotCommand(rejectCommand, "rejectCommand"),
-            BotCommand(fixPollCommand, "fixPollCommand"),
             BotCommand(getPollCommand, "getPollCommand"),
-            BotCommand(unrejectCommand, "unrejectCommand"),
-            BotCommand(myPollsCommand, "myPollsCommand"),
-//            BotCommand(languageCommand, "languageCommand"),
+            BotCommand(myPollsCommand, "myPollsCommand")
         )
     }
     bot.setWebhookInfoAndStartListenWebhooks(

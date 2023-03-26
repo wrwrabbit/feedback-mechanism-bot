@@ -50,7 +50,13 @@ fun proposePoll(): suspend BehaviourContext.(CommonMessage<TextContent>) -> Unit
         }
     }
     val savedPoll = PollRepository.save(userId, question, options.toTypedArray(), allowMultipleAnswers)
-    execute(SendTextMessage(moderatorsChatId.toChatId(), savedPoll.toMessage("be"), replyMarkup = moderatorsReviewMarkup(savedPoll.id)))
+    execute(
+        SendTextMessage(
+            moderatorsChatId.toChatId(),
+            savedPoll.toMessage("be"),
+            replyMarkup = moderatorsReviewMarkup(savedPoll.id)
+        )
+    )
     reply(message, sentToModeratorsText(langCode), replyMarkup = menuMarkup())
 }
 
