@@ -26,16 +26,24 @@ fun proposePoll(): suspend BehaviourContext.(CommonMessage<TextContent>) -> Unit
     ).first().content.text
     val options = mutableListOf<String>()
     var option = waitTextMessage(
-        SendTextMessage(userId.toChatId(), "Отправьте варианты ответа", replyMarkup = endMarkup())
+        SendTextMessage(userId.toChatId(), "Отправьте вариант ответа №${options.size + 1}", replyMarkup = endMarkup())
     ).first().content.text
     while (option != "Завершить") {
         options.add(option)
         option = waitTextMessage(
-            SendTextMessage(userId.toChatId(), "Отправьте варианты ответа", replyMarkup = endMarkup())
+            SendTextMessage(
+                userId.toChatId(),
+                "Отправьте вариант ответа №${options.size + 1}",
+                replyMarkup = endMarkup()
+            )
         ).first().content.text
     }
     val allowMultipleAnswers = waitTextMessage(
-        SendTextMessage(userId.toChatId(), "Можно ли голосовать за больше чем один вариант?", replyMarkup = yesNoMarkup())
+        SendTextMessage(
+            userId.toChatId(),
+            "Можно ли голосовать за больше чем один вариант?",
+            replyMarkup = yesNoMarkup()
+        )
     ).first().content.text.lowercase().fromAllowMultipleAnswers(langCode)
     val lastUserPollTime = PollRepository.lastUserPoll(userId)?.createdAt
     if (lastUserPollTime != null) {
