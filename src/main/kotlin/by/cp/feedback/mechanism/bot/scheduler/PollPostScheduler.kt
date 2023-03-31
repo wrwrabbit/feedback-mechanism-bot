@@ -27,7 +27,7 @@ class PollPostScheduler {
                     bot.edit(
                         chatId = postChatId.toChatId(),
                         messageId = poll.messageId!!,
-                        text = poll.toMessage("be")
+                        text = poll.toMessage("ru")
                     )
                 } catch (e: MessageIsNotModifiedException) {
                 } catch (e: Exception) {

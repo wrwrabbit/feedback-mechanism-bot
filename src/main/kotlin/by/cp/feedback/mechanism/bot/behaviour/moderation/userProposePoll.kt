@@ -1,4 +1,4 @@
-package by.cp.feedback.mechanism.bot.behaviour.moderation.user
+package by.cp.feedback.mechanism.bot.behaviour.moderation
 
 import by.cp.feedback.mechanism.bot.behaviour.utils.tryF
 import by.cp.feedback.mechanism.bot.exception.FromNotFoundException
@@ -18,7 +18,7 @@ import java.time.Duration
 import java.time.LocalDateTime
 import java.time.ZoneOffset
 
-fun proposePoll(): suspend BehaviourContext.(CommonMessage<TextContent>) -> Unit = tryF { message ->
+fun userProposePoll(): suspend BehaviourContext.(CommonMessage<TextContent>) -> Unit = tryF { message ->
     val userId: Long = message.from?.id?.chatId ?: throw FromNotFoundException()
     val langCode = "ru"
     val question = waitTextMessage(
@@ -59,8 +59,8 @@ fun proposePoll(): suspend BehaviourContext.(CommonMessage<TextContent>) -> Unit
     execute(
         SendTextMessage(
             moderatorsChatId.toChatId(),
-            savedPoll.toMessage("be"),
-            replyMarkup = moderatorsReviewMarkup(savedPoll.id)
+            savedPoll.toMessage("ru"),
+            replyMarkup = moderatorsReviewMarkup(savedPoll.id, 0)
         )
     )
     reply(message, sentToModeratorsText(langCode), replyMarkup = menuMarkup())

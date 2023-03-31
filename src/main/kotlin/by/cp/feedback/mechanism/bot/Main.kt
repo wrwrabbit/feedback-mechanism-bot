@@ -4,12 +4,7 @@ import by.cp.feedback.mechanism.bot.behaviour.common.getChatId
 import by.cp.feedback.mechanism.bot.behaviour.common.getPoll
 import by.cp.feedback.mechanism.bot.behaviour.common.myPolls
 import by.cp.feedback.mechanism.bot.behaviour.common.start
-import by.cp.feedback.mechanism.bot.behaviour.moderation.moderatorApprove
-import by.cp.feedback.mechanism.bot.behaviour.moderation.moderatorFix
-import by.cp.feedback.mechanism.bot.behaviour.moderation.moderatorReject
-import by.cp.feedback.mechanism.bot.behaviour.moderation.user.proposePoll
-import by.cp.feedback.mechanism.bot.behaviour.moderation.user.userApproveModeration
-import by.cp.feedback.mechanism.bot.behaviour.moderation.user.userRejectModeration
+import by.cp.feedback.mechanism.bot.behaviour.moderation.*
 import by.cp.feedback.mechanism.bot.behaviour.review.userApprove
 import by.cp.feedback.mechanism.bot.behaviour.review.userUnApprove
 import by.cp.feedback.mechanism.bot.behaviour.vote.userVote
@@ -39,6 +34,8 @@ class FeedbackMechanismBot
 
 const val startCommand = "start"
 const val proposePollCommand = "propose_poll"
+const val moderationPollsCommand = "moderation_polls"
+const val createModerationCommand = "create_moderation"
 const val getChatIdCommand = "get_chat_id"
 const val myPollsCommand = "my_polls"
 const val getPollCommand = "get_poll"
@@ -64,11 +61,13 @@ suspend fun main(args: Array<String>) {
         onCommand(myPollsCommand, scenarioReceiver = myPolls())
         onText(initialFilter = { it.content.text == "\uD83D\uDDC2 мои опросы" }, scenarioReceiver = myPolls())
         //MODERATION
-        onCommand(proposePollCommand, scenarioReceiver = proposePoll())
-        onText(initialFilter = { it.content.text == "✍️ создать опрос" }, scenarioReceiver = proposePoll())
+        onCommand(moderationPollsCommand, scenarioReceiver = moderationPolls())
+        onCommandWithArgs(createModerationCommand, scenarioReceiver = createModeration())
         onDataCallbackQuery(Regex("$moderatorApproveDC\\d*"), scenarioReceiver = moderatorApprove())
         onDataCallbackQuery(Regex("$moderatorFixDC.*"), scenarioReceiver = moderatorFix())
         onDataCallbackQuery(Regex("$moderatorRejectDC.*"), scenarioReceiver = moderatorReject())
+        onText(initialFilter = { it.content.text == "✍️ создать опрос" }, scenarioReceiver = userProposePoll())
+        onCommand(proposePollCommand, scenarioReceiver = userProposePoll())
         onDataCallbackQuery(Regex("$userApproveModerationDC.*"), scenarioReceiver = userApproveModeration())
         onDataCallbackQuery(Regex("$userRejectModerationDC.*"), scenarioReceiver = userRejectModeration())
         //REVIEW

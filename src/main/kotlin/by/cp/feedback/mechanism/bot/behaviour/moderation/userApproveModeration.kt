@@ -1,6 +1,5 @@
-package by.cp.feedback.mechanism.bot.behaviour.moderation.user
+package by.cp.feedback.mechanism.bot.behaviour.moderation
 
-import by.cp.feedback.mechanism.bot.behaviour.moderation.sentToUsersReviewText
 import by.cp.feedback.mechanism.bot.exception.PollNotFoundInDbException
 import by.cp.feedback.mechanism.bot.model.PollStatus
 import by.cp.feedback.mechanism.bot.model.parsePoll
