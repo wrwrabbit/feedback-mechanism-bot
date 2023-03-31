@@ -25,7 +25,7 @@ dependencies {
     implementation("org.jetbrains.exposed:exposed-dao:0.41.1")
     implementation("org.jetbrains.exposed:exposed-jdbc:0.41.1")
     implementation("org.jetbrains.exposed:exposed-java-time:0.41.1")
-    implementation("com.impossibl.pgjdbc-ng:pgjdbc-ng:0.8.9")
+    implementation("org.postgresql:postgresql:42.6.0")
     testImplementation(kotlin("test"))
 }
 
