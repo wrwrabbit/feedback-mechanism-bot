@@ -40,11 +40,11 @@ fun yesNoMarkup() = ReplyKeyboardMarkup(
     resizeKeyboard = true
 )
 
-fun moderatorsReviewMarkup(pollId: Long) = InlineKeyboardMarkup(
+fun moderatorsReviewMarkup(pollId: Long, approvalsCount: Int) = InlineKeyboardMarkup(
     matrix {
         row {
             +CallbackDataInlineKeyboardButton(
-                "✅ 0/$moderatorsApprovalsRequired",
+                "✅ $approvalsCount/$moderatorsApprovalsRequired",
                 callbackData = "$moderatorApproveDC$pollId"
             )
             +CallbackDataInlineKeyboardButton(
@@ -122,12 +122,3 @@ fun userVoteSingleAnswerMarkup(options: Array<String>, pollId: Long) = InlineKey
         }
     }
 )
-
-fun moderatorsApproveMarkup(pollId: Long, approvalsCount: Int) = InlineKeyboardMarkup(matrix {
-    row {
-        +CallbackDataInlineKeyboardButton(
-            "✅ $approvalsCount/$moderatorsApprovalsRequired",
-            callbackData = "$moderatorApproveDC$pollId"
-        )
-    }
-})

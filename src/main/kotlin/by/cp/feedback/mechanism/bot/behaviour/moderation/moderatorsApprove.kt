@@ -3,10 +3,7 @@ package by.cp.feedback.mechanism.bot.behaviour.moderation
 import by.cp.feedback.mechanism.bot.exception.AlreadyApprovedException
 import by.cp.feedback.mechanism.bot.exception.CantApproveRejectedException
 import by.cp.feedback.mechanism.bot.exception.PollNotFoundInDbException
-import by.cp.feedback.mechanism.bot.model.PollStatus
-import by.cp.feedback.mechanism.bot.model.moderatorApproveDC
-import by.cp.feedback.mechanism.bot.model.moderatorsApprovalsRequired
-import by.cp.feedback.mechanism.bot.model.moderatorsApproveMarkup
+import by.cp.feedback.mechanism.bot.model.*
 import by.cp.feedback.mechanism.bot.repository.PollRepository
 import by.cp.feedback.mechanism.bot.repository.PollUserReviewRepository
 import dev.inmo.tgbotapi.extensions.api.edit.edit
@@ -31,7 +28,7 @@ fun moderatorApprove(): suspend BehaviourContext.(DataCallbackQuery) -> Unit = {
         execute(SendTextMessage(poll.userId.toChatId(), sentToUsersReviewText(langCode)))
     }
     val message = (callback as MessageDataCallbackQuery).message
-    edit(message.chat, message.messageId, moderatorsApproveMarkup(poll.id, resultArray.size))
+    edit(message.chat, message.messageId, moderatorsReviewMarkup(poll.id, resultArray.size))
 }
 
 fun sentToUsersReviewText(langCode: String) = when (langCode) {
