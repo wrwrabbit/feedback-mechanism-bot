@@ -20,7 +20,7 @@ fun userApprove(): suspend BehaviourContext.(DataCallbackQuery) -> Unit = { call
     if (poll.userApproves + 1 == usersApprovalsRequired) {
         PollUserReviewRepository.delete(poll.id)
         val langCode = "ru"
-        PollRepository.updateStatus(poll.id, PollStatus.VOTING)
+        PollRepository.start(poll.id)
         PollVoteRepository.save(poll.id)
         PollUserVoteRepository.save(poll.id)
         val message1 = execute(
@@ -29,6 +29,9 @@ fun userApprove(): suspend BehaviourContext.(DataCallbackQuery) -> Unit = { call
                     id = poll.id,
                     question = poll.question,
                     allowMultipleAnswers = poll.allowMultipleAnswers,
+                    createdAt = poll.createdAt,
+                    startedAt = null,
+                    finishedAt = null,
                     options = poll.options,
                     results = poll.options.map { 0 }).toMessage("be")
             )

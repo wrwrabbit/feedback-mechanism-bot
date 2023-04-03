@@ -9,6 +9,7 @@ val postChatId = System.getenv("POST_CHAT_ID").toLong()
 val moderatorsApprovalsRequired = System.getenv("MODERATORS_APPROVALS_REQUIRED").toInt()
 val usersApprovalsRequired = System.getenv("USERS_APPROVALS_REQUIRED").toLong()
 val secondsBetweenPolls = System.getenv("SECONDS_BETWEEN_POLLS").toLong()
+val secondsTillFinish = System.getenv("SECONDS_TILL_FINISH").toLong()
 
 //MODERATION
 const val moderatorApproveDC = "ModeratorsApproveDC"

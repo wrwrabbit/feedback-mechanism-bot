@@ -5,5 +5,5 @@ enum class PollStatus {
     REJECTED,
     ON_USER_REVIEW,
     VOTING,
-    ENDED
+    FINISHED
 }
