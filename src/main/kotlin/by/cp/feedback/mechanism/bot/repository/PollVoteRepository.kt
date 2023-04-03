@@ -28,6 +28,9 @@ object PollVoteRepository {
                     it[Polls.messageId],
                     it[Polls.question],
                     it[Polls.allowMultipleAnswers],
+                    it[Polls.createdAt],
+                    it[Polls.startedAt],
+                    it[Polls.finishedAt],
                     it[Polls.options],
                     it[Polls.options].mapIndexed { index, s ->
                         when (index + 1) {

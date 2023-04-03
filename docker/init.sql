@@ -11,6 +11,8 @@ create table polls(
     options text[],
     allow_multiple_answers boolean,
     created_at timestamp,
+    started_at timestamp null,
+    finished_at timestamp null,
     moderator_approves bigint[] default array[]::bigint[],
     user_approves bigint default 0,
     rejection_reason text null,
