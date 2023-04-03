@@ -75,7 +75,6 @@ fun sendToUserReviewMarkup(pollId: Long) = InlineKeyboardMarkup(
 )
 
 
-
 fun userModerationReviewMarkup(pollId: Long, fixedPoll: String) = InlineKeyboardMarkup(
     matrix {
         row {
@@ -119,6 +118,17 @@ fun userVoteSingleAnswerMarkup(options: Array<String>, pollId: Long) = InlineKey
                     callbackData = "${userVoteDC}${pollId}_${index + 1}"
                 )
             }
+        }
+    }
+)
+
+fun showModerationMarkup(pollId: Long) = InlineKeyboardMarkup(
+    keyboard = matrix {
+        row {
+            +CallbackDataInlineKeyboardButton(
+                text = "Показать",
+                callbackData = "${showModerationDC}${pollId}"
+            )
         }
     }
 )

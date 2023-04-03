@@ -16,6 +16,7 @@ const val moderatorFixDC = "ModeratorsFixDC"
 const val moderatorRejectDC = "ModeratorsRejectDC"
 const val userApproveModerationDC = "UserApproveModerationDC"
 const val userRejectModerationDC = "UserRejectModerationDC"
+const val showModerationDC = "ShowModerationDC"
 
 //REVIEW
 const val userUnApproveDC = "UsersUnApproveDC"
