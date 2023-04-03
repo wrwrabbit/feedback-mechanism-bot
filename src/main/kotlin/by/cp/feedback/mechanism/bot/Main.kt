@@ -35,7 +35,6 @@ class FeedbackMechanismBot
 const val startCommand = "start"
 const val proposePollCommand = "propose_poll"
 const val moderationPollsCommand = "moderation_polls"
-const val createModerationCommand = "create_moderation"
 const val getChatIdCommand = "get_chat_id"
 const val myPollsCommand = "my_polls"
 const val getPollCommand = "get_poll"
@@ -62,7 +61,7 @@ suspend fun main(args: Array<String>) {
         onText(initialFilter = { it.content.text == "\uD83D\uDDC2 мои опросы" }, scenarioReceiver = myPolls())
         //MODERATION
         onCommand(moderationPollsCommand, scenarioReceiver = moderationPolls())
-        onCommandWithArgs(createModerationCommand, scenarioReceiver = createModeration())
+        onDataCallbackQuery(Regex("$showModerationDC\\d*"), scenarioReceiver = showModeration())
         onDataCallbackQuery(Regex("$moderatorApproveDC\\d*"), scenarioReceiver = moderatorApprove())
         onDataCallbackQuery(Regex("$moderatorFixDC.*"), scenarioReceiver = moderatorFix())
         onDataCallbackQuery(Regex("$moderatorRejectDC.*"), scenarioReceiver = moderatorReject())

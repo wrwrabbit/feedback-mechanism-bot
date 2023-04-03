@@ -6,8 +6,10 @@ import by.cp.feedback.mechanism.bot.exception.PollNotFoundInDbException
 import by.cp.feedback.mechanism.bot.model.*
 import by.cp.feedback.mechanism.bot.repository.PollRepository
 import by.cp.feedback.mechanism.bot.repository.PollUserReviewRepository
+import dev.inmo.tgbotapi.extensions.api.delete
 import dev.inmo.tgbotapi.extensions.api.edit.edit
 import dev.inmo.tgbotapi.extensions.behaviour_builder.BehaviourContext
+import dev.inmo.tgbotapi.extensions.utils.extensions.raw.message
 import dev.inmo.tgbotapi.requests.send.SendTextMessage
 import dev.inmo.tgbotapi.types.queries.callback.DataCallbackQuery
 import dev.inmo.tgbotapi.types.queries.callback.MessageDataCallbackQuery
@@ -26,6 +28,7 @@ fun moderatorApprove(): suspend BehaviourContext.(DataCallbackQuery) -> Unit = {
         PollRepository.updateStatus(poll.id, PollStatus.ON_USER_REVIEW)
         PollUserReviewRepository.save(poll.id)
         execute(SendTextMessage(poll.userId.toChatId(), sentToUsersReviewText(langCode)))
+        delete((callback as MessageDataCallbackQuery).message)
     }
     val message = (callback as MessageDataCallbackQuery).message
     edit(message.chat, message.messageId, moderatorsReviewMarkup(poll.id, resultArray.size))

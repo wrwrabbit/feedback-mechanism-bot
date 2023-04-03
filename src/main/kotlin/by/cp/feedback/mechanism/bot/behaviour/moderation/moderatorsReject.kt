@@ -7,10 +7,12 @@ import by.cp.feedback.mechanism.bot.model.moderatorApproveDC
 import by.cp.feedback.mechanism.bot.model.moderatorRejectDC
 import by.cp.feedback.mechanism.bot.model.moderatorsChatId
 import by.cp.feedback.mechanism.bot.repository.PollRepository
+import dev.inmo.tgbotapi.extensions.api.delete
 import dev.inmo.tgbotapi.extensions.behaviour_builder.BehaviourContext
 import dev.inmo.tgbotapi.extensions.behaviour_builder.expectations.waitTextMessage
 import dev.inmo.tgbotapi.requests.send.SendTextMessage
 import dev.inmo.tgbotapi.types.queries.callback.DataCallbackQuery
+import dev.inmo.tgbotapi.types.queries.callback.MessageDataCallbackQuery
 import dev.inmo.tgbotapi.types.toChatId
 import kotlinx.coroutines.flow.first
 
@@ -27,6 +29,7 @@ fun moderatorReject(): suspend BehaviourContext.(DataCallbackQuery) -> Unit = { 
     PollRepository.updateStatus(poll.id, PollStatus.REJECTED)
     execute(SendTextMessage(poll.userId.toChatId(), yourPollRejectedText(poll.id, langCode, rejectionReason)))
     execute(SendTextMessage(moderatorsChatId.toChatId(), "Вы отклонили опрос"))
+    delete((callback as MessageDataCallbackQuery).message)
 }
 
 fun yourPollRejectedText(pollId: Long, langCode: String, rejectionReason: String) = when (langCode) {
