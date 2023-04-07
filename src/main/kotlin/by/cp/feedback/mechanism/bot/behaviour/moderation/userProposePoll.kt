@@ -9,10 +9,12 @@ import dev.inmo.tgbotapi.extensions.api.send.reply
 import dev.inmo.tgbotapi.extensions.behaviour_builder.BehaviourContext
 import dev.inmo.tgbotapi.extensions.behaviour_builder.expectations.waitTextMessage
 import dev.inmo.tgbotapi.extensions.utils.extensions.raw.from
+import dev.inmo.tgbotapi.extensions.utils.extensions.sameThread
 import dev.inmo.tgbotapi.requests.send.SendTextMessage
 import dev.inmo.tgbotapi.types.message.abstracts.CommonMessage
 import dev.inmo.tgbotapi.types.message.content.TextContent
 import dev.inmo.tgbotapi.types.toChatId
+import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.first
 import java.time.Duration
 import java.time.LocalDateTime
@@ -23,11 +25,11 @@ fun userProposePoll(): suspend BehaviourContext.(CommonMessage<TextContent>) -> 
     val langCode = "ru"
     val question = waitTextMessage(
         SendTextMessage(userId.toChatId(), "Отправьте вопрос")
-    ).first().content.text
+    ).filter { msg -> msg.sameThread(message) }.first().content.text
     val options = mutableListOf<String>()
     var option = waitTextMessage(
         SendTextMessage(userId.toChatId(), "Отправьте вариант ответа №${options.size + 1}", replyMarkup = endMarkup())
-    ).first().content.text
+    ).filter { msg -> msg.sameThread(message) }.first().content.text
     while (option != "Завершить") {
         options.add(option)
         option = waitTextMessage(
@@ -36,7 +38,7 @@ fun userProposePoll(): suspend BehaviourContext.(CommonMessage<TextContent>) -> 
                 "Отправьте вариант ответа №${options.size + 1}",
                 replyMarkup = endMarkup()
             )
-        ).first().content.text
+        ).filter { msg -> msg.sameThread(message) }.first().content.text
     }
     val allowMultipleAnswers = waitTextMessage(
         SendTextMessage(
@@ -44,7 +46,7 @@ fun userProposePoll(): suspend BehaviourContext.(CommonMessage<TextContent>) -> 
             "Можно ли голосовать за больше чем один вариант?",
             replyMarkup = yesNoMarkup()
         )
-    ).first().content.text.lowercase().fromAllowMultipleAnswers(langCode)
+    ).filter { msg -> msg.sameThread(message) }.first().content.text.lowercase().fromAllowMultipleAnswers(langCode)
     val lastUserPollTime = PollRepository.lastUserPoll(userId)?.createdAt
     if (lastUserPollTime != null) {
         val duration = Duration.between(LocalDateTime.now(ZoneOffset.UTC), lastUserPollTime)

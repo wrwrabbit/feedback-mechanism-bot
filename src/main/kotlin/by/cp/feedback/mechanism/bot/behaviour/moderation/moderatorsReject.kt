@@ -10,10 +10,12 @@ import by.cp.feedback.mechanism.bot.repository.PollRepository
 import dev.inmo.tgbotapi.extensions.api.delete
 import dev.inmo.tgbotapi.extensions.behaviour_builder.BehaviourContext
 import dev.inmo.tgbotapi.extensions.behaviour_builder.expectations.waitTextMessage
+import dev.inmo.tgbotapi.extensions.utils.extensions.sameThread
 import dev.inmo.tgbotapi.requests.send.SendTextMessage
 import dev.inmo.tgbotapi.types.queries.callback.DataCallbackQuery
 import dev.inmo.tgbotapi.types.queries.callback.MessageDataCallbackQuery
 import dev.inmo.tgbotapi.types.toChatId
+import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.first
 
 fun moderatorReject(): suspend BehaviourContext.(DataCallbackQuery) -> Unit = { callback ->
@@ -24,7 +26,7 @@ fun moderatorReject(): suspend BehaviourContext.(DataCallbackQuery) -> Unit = { 
     val langCode = "ru"
     val rejectionReason = waitTextMessage(
         SendTextMessage(moderatorsChatId.toChatId(), "Отправьте причину отклонения")
-    ).first().content.text
+    ).filter { msg -> msg.sameThread(moderatorsChatId.toChatId()) }.first().content.text
     PollRepository.updateRejectionReason(id, rejectionReason)
     PollRepository.updateStatus(poll.id, PollStatus.REJECTED)
     execute(SendTextMessage(poll.userId.toChatId(), yourPollRejectedText(poll.id, langCode, rejectionReason)))
