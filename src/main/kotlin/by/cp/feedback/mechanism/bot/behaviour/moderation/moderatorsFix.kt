@@ -7,10 +7,12 @@ import by.cp.feedback.mechanism.bot.repository.PollRepository
 import dev.inmo.tgbotapi.extensions.api.delete
 import dev.inmo.tgbotapi.extensions.behaviour_builder.BehaviourContext
 import dev.inmo.tgbotapi.extensions.behaviour_builder.expectations.waitTextMessage
+import dev.inmo.tgbotapi.extensions.utils.extensions.sameThread
 import dev.inmo.tgbotapi.requests.send.SendTextMessage
 import dev.inmo.tgbotapi.types.queries.callback.DataCallbackQuery
 import dev.inmo.tgbotapi.types.queries.callback.MessageDataCallbackQuery
 import dev.inmo.tgbotapi.types.toChatId
+import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.first
 
 fun moderatorFix(): suspend BehaviourContext.(DataCallbackQuery) -> Unit = { callback ->
@@ -20,7 +22,7 @@ fun moderatorFix(): suspend BehaviourContext.(DataCallbackQuery) -> Unit = { cal
     val langCode = "ru"
     val fixedPoll = waitTextMessage(
         SendTextMessage(moderatorsChatId.toChatId(), "Отправьте исправленный опрос в формате\n${pollTemplateText(langCode)}")
-    ).first().content.text
+    ).filter { msg -> msg.sameThread(moderatorsChatId.toChatId()) }.first().content.text
     execute(
         SendTextMessage(
             poll.userId.toChatId(),

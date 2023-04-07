@@ -9,11 +9,13 @@ import dev.inmo.tgbotapi.extensions.api.send.reply
 import dev.inmo.tgbotapi.extensions.behaviour_builder.BehaviourContext
 import dev.inmo.tgbotapi.extensions.behaviour_builder.expectations.waitTextMessage
 import dev.inmo.tgbotapi.extensions.utils.extensions.raw.from
+import dev.inmo.tgbotapi.extensions.utils.extensions.sameThread
 import dev.inmo.tgbotapi.requests.abstracts.asMultipartFile
 import dev.inmo.tgbotapi.requests.send.media.SendPhoto
 import dev.inmo.tgbotapi.types.message.abstracts.CommonMessage
 import dev.inmo.tgbotapi.types.message.content.TextContent
 import dev.inmo.tgbotapi.types.toChatId
+import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.first
 import java.io.ByteArrayOutputStream
 import javax.imageio.ImageIO
@@ -29,12 +31,12 @@ fun start(): suspend BehaviourContext.(CommonMessage<TextContent>) -> Unit = try
         }.asMultipartFile("captcha")
         var userCaptchaMessage = waitTextMessage(
             SendPhoto(userId.toChatId(), file, sendMeCaptchaText(langCode))
-        ).first()
+        ).filter { msg -> msg.sameThread(message) }.first()
         while (userCaptchaMessage.content.text != text) {
             reply(userCaptchaMessage, wrongCaptchaText(langCode))
             userCaptchaMessage = waitTextMessage(
                 SendPhoto(userId.toChatId(), file, sendMeCaptchaText(langCode))
-            ).first()
+            ).filter { msg -> msg.sameThread(message) }.first()
         }
         UserRepository.save(userId, langCode)
     }
