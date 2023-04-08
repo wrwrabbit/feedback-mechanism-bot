@@ -132,3 +132,13 @@ fun showModerationMarkup(pollId: Long) = InlineKeyboardMarkup(
         }
     }
 )
+
+fun changeCaptchaMarkup() = ReplyKeyboardMarkup(
+    keyboard = matrix {
+        row {
+            +SimpleKeyboardButton(changeCaptcha)
+        }
+    },
+    oneTimeKeyboard = true,
+    resizeKeyboard = true
+)

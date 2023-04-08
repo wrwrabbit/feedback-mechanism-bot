@@ -8,6 +8,8 @@ import dev.inmo.tgbotapi.types.chat.CommonUser
 import dev.inmo.tgbotapi.types.message.abstracts.CommonMessage
 import io.ktor.util.*
 
+const val changeCaptcha = "Изменить капчу"
+
 fun CommonMessage<*>.langCode() =
     (this.from!! as CommonUser).ietfLanguageCode?.code ?: "ru"
 
