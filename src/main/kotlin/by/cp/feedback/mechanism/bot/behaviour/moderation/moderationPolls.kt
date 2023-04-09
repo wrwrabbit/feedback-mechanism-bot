@@ -14,16 +14,15 @@ import dev.inmo.tgbotapi.types.message.content.TextContent
 import dev.inmo.tgbotapi.types.toChatId
 
 fun moderationPolls(): suspend BehaviourContext.(CommonMessage<TextContent>) -> Unit = tryF { message ->
-    val langCode = "ru"
     val polls = PollRepository.getByStatus(PollStatus.ON_MODERATOR_REVIEW)
     if (polls.isEmpty()) {
-        reply(message, emptyPollsMessage(langCode))
+        reply(message, emptyPollsMessage())
     } else {
         polls.forEach { poll ->
             execute(
                 SendTextMessage(
                     moderatorsChatId.toChatId(),
-                    poll.toStatusMessage(langCode),
+                    poll.toStatusMessage(),
                     replyMarkup = showModerationMarkup(poll.id)
                 )
             )
@@ -31,17 +30,8 @@ fun moderationPolls(): suspend BehaviourContext.(CommonMessage<TextContent>) -> 
     }
 }
 
-fun emptyPollsMessage(langCode: String): String = when (langCode) {
-    "be" -> "У вас няма апытанняў"
-    else -> "Нет вопросов для модерации"
-}
+fun emptyPollsMessage(): String = "Нет вопросов для модерации"
 
-fun PollDto.toStatusMessage(langCode: String): String = when (langCode) {
-    "be" -> "Апытанне #$id," +
-        "Статус #$status" +
-        if (status == PollStatus.REJECTED) ",Прычына адмовы: $rejectionReason" else ""
-
-    else -> "Опрос #$id," + "\n" +
+fun PollDto.toStatusMessage(): String = "Опрос #$id," + "\n" +
         "Вопрос $question," + "\n" +
         "Статус #$status" + "\n"
-}

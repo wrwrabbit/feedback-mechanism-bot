@@ -1,12 +1,10 @@
 package by.cp.feedback.mechanism.bot.repository
 
 import by.cp.feedback.mechanism.bot.database.DatabaseConfiguration
-import by.cp.feedback.mechanism.bot.exception.YouAreNotRegisteredException
 import by.cp.feedback.mechanism.bot.table.Users
 import org.jetbrains.exposed.sql.insertAndGetId
 import org.jetbrains.exposed.sql.select
 import org.jetbrains.exposed.sql.transactions.transaction
-import org.jetbrains.exposed.sql.update
 
 object UserRepository {
 
@@ -19,19 +17,8 @@ object UserRepository {
         }.value
     }
 
-    fun updateLangCode(id: Long, langCode: String) = transaction {
-        Users.update({ Users.id eq id }) {
-            it[Users.langCode] = langCode
-        }
-    }
-
     fun exists(userId: Long): Boolean = transaction {
         !Users.select { Users.id eq userId }.empty()
-    }
-
-    fun langCodeById(userId: Long): String = transaction {
-        Users.select { Users.id eq userId }.map { it[Users.langCode] }.firstOrNull()
-            ?: throw YouAreNotRegisteredException()
     }
 
 }

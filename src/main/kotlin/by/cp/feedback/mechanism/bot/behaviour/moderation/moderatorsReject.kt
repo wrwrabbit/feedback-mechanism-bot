@@ -3,7 +3,6 @@ package by.cp.feedback.mechanism.bot.behaviour.moderation
 import by.cp.feedback.mechanism.bot.exception.CantRejectRejectedException
 import by.cp.feedback.mechanism.bot.exception.PollNotFoundInDbException
 import by.cp.feedback.mechanism.bot.model.PollStatus
-import by.cp.feedback.mechanism.bot.model.moderatorApproveDC
 import by.cp.feedback.mechanism.bot.model.moderatorRejectDC
 import by.cp.feedback.mechanism.bot.model.moderatorsChatId
 import by.cp.feedback.mechanism.bot.repository.PollRepository
@@ -22,19 +21,15 @@ fun moderatorReject(): suspend BehaviourContext.(DataCallbackQuery) -> Unit = { 
     val id = callback.data.substring(moderatorRejectDC.length).toLong()
     val poll = PollRepository.getById(id) ?: throw PollNotFoundInDbException()
     if (poll.rejectionReason != null) throw CantRejectRejectedException()
-    val chatId: Long = callback.from.id.chatId
-    val langCode = "ru"
     val rejectionReason = waitTextMessage(
         SendTextMessage(moderatorsChatId.toChatId(), "Отправьте причину отклонения")
     ).filter { msg -> msg.sameThread(moderatorsChatId.toChatId()) }.first().content.text
     PollRepository.updateRejectionReason(id, rejectionReason)
     PollRepository.updateStatus(poll.id, PollStatus.REJECTED)
-    execute(SendTextMessage(poll.userId.toChatId(), yourPollRejectedText(poll.id, langCode, rejectionReason)))
+    execute(SendTextMessage(poll.userId.toChatId(), yourPollRejectedText(poll.id, rejectionReason)))
     execute(SendTextMessage(moderatorsChatId.toChatId(), "Вы отклонили опрос"))
     delete((callback as MessageDataCallbackQuery).message)
 }
 
-fun yourPollRejectedText(pollId: Long, langCode: String, rejectionReason: String) = when (langCode) {
-    "be" -> "Ваша апытанне #$pollId адмоўлена"
-    else -> "Ваш опрос #$pollId отклонён. Причина: $rejectionReason"
-}
+fun yourPollRejectedText(pollId: Long, , rejectionReason: String) =
+    "Ваш опрос #$pollId отклонён. Причина: $rejectionReason"

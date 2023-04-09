@@ -19,7 +19,6 @@ fun userApprove(): suspend BehaviourContext.(DataCallbackQuery) -> Unit = { call
     PollRepository.addUserApprove(id)
     if (poll.userApproves + 1 == usersApprovalsRequired) {
         PollUserReviewRepository.delete(poll.id)
-        val langCode = "ru"
         PollRepository.start(poll.id)
         PollVoteRepository.save(poll.id)
         PollUserVoteRepository.save(poll.id)
@@ -33,21 +32,18 @@ fun userApprove(): suspend BehaviourContext.(DataCallbackQuery) -> Unit = { call
                     startedAt = null,
                     finishedAt = null,
                     options = poll.options,
-                    results = poll.options.map { 0 }).toMessage("be")
+                    results = poll.options.map { 0 }).toMessage()
             )
         )
         PollRepository.updateMessageId(id, message1.messageId)
         execute(
             SendTextMessage(
                 poll.userId.toChatId(),
-                sentToUsersVoteText(langCode)
+                sentToUsersVoteText()
             )
         )
     }
     delete((callback as MessageDataCallbackQuery).message)
 }
 
-fun sentToUsersVoteText(langCode: String) = when (langCode) {
-    "be" -> "Ваша апытанне адпраўлена на галасаванне карыстальнікам"
-    else -> "Ваш опрос отправлен на голосование пользователям"
-}
+fun sentToUsersVoteText() = "Ваш опрос отправлен на голосование пользователям"
