@@ -17,7 +17,7 @@ fun showModeration(): suspend BehaviourContext.(DataCallbackQuery) -> Unit = { c
     execute(
         SendTextMessage(
             moderatorsChatId.toChatId(),
-            poll.toMessage("ru"),
+            poll.toMessage(),
             replyMarkup = moderatorsReviewMarkup(id, poll.moderatorApproves.size)
         )
     )

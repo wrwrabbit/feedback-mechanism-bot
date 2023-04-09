@@ -31,5 +31,5 @@ fun moderatorReject(): suspend BehaviourContext.(DataCallbackQuery) -> Unit = { 
     delete((callback as MessageDataCallbackQuery).message)
 }
 
-fun yourPollRejectedText(pollId: Long, , rejectionReason: String) =
+fun yourPollRejectedText(pollId: Long, rejectionReason: String) =
     "Ваш опрос #$pollId отклонён. Причина: $rejectionReason"
