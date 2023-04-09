@@ -35,14 +35,14 @@ fun sentToModeratorsText(langCode: String) = when (langCode) {
 
 fun PollVoteDto.toMessage(langCode: String): String = when (langCode) {
     "be" -> "Апытанне #$id\n" +
-        "${question(langCode)}: $question\n" +
-        this.results() +
-        "${moreThanOneAnswer(langCode)}: ${allowMultipleAnswers.toAllowMultipleAnswers(langCode)}\n"
+            "${question(langCode)}: $question\n" +
+            this.results() +
+            "${moreThanOneAnswer(langCode)}: ${allowMultipleAnswers.toAllowMultipleAnswers(langCode)}\n"
 
     else -> "Опрос #$id\n" +
-        "${question(langCode)}: $question\n" +
-        this.results() +
-        "${moreThanOneAnswer(langCode)}: ${allowMultipleAnswers.toAllowMultipleAnswers(langCode)}\n"
+            "${question(langCode)}: $question\n" +
+            this.results() +
+            "${moreThanOneAnswer(langCode)}: ${allowMultipleAnswers.toAllowMultipleAnswers(langCode)}\n"
 }
 
 fun PollVoteDto.results(): String = results.reduce { acc, next -> acc + next }
@@ -60,16 +60,16 @@ fun PollVoteDto.results(): String = results.reduce { acc, next -> acc + next }
 
 fun PollDto.toMessage(langCode: String): String = when (langCode) {
     "be" -> "Апытанне #$id\n" +
-        "Статус #$status\n" +
-        "${question(langCode)}: $question\n" +
-        "${options.map { option -> "${answer(langCode)}: $option" }.joinToString("\n")}\n" +
-        "${moreThanOneAnswer(langCode)}: ${allowMultipleAnswers.toAllowMultipleAnswers(langCode)}"
+            "Статус #$status\n" +
+            "${question(langCode)}: $question\n" +
+            "${options.mapIndexed { i, option -> "${answer(langCode)}: ${i + 1}: $option" }.joinToString("\n")}\n" +
+            "${moreThanOneAnswer(langCode)}: ${allowMultipleAnswers.toAllowMultipleAnswers(langCode)}"
 
     else -> "Опрос #$id\n" +
-        "Статус #$status\n" +
-        "${question(langCode)}: $question\n" +
-        "${options.map { option -> "${answer(langCode)}: $option" }.joinToString("\n")}\n" +
-        "${moreThanOneAnswer(langCode)}: ${allowMultipleAnswers.toAllowMultipleAnswers(langCode)}"
+            "Статус #$status\n" +
+            "${question(langCode)}: $question\n" +
+            "${options.mapIndexed { i, option -> "${answer(langCode)}: ${i + 1}: $option" }.joinToString("\n")}\n" +
+            "${moreThanOneAnswer(langCode)}: ${allowMultipleAnswers.toAllowMultipleAnswers(langCode)}"
 }
 
 fun Boolean.toAllowMultipleAnswers(langCode: String): String = when (langCode) {

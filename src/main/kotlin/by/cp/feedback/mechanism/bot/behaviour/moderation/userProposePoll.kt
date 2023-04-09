@@ -23,6 +23,15 @@ import java.time.ZoneOffset
 fun userProposePoll(): suspend BehaviourContext.(CommonMessage<TextContent>) -> Unit = tryF { message ->
     val userId: Long = message.from?.id?.chatId ?: throw FromNotFoundException()
     val langCode = "ru"
+    val lastUserPollTime = PollRepository.lastUserPoll(userId)?.createdAt
+    if (lastUserPollTime != null) {
+        val duration = Duration.between(lastUserPollTime, LocalDateTime.now(ZoneOffset.UTC))
+        if (duration.toSeconds() < secondsBetweenPolls) {
+            throw LessSevenDaysFromLastPollException(
+                timeTillNexPollText(duration, langCode)
+            )
+        }
+    }
     val question = waitTextMessage(
         SendTextMessage(userId.toChatId(), "Отправьте вопрос")
     ).filter { msg -> msg.sameThread(message) }.first().content.text
@@ -47,15 +56,6 @@ fun userProposePoll(): suspend BehaviourContext.(CommonMessage<TextContent>) -> 
             replyMarkup = yesNoMarkup()
         )
     ).filter { msg -> msg.sameThread(message) }.first().content.text.lowercase().fromAllowMultipleAnswers(langCode)
-    val lastUserPollTime = PollRepository.lastUserPoll(userId)?.createdAt
-    if (lastUserPollTime != null) {
-        val duration = Duration.between(LocalDateTime.now(ZoneOffset.UTC), lastUserPollTime)
-        if (duration.toSeconds() < secondsBetweenPolls) {
-            throw LessSevenDaysFromLastPollException(
-                timeTillNexPollText(duration.toDays(), duration.toHours(), duration.toMinutes(), langCode)
-            )
-        }
-    }
     val savedPoll = PollRepository.save(userId, question, options.toTypedArray(), allowMultipleAnswers)
     execute(
         SendTextMessage(
@@ -67,10 +67,11 @@ fun userProposePoll(): suspend BehaviourContext.(CommonMessage<TextContent>) -> 
     reply(message, sentToModeratorsText(langCode), replyMarkup = menuMarkup())
 }
 
-fun timeTillNexPollText(days: Long, hours: Long, minutes: Long, langCode: String) = when (langCode) {
-    "be" -> "Час да наступнай магчымасці прапанаваць апытанне: дні=$days " +
-        "гадзіны=$hours хвіліны=$minutes"
-
-    else -> "Время до следующей возможности предложить опрос: дни=$days " +
-        "часы=$hours минуты=$minutes"
+fun timeTillNexPollText(duration: Duration, langCode: String): String {
+    val stringBuilder = StringBuilder("Время до следующей возможности предложить опрос: ")
+    duration.toDays().takeIf { it != 0L }?.let { stringBuilder.append(" дни=$it") }
+    duration.toHours().takeIf { it != 0L }?.let { stringBuilder.append(" часы=${it - duration.toDays() * 24}") }
+    duration.toMinutes().takeIf { it != 0L }?.let { stringBuilder.append(" минуты=${it - duration.toHours() * 60}") }
+    duration.toSeconds().takeIf { it != 0L }?.let { stringBuilder.append(" секунды=${it - duration.toMinutes() * 60}") }
+    return stringBuilder.toString().trim()
 }
