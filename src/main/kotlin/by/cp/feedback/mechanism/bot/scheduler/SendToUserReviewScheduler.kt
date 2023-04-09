@@ -5,7 +5,6 @@ import by.cp.feedback.mechanism.bot.model.sendToUserReviewMarkup
 import by.cp.feedback.mechanism.bot.model.toMessage
 import by.cp.feedback.mechanism.bot.repository.PollRepository
 import by.cp.feedback.mechanism.bot.repository.PollUserReviewRepository
-import by.cp.feedback.mechanism.bot.repository.UserRepository
 import dev.inmo.tgbotapi.requests.send.SendTextMessage
 import dev.inmo.tgbotapi.types.toChatId
 import kotlinx.coroutines.runBlocking
@@ -22,11 +21,10 @@ class SendToUserReviewScheduler {
         if (reviews.isNotEmpty()) {
             reviews.forEach { review ->
                 runBlocking {
-                    val langCode = UserRepository.langCodeById(review.userId)
                     bot.execute(
                         SendTextMessage(
                             chatId = review.userId.toChatId(),
-                            text = PollRepository.getById(review.pollId)!!.toMessage(langCode),
+                            text = PollRepository.getById(review.pollId)!!.toMessage(),
                             replyMarkup = sendToUserReviewMarkup(review.pollId)
                         )
                     )

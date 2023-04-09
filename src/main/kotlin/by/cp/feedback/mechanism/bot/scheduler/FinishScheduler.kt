@@ -3,7 +3,6 @@ package by.cp.feedback.mechanism.bot.scheduler
 import by.cp.feedback.mechanism.bot.model.secondsTillFinish
 import by.cp.feedback.mechanism.bot.repository.PollRepository
 import by.cp.feedback.mechanism.bot.repository.PollVoteRepository
-import mu.KotlinLogging
 import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Component
 import java.time.Duration

@@ -19,9 +19,8 @@ fun moderatorFix(): suspend BehaviourContext.(DataCallbackQuery) -> Unit = { cal
     val id = callback.data.substring(moderatorFixDC.length).toLong()
     val poll = PollRepository.getById(id) ?: throw PollNotFoundInDbException()
     if (poll.rejectionReason != null) throw CantRejectRejectedException()
-    val langCode = "ru"
     val fixedPoll = waitTextMessage(
-        SendTextMessage(moderatorsChatId.toChatId(), "Отправьте исправленный опрос в формате\n${pollTemplateText(langCode)}")
+        SendTextMessage(moderatorsChatId.toChatId(), "Отправьте исправленный опрос в формате\n${pollTemplateText()}")
     ).filter { msg -> msg.sameThread(moderatorsChatId.toChatId()) }.first().content.text
     execute(
         SendTextMessage(
@@ -34,16 +33,8 @@ fun moderatorFix(): suspend BehaviourContext.(DataCallbackQuery) -> Unit = { cal
     delete((callback as MessageDataCallbackQuery).message)
 }
 
-fun pollTemplateText(langCode: String) = when (langCode) {
-    "be" -> "${question(langCode)}: Колькі?\n" +
-        "${answer(langCode)}: 10\n" +
+fun pollTemplateText() = "${question()}: Сколько?\n" +
+        "${answer()}: 10\n" +
         "...\n" +
-        "${answer(langCode)}: 12\n" +
-        "${moreThanOneAnswer(langCode)}: Так"
-
-    else -> "${question(langCode)}: Сколько?\n" +
-        "${answer(langCode)}: 10\n" +
-        "...\n" +
-        "${answer(langCode)}: 12\n" +
-        "${moreThanOneAnswer(langCode)}: Да"
-}
+        "${answer()}: 12\n" +
+        "${moreThanOneAnswer()}: Да"

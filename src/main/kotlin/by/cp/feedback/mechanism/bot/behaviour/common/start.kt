@@ -27,36 +27,34 @@ import javax.imageio.ImageIO
 
 fun start(): suspend BehaviourContext.(CommonMessage<TextContent>) -> Unit = tryF { message ->
     val userId: Long = message.from?.id?.chatId ?: throw FromNotFoundException()
-    val langCode = "ru"
     if (!UserRepository.exists(userId)) {
         var imageText = CaptchaService.getCaptcha()
-        var userCaptchaMessage = waitCaptcha(userId, imageText, langCode, message)
+        var userCaptchaMessage = waitCaptcha(userId, imageText, message)
         while (userCaptchaMessage.content.text != imageText.second) {
             if (userCaptchaMessage.content.text == changeCaptcha) {
                 imageText = CaptchaService.getCaptcha()
-                userCaptchaMessage = waitCaptcha(userId, imageText, langCode, message)
+                userCaptchaMessage = waitCaptcha(userId, imageText, message)
             } else {
-                reply(userCaptchaMessage, wrongCaptchaText(langCode))
-                userCaptchaMessage = waitCaptcha(userId, imageText, langCode, message)
+                reply(userCaptchaMessage, wrongCaptchaText())
+                userCaptchaMessage = waitCaptcha(userId, imageText, message)
             }
         }
-        UserRepository.save(userId, langCode)
+        UserRepository.save(userId, "ru")
         PollUserReviewRepository.saveByUserId(userId)
         PollUserVoteRepository.saveByUserId(userId)
     }
-    reply(message, helloText(langCode), replyMarkup = menuMarkup())
+    reply(message, helloText(), replyMarkup = menuMarkup())
 }
 
 private suspend fun BehaviourContext.waitCaptcha(
     userId: Long,
     imageText: Pair<BufferedImage, String>,
-    langCode: String,
     message: CommonMessage<TextContent>
 ) = waitTextMessage(
     SendPhoto(
         userId.toChatId(),
         imageText.first.toPhoto(),
-        sendMeCaptchaText(langCode),
+        sendMeCaptchaText(),
         replyMarkup = changeCaptchaMarkup()
     )
 ).filter { msg -> msg.sameThread(message) }.first()
@@ -66,22 +64,8 @@ fun BufferedImage.toPhoto() = ByteArrayOutputStream().let {
     it.toByteArray()
 }.asMultipartFile("captcha")
 
-fun sendMeCaptchaText(langCode: String) = when (langCode) {
-    "be" -> "Адышліце капчу"
-    else -> "Отошлите капчу"
-}
+fun sendMeCaptchaText() = "Отошлите капчу"
 
-fun wrongCaptchaText(langCode: String) = when (langCode) {
-    "be" -> "Неправільная капча"
-    else -> "Неправильная капча"
-}
+fun wrongCaptchaText() = "Неправильная капча"
 
-fun helloLangText(langCode: String) = when (langCode) {
-    "be" -> "Прывітанне\nАбярыце мову"
-    else -> "Привет\nВыберете язык"
-}
-
-fun helloText(langCode: String) = when (langCode) {
-    "be" -> "Прывітанне"
-    else -> "Привет"
-}
+fun helloText() = "Привет"

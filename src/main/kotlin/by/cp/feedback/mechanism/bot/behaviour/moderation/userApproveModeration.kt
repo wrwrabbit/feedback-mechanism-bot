@@ -18,10 +18,9 @@ fun userApproveModeration(): suspend BehaviourContext.(DataCallbackQuery) -> Uni
     val fixedPoll = (callback as MessageDataCallbackQuery).message.content.textContentOrThrow().text
         .split("\n").let { it.subList(1, it.size) }.joinToString("\n")
     val poll = PollRepository.getById(id) ?: throw PollNotFoundInDbException()
-    val langCode = "ru"
-    val (question, options, allowMultipleAnswers) = parsePoll(fixedPoll, langCode)
+    val (question, options, allowMultipleAnswers) = parsePoll(fixedPoll)
     PollRepository.updatePoll(id, question, options, allowMultipleAnswers)
     PollRepository.updateStatus(poll.id, PollStatus.ON_USER_REVIEW)
     PollUserReviewRepository.save(poll.id)
-    execute(SendTextMessage(poll.userId.toChatId(), sentToUsersReviewText(langCode)))
+    execute(SendTextMessage(poll.userId.toChatId(), sentToUsersReviewText()))
 }

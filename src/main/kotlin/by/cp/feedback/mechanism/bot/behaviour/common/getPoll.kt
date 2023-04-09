@@ -18,7 +18,6 @@ fun getPoll(): suspend BehaviourContext.(CommonMessage<TextContent>, Array<Strin
     val id = args.first().toLong()
     val poll = PollRepository.getById(id) ?: throw PollNotFoundInDbException()
     val userId: Long = message.from?.id?.chatId ?: throw FromNotFoundException()
-    val langCode = "ru"
     if (userId != poll.userId) throw YouAreNotOwnerOfPollException()
-    reply(message, poll.toMessage(langCode))
+    reply(message, poll.toMessage())
 }

@@ -6,7 +6,6 @@ import by.cp.feedback.mechanism.bot.model.userVoteMultipleAnswersMarkup
 import by.cp.feedback.mechanism.bot.model.userVoteSingleAnswerMarkup
 import by.cp.feedback.mechanism.bot.repository.PollRepository
 import by.cp.feedback.mechanism.bot.repository.PollUserVoteRepository
-import by.cp.feedback.mechanism.bot.repository.UserRepository
 import dev.inmo.tgbotapi.requests.send.SendTextMessage
 import dev.inmo.tgbotapi.types.toChatId
 import kotlinx.coroutines.runBlocking
@@ -25,11 +24,10 @@ class SendToUserVoteScheduler {
             reviews.forEach { review ->
                 runBlocking {
                     val poll = PollRepository.getById(review.pollId)!!
-                    val langCode = UserRepository.langCodeById(review.userId)
                     bot.execute(
                         SendTextMessage(
                             chatId = review.userId.toChatId(),
-                            text = poll.toMessage(langCode),
+                            text = poll.toMessage(),
                             replyMarkup = if (poll.allowMultipleAnswers) {
                                 userVoteMultipleAnswersMarkup(poll.options, poll.id)
                             } else {
