@@ -6,6 +6,8 @@ import by.cp.feedback.mechanism.bot.exception.FromNotFoundException
 import by.cp.feedback.mechanism.bot.model.changeCaptcha
 import by.cp.feedback.mechanism.bot.model.changeCaptchaMarkup
 import by.cp.feedback.mechanism.bot.model.menuMarkup
+import by.cp.feedback.mechanism.bot.repository.PollUserReviewRepository
+import by.cp.feedback.mechanism.bot.repository.PollUserVoteRepository
 import by.cp.feedback.mechanism.bot.repository.UserRepository
 import dev.inmo.tgbotapi.extensions.api.send.reply
 import dev.inmo.tgbotapi.extensions.behaviour_builder.BehaviourContext
@@ -39,6 +41,8 @@ fun start(): suspend BehaviourContext.(CommonMessage<TextContent>) -> Unit = try
             }
         }
         UserRepository.save(userId, langCode)
+        PollUserReviewRepository.saveByUserId(userId)
+        PollUserVoteRepository.saveByUserId(userId)
     }
     reply(message, helloText(langCode), replyMarkup = menuMarkup())
 }

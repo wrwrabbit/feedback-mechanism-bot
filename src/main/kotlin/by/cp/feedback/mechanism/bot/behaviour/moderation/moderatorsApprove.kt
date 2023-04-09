@@ -29,9 +29,10 @@ fun moderatorApprove(): suspend BehaviourContext.(DataCallbackQuery) -> Unit = {
         PollUserReviewRepository.save(poll.id)
         execute(SendTextMessage(poll.userId.toChatId(), sentToUsersReviewText(langCode)))
         delete((callback as MessageDataCallbackQuery).message)
+    } else {
+        val message = (callback as MessageDataCallbackQuery).message
+        edit(message.chat, message.messageId, moderatorsReviewMarkup(poll.id, resultArray.size))
     }
-    val message = (callback as MessageDataCallbackQuery).message
-    edit(message.chat, message.messageId, moderatorsReviewMarkup(poll.id, resultArray.size))
 }
 
 fun sentToUsersReviewText(langCode: String) = when (langCode) {

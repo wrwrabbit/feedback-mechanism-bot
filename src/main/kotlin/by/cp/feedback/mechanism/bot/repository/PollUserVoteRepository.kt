@@ -2,7 +2,9 @@ package by.cp.feedback.mechanism.bot.repository
 
 import by.cp.feedback.mechanism.bot.database.DatabaseConfiguration
 import by.cp.feedback.mechanism.bot.model.PollForUserReviewDto
+import by.cp.feedback.mechanism.bot.model.PollStatus
 import by.cp.feedback.mechanism.bot.table.PollUserVote
+import by.cp.feedback.mechanism.bot.table.Polls
 import by.cp.feedback.mechanism.bot.table.Users
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
@@ -15,6 +17,13 @@ object PollUserVoteRepository {
     fun save(pollId: Long) = transaction {
         PollUserVote.insert(
             Users.slice(Users.id, longParam(pollId)).selectAll(),
+            columns = listOf(PollUserVote.userId, PollUserVote.pollId)
+        )
+    }
+
+    fun saveByUserId(userId: Long) = transaction {
+        PollUserVote.insert(
+            Polls.slice(longParam(userId), Polls.id).select { Polls.status eq PollStatus.VOTING },
             columns = listOf(PollUserVote.userId, PollUserVote.pollId)
         )
     }
