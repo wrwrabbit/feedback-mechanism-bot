@@ -20,7 +20,7 @@ fun moderatorFix(): suspend BehaviourContext.(DataCallbackQuery) -> Unit = { cal
     val poll = PollRepository.getById(id) ?: throw PollNotFoundInDbException()
     if (poll.rejectionReason != null) throw CantRejectRejectedException()
     val fixedPoll = waitTextMessage(
-        SendTextMessage(moderatorsChatId.toChatId(), "Отправьте исправленный опрос в формате\n${pollTemplateText()}")
+        SendTextMessage(moderatorsChatId.toChatId(), "Отправьте исправленный опрос (в ответе на это сообщение) в формате\n${pollTemplateText()}")
     ).filter { msg -> msg.sameThread(moderatorsChatId.toChatId()) }.first().content.text
     execute(
         SendTextMessage(
