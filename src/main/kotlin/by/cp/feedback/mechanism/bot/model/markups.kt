@@ -102,7 +102,7 @@ fun userVoteMultipleAnswersMarkup(options: Array<String>, pollId: Long) = Inline
         }
         row {
             +CallbackDataInlineKeyboardButton(
-                "Vote",
+                "Отправить",
                 callbackData = "$userVoteMultipleAnswersDC${pollId}"
             )
         }
