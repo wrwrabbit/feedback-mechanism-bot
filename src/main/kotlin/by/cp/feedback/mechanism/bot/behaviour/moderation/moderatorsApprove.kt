@@ -9,13 +9,16 @@ import by.cp.feedback.mechanism.bot.model.moderatorsApprovalsRequired
 import by.cp.feedback.mechanism.bot.model.moderatorsReviewMarkup
 import by.cp.feedback.mechanism.bot.repository.PollRepository
 import by.cp.feedback.mechanism.bot.repository.PollUserReviewRepository
-import dev.inmo.tgbotapi.extensions.api.delete
 import dev.inmo.tgbotapi.extensions.api.edit.edit
 import dev.inmo.tgbotapi.extensions.behaviour_builder.BehaviourContext
 import dev.inmo.tgbotapi.requests.send.SendTextMessage
+import dev.inmo.tgbotapi.types.buttons.InlineKeyboardButtons.CallbackDataInlineKeyboardButton
+import dev.inmo.tgbotapi.types.buttons.InlineKeyboardMarkup
 import dev.inmo.tgbotapi.types.queries.callback.DataCallbackQuery
 import dev.inmo.tgbotapi.types.queries.callback.MessageDataCallbackQuery
 import dev.inmo.tgbotapi.types.toChatId
+import dev.inmo.tgbotapi.utils.matrix
+import dev.inmo.tgbotapi.utils.row
 
 fun moderatorApprove(): suspend BehaviourContext.(DataCallbackQuery) -> Unit = { callback ->
     val id = callback.data.substring(moderatorApproveDC.length).toLong()
@@ -29,7 +32,19 @@ fun moderatorApprove(): suspend BehaviourContext.(DataCallbackQuery) -> Unit = {
         PollRepository.updateStatus(poll.id, PollStatus.ON_USER_REVIEW)
         PollUserReviewRepository.save(poll.id)
         execute(SendTextMessage(poll.userId.toChatId(), sentToUsersReviewText()))
-        delete((callback as MessageDataCallbackQuery).message)
+        val message = (callback as MessageDataCallbackQuery).message
+        edit(
+            message.chat,
+            message.messageId,
+            InlineKeyboardMarkup(matrix {
+                row {
+                    +CallbackDataInlineKeyboardButton(
+                        "Approved",
+                        callbackData = "xxxxxxxxxx"
+                    )
+                }
+            })
+        )
     } else {
         val message = (callback as MessageDataCallbackQuery).message
         edit(message.chat, message.messageId, moderatorsReviewMarkup(poll.id, resultArray.size))

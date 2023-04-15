@@ -5,9 +5,11 @@ import dev.inmo.tgbotapi.extensions.api.send.reply
 import dev.inmo.tgbotapi.extensions.behaviour_builder.BehaviourContext
 import dev.inmo.tgbotapi.types.message.abstracts.CommonMessage
 import dev.inmo.tgbotapi.types.message.content.TextContent
+import dev.inmo.tgbotapi.types.queries.callback.DataCallbackQuery
+import dev.inmo.tgbotapi.types.queries.callback.MessageDataCallbackQuery
 
 fun tryF(extracted: suspend BehaviourContext.(message: CommonMessage<TextContent>) -> Unit): suspend BehaviourContext.(CommonMessage<TextContent>) -> Unit =
-    { message: CommonMessage<TextContent> ->
+    { message ->
         try {
             extracted(message)
         } catch (exception: FeedbackBotException) {
@@ -15,8 +17,17 @@ fun tryF(extracted: suspend BehaviourContext.(message: CommonMessage<TextContent
         }
     }
 
+fun tryFModerators(extracted: suspend BehaviourContext.(callback: DataCallbackQuery) -> Unit): suspend BehaviourContext.(DataCallbackQuery) -> Unit =
+    { callback ->
+        try {
+            extracted(callback)
+        } catch (exception: FeedbackBotException) {
+            reply((callback as MessageDataCallbackQuery).message, exception.message)
+        }
+    }
+
 fun tryF(extracted: suspend BehaviourContext.(message: CommonMessage<TextContent>, args: Array<String>) -> Unit): suspend BehaviourContext.(CommonMessage<TextContent>, Array<String>) -> Unit =
-    { message: CommonMessage<TextContent>, args: Array<String> ->
+    { message, args ->
         try {
             extracted(message, args)
         } catch (exception: FeedbackBotException) {

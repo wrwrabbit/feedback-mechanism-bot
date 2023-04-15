@@ -1,27 +1,36 @@
 package by.cp.feedback.mechanism.bot.behaviour.moderation
 
+import by.cp.feedback.mechanism.bot.behaviour.utils.tryFModerators
 import by.cp.feedback.mechanism.bot.exception.CantRejectRejectedException
 import by.cp.feedback.mechanism.bot.exception.PollNotFoundInDbException
 import by.cp.feedback.mechanism.bot.model.*
 import by.cp.feedback.mechanism.bot.repository.PollRepository
-import dev.inmo.tgbotapi.extensions.api.delete
+import dev.inmo.tgbotapi.extensions.api.edit.edit
 import dev.inmo.tgbotapi.extensions.behaviour_builder.BehaviourContext
 import dev.inmo.tgbotapi.extensions.behaviour_builder.expectations.waitTextMessage
 import dev.inmo.tgbotapi.extensions.utils.extensions.sameThread
 import dev.inmo.tgbotapi.requests.send.SendTextMessage
+import dev.inmo.tgbotapi.types.buttons.InlineKeyboardButtons.CallbackDataInlineKeyboardButton
+import dev.inmo.tgbotapi.types.buttons.InlineKeyboardMarkup
 import dev.inmo.tgbotapi.types.queries.callback.DataCallbackQuery
 import dev.inmo.tgbotapi.types.queries.callback.MessageDataCallbackQuery
 import dev.inmo.tgbotapi.types.toChatId
+import dev.inmo.tgbotapi.utils.matrix
+import dev.inmo.tgbotapi.utils.row
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.first
 
-fun moderatorFix(): suspend BehaviourContext.(DataCallbackQuery) -> Unit = { callback ->
+fun moderatorFix(): suspend BehaviourContext.(DataCallbackQuery) -> Unit = tryFModerators { callback ->
     val id = callback.data.substring(moderatorFixDC.length).toLong()
     val poll = PollRepository.getById(id) ?: throw PollNotFoundInDbException()
     if (poll.rejectionReason != null) throw CantRejectRejectedException()
     val fixedPoll = waitTextMessage(
-        SendTextMessage(moderatorsChatId.toChatId(), "Отправьте исправленный опрос (в ответе на это сообщение) в формате\n${pollTemplateText()}")
+        SendTextMessage(
+            moderatorsChatId.toChatId(),
+            "Отправьте исправленный опрос (в ответе на это сообщение) в формате\n${pollTemplateText()}"
+        )
     ).filter { msg -> msg.sameThread(moderatorsChatId.toChatId()) }.first().content.text
+    parsePoll(fixedPoll)
     execute(
         SendTextMessage(
             poll.userId.toChatId(),
@@ -30,7 +39,19 @@ fun moderatorFix(): suspend BehaviourContext.(DataCallbackQuery) -> Unit = { cal
         )
     )
     execute(SendTextMessage(moderatorsChatId.toChatId(), "Вы предложили исправленную версию опроса"))
-    delete((callback as MessageDataCallbackQuery).message)
+    val message = (callback as MessageDataCallbackQuery).message
+    edit(
+        message.chat,
+        message.messageId,
+        InlineKeyboardMarkup(matrix {
+            row {
+                +CallbackDataInlineKeyboardButton(
+                    "Fixed",
+                    callbackData = "xxxxxxxxxx"
+                )
+            }
+        })
+    )
 }
 
 fun pollTemplateText() = "${question()}: Сколько?\n" +

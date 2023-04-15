@@ -35,18 +35,19 @@ fun userProposePoll(): suspend BehaviourContext.(CommonMessage<TextContent>) -> 
         SendTextMessage(userId.toChatId(), "Отправьте вопрос")
     ).filter { msg -> msg.sameThread(message) }.first().content.text
     val options = mutableListOf<String>()
-    var option = waitTextMessage(
-        SendTextMessage(userId.toChatId(), "Отправьте вариант ответа №${options.size + 1}", replyMarkup = endMarkup())
-    ).filter { msg -> msg.sameThread(message) }.first().content.text
-    while (option != "Завершить") {
-        options.add(option)
+    var option = ""
+    for (i in 0..10) {
         option = waitTextMessage(
             SendTextMessage(
                 userId.toChatId(),
                 "Отправьте вариант ответа №${options.size + 1}",
-                replyMarkup = endMarkup()
+                replyMarkup = endMarkup().takeIf { options.size > 1 }
             )
         ).filter { msg -> msg.sameThread(message) }.first().content.text
+        if (options.size > 1 && option == "Завершить") {
+            break
+        }
+        options.add(option)
     }
     val allowMultipleAnswers = waitTextMessage(
         SendTextMessage(
