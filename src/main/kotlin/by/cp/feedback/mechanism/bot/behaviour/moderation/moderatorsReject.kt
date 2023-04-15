@@ -6,14 +6,18 @@ import by.cp.feedback.mechanism.bot.model.PollStatus
 import by.cp.feedback.mechanism.bot.model.moderatorRejectDC
 import by.cp.feedback.mechanism.bot.model.moderatorsChatId
 import by.cp.feedback.mechanism.bot.repository.PollRepository
-import dev.inmo.tgbotapi.extensions.api.delete
+import dev.inmo.tgbotapi.extensions.api.edit.edit
 import dev.inmo.tgbotapi.extensions.behaviour_builder.BehaviourContext
 import dev.inmo.tgbotapi.extensions.behaviour_builder.expectations.waitTextMessage
 import dev.inmo.tgbotapi.extensions.utils.extensions.sameThread
 import dev.inmo.tgbotapi.requests.send.SendTextMessage
+import dev.inmo.tgbotapi.types.buttons.InlineKeyboardButtons.CallbackDataInlineKeyboardButton
+import dev.inmo.tgbotapi.types.buttons.InlineKeyboardMarkup
 import dev.inmo.tgbotapi.types.queries.callback.DataCallbackQuery
 import dev.inmo.tgbotapi.types.queries.callback.MessageDataCallbackQuery
 import dev.inmo.tgbotapi.types.toChatId
+import dev.inmo.tgbotapi.utils.matrix
+import dev.inmo.tgbotapi.utils.row
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.first
 
@@ -28,7 +32,19 @@ fun moderatorReject(): suspend BehaviourContext.(DataCallbackQuery) -> Unit = { 
     PollRepository.updateStatus(poll.id, PollStatus.REJECTED)
     execute(SendTextMessage(poll.userId.toChatId(), yourPollRejectedText(poll.id, rejectionReason)))
     execute(SendTextMessage(moderatorsChatId.toChatId(), "Вы отклонили опрос"))
-    delete((callback as MessageDataCallbackQuery).message)
+    val message = (callback as MessageDataCallbackQuery).message
+    edit(
+        message.chat,
+        message.messageId,
+        InlineKeyboardMarkup(matrix {
+            row {
+                +CallbackDataInlineKeyboardButton(
+                    "Rejected",
+                    callbackData = "xxxxxxxxxx"
+                )
+            }
+        })
+    )
 }
 
 fun yourPollRejectedText(pollId: Long, rejectionReason: String) =

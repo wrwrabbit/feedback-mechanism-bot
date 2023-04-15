@@ -14,12 +14,8 @@ import dev.inmo.tgbotapi.types.message.content.TextContent
 fun myPolls(): suspend BehaviourContext.(CommonMessage<TextContent>) -> Unit = tryF { message ->
     val userId: Long = message.from?.id?.chatId ?: throw FromNotFoundException()
     val polls = PollRepository.getByUserId(userId)
-    val pollsResponse = polls.joinToString("\n") { it.toStatusMessage() + "\n" }
-    val response = if (pollsResponse.isNotEmpty()) {
-        pollsResponse
-    } else {
-        emptyPollsMessage()
-    }
+    val pollsResponse = polls.sortedBy { it.id }.joinToString("\n") { it.toStatusMessage() + "\n" }
+    val response = pollsResponse.ifEmpty { emptyPollsMessage() }
     reply(message, response)
 }
 

@@ -17,7 +17,7 @@ object CaptchaService {
         val textFont = Font("Verdana", Font.BOLD, 20)
         val charsToPrint = 6
         val width = 160
-        val height = 50
+        val height = 100
         val circlesToDraw = 25
         val horizMargin = 10.0f
         val rotationRange = 0.7
