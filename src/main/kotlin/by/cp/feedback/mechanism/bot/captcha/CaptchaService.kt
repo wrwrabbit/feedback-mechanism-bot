@@ -16,10 +16,10 @@ object CaptchaService {
         val circleColor = Color(190, 160, 150)
         val textFont = Font("Verdana", Font.BOLD, 20)
         val charsToPrint = 6
-        val width = 110
-        val height = 30
+        val width = 160
+        val height = 100
         val circlesToDraw = 25
-        val horizMargin = 5.0f
+        val horizMargin = 10.0f
         val rotationRange = 0.7
         val bufferedImage = BufferedImage(width, height, BufferedImage.TYPE_INT_RGB)
         val g = bufferedImage.graphics as Graphics2D
