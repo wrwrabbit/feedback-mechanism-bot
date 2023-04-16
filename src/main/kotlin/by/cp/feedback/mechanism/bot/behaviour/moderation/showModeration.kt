@@ -4,7 +4,7 @@ import by.cp.feedback.mechanism.bot.exception.PollNotFoundInDbException
 import by.cp.feedback.mechanism.bot.model.moderatorsChatId
 import by.cp.feedback.mechanism.bot.model.moderatorsReviewMarkup
 import by.cp.feedback.mechanism.bot.model.showModerationDC
-import by.cp.feedback.mechanism.bot.model.toMessage
+import by.cp.feedback.mechanism.bot.model.toModeratorsMessage
 import by.cp.feedback.mechanism.bot.repository.PollRepository
 import dev.inmo.tgbotapi.extensions.behaviour_builder.BehaviourContext
 import dev.inmo.tgbotapi.requests.send.SendTextMessage
@@ -17,7 +17,7 @@ fun showModeration(): suspend BehaviourContext.(DataCallbackQuery) -> Unit = { c
     execute(
         SendTextMessage(
             moderatorsChatId.toChatId(),
-            poll.toMessage(),
+            poll.toModeratorsMessage(),
             replyMarkup = moderatorsReviewMarkup(id, poll.moderatorApproves.size)
         )
     )

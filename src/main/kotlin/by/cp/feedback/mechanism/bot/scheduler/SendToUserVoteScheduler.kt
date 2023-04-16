@@ -17,12 +17,12 @@ import java.util.concurrent.TimeUnit
 @Component
 class SendToUserVoteScheduler {
 
-    @Scheduled(fixedRate = 4, timeUnit = TimeUnit.SECONDS)
+    @Scheduled(fixedRate = 5, timeUnit = TimeUnit.SECONDS)
     fun process() {
-        val reviews = PollUserVoteRepository.select15()
-        if (reviews.isNotEmpty()) {
-            reviews.forEach { review ->
-                runBlocking {
+        runBlocking {
+            val reviews = PollUserVoteRepository.select15()
+            if (reviews.isNotEmpty()) {
+                reviews.forEach { review ->
                     val poll = PollRepository.getById(review.pollId)!!
                     bot.execute(
                         SendTextMessage(
@@ -35,8 +35,8 @@ class SendToUserVoteScheduler {
                             }
                         )
                     )
+                    PollUserVoteRepository.delete(review)
                 }
-                PollUserVoteRepository.delete(review)
             }
         }
     }

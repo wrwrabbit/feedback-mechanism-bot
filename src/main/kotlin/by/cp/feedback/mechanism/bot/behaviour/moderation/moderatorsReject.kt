@@ -11,13 +11,10 @@ import dev.inmo.tgbotapi.extensions.behaviour_builder.BehaviourContext
 import dev.inmo.tgbotapi.extensions.behaviour_builder.expectations.waitTextMessage
 import dev.inmo.tgbotapi.extensions.utils.extensions.sameThread
 import dev.inmo.tgbotapi.requests.send.SendTextMessage
-import dev.inmo.tgbotapi.types.buttons.InlineKeyboardButtons.CallbackDataInlineKeyboardButton
-import dev.inmo.tgbotapi.types.buttons.InlineKeyboardMarkup
+import dev.inmo.tgbotapi.types.message.content.TextContent
 import dev.inmo.tgbotapi.types.queries.callback.DataCallbackQuery
 import dev.inmo.tgbotapi.types.queries.callback.MessageDataCallbackQuery
 import dev.inmo.tgbotapi.types.toChatId
-import dev.inmo.tgbotapi.utils.matrix
-import dev.inmo.tgbotapi.utils.row
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.first
 
@@ -33,17 +30,12 @@ fun moderatorReject(): suspend BehaviourContext.(DataCallbackQuery) -> Unit = { 
     execute(SendTextMessage(poll.userId.toChatId(), yourPollRejectedText(poll.id, rejectionReason)))
     execute(SendTextMessage(moderatorsChatId.toChatId(), "Вы отклонили опрос"))
     val message = (callback as MessageDataCallbackQuery).message
+    val text = (callback.message.content as TextContent).text
     edit(
-        message.chat,
-        message.messageId,
-        InlineKeyboardMarkup(matrix {
-            row {
-                +CallbackDataInlineKeyboardButton(
-                    "Rejected",
-                    callbackData = "xxxxxxxxxx"
-                )
-            }
-        })
+        chatId = message.chat.id,
+        messageId = message.messageId,
+        text = "ОТКЛОНЕНО\n$text",
+        replyMarkup = null
     )
 }
 

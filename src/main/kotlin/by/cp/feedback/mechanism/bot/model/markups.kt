@@ -23,6 +23,7 @@ fun endMarkup() = ReplyKeyboardMarkup(
     keyboard = matrix {
         row {
             +SimpleKeyboardButton("Завершить")
+            +SimpleKeyboardButton(cancelPollCreation)
         }
     },
     oneTimeKeyboard = true,
@@ -34,6 +35,7 @@ fun yesNoMarkup() = ReplyKeyboardMarkup(
         row {
             +SimpleKeyboardButton("Да")
             +SimpleKeyboardButton("Нет")
+            +SimpleKeyboardButton(cancelPollCreation)
         }
     },
     oneTimeKeyboard = true,
@@ -137,6 +139,16 @@ fun changeCaptchaMarkup() = ReplyKeyboardMarkup(
     keyboard = matrix {
         row {
             +SimpleKeyboardButton(changeCaptcha)
+        }
+    },
+    oneTimeKeyboard = true,
+    resizeKeyboard = true
+)
+
+fun cancelPollCreationMarkup() = ReplyKeyboardMarkup(
+    keyboard = matrix {
+        row {
+            +SimpleKeyboardButton(cancelPollCreation)
         }
     },
     oneTimeKeyboard = true,
