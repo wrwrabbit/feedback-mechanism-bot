@@ -33,11 +33,17 @@ import org.springframework.scheduling.annotation.EnableScheduling
 class FeedbackMechanismBot
 
 const val startCommand = "start"
-const val proposePollCommand = "propose_poll"
 const val moderationPollsCommand = "moderation_polls"
 const val getChatIdCommand = "get_chat_id"
 const val myPollsCommand = "my_polls"
 const val getPollCommand = "get_poll"
+val botCommands = listOf(
+    startCommand,
+    moderationPollsCommand,
+    getChatIdCommand,
+    myPollsCommand,
+    getPollCommand
+).map { "/$it" }
 
 private val logger = KotlinLogging.logger { }
 
@@ -66,7 +72,6 @@ suspend fun main(args: Array<String>) {
         onDataCallbackQuery(Regex("$moderatorFixDC.*"), scenarioReceiver = moderatorFix())
         onDataCallbackQuery(Regex("$moderatorRejectDC.*"), scenarioReceiver = moderatorReject())
         onText(initialFilter = { it.content.text == "✍️ создать опрос" }, scenarioReceiver = userProposePoll())
-        onCommand(proposePollCommand, scenarioReceiver = userProposePoll())
         onDataCallbackQuery(Regex("$userApproveModerationDC.*"), scenarioReceiver = userApproveModeration())
         onDataCallbackQuery(Regex("$userRejectModerationDC.*"), scenarioReceiver = userRejectModeration())
         //REVIEW
@@ -81,11 +86,10 @@ suspend fun main(args: Array<String>) {
         onDataCallbackQuery(Regex("$userVoteCheckAnswerDC.*"), scenarioReceiver = userVoteCheckAnswer())
 
         setMyCommands(
-            BotCommand(startCommand, "startCommand"),
-            BotCommand(proposePollCommand, "proposePollCommand"),
-            BotCommand(getChatIdCommand, "getChatIdCommand"),
-            BotCommand(getPollCommand, "getPollCommand"),
-            BotCommand(myPollsCommand, "myPollsCommand")
+            BotCommand(startCommand, "Пример: /start"),
+            BotCommand(getChatIdCommand, "Пример: /get_chat_id"),
+            BotCommand(getPollCommand, "Пример: /get_poll 20"),
+            BotCommand(myPollsCommand, "Пример: /my_polls")
         )
     }
     bot.setWebhookInfoAndStartListenWebhooks(

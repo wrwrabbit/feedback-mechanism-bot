@@ -14,7 +14,7 @@ import java.util.concurrent.TimeUnit
 @Component
 class FinishScheduler {
 
-    @Scheduled(fixedRate = 20, timeUnit = TimeUnit.SECONDS)
+    @Scheduled(fixedRate = 30, timeUnit = TimeUnit.SECONDS)
     fun process() {
         PollVoteRepository.findInVoting().forEach { poll ->
             val between = Duration.between(poll.startedAt, LocalDateTime.now(ZoneOffset.UTC))

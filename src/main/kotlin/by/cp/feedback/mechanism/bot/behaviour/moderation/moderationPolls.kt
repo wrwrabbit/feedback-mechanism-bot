@@ -14,18 +14,20 @@ import dev.inmo.tgbotapi.types.message.content.TextContent
 import dev.inmo.tgbotapi.types.toChatId
 
 fun moderationPolls(): suspend BehaviourContext.(CommonMessage<TextContent>) -> Unit = tryF { message ->
-    val polls = PollRepository.getByStatus(PollStatus.ON_MODERATOR_REVIEW)
-    if (polls.isEmpty()) {
-        reply(message, emptyPollsMessage())
-    } else {
-        polls.forEach { poll ->
-            execute(
-                SendTextMessage(
-                    moderatorsChatId.toChatId(),
-                    poll.toStatusMessage(),
-                    replyMarkup = showModerationMarkup(poll.id)
+    if (message.chat.id == moderatorsChatId.toChatId()) {
+        val polls = PollRepository.getByStatus(PollStatus.ON_MODERATOR_REVIEW)
+        if (polls.isEmpty()) {
+            reply(message, emptyPollsMessage())
+        } else {
+            polls.forEach { poll ->
+                execute(
+                    SendTextMessage(
+                        moderatorsChatId.toChatId(),
+                        poll.toStatusMessage(),
+                        replyMarkup = showModerationMarkup(poll.id)
+                    )
                 )
-            )
+            }
         }
     }
 }

@@ -10,13 +10,10 @@ import dev.inmo.tgbotapi.extensions.behaviour_builder.BehaviourContext
 import dev.inmo.tgbotapi.extensions.behaviour_builder.expectations.waitTextMessage
 import dev.inmo.tgbotapi.extensions.utils.extensions.sameThread
 import dev.inmo.tgbotapi.requests.send.SendTextMessage
-import dev.inmo.tgbotapi.types.buttons.InlineKeyboardButtons.CallbackDataInlineKeyboardButton
-import dev.inmo.tgbotapi.types.buttons.InlineKeyboardMarkup
+import dev.inmo.tgbotapi.types.message.content.TextContent
 import dev.inmo.tgbotapi.types.queries.callback.DataCallbackQuery
 import dev.inmo.tgbotapi.types.queries.callback.MessageDataCallbackQuery
 import dev.inmo.tgbotapi.types.toChatId
-import dev.inmo.tgbotapi.utils.matrix
-import dev.inmo.tgbotapi.utils.row
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.first
 
@@ -40,17 +37,12 @@ fun moderatorFix(): suspend BehaviourContext.(DataCallbackQuery) -> Unit = tryFM
     )
     execute(SendTextMessage(moderatorsChatId.toChatId(), "Вы предложили исправленную версию опроса"))
     val message = (callback as MessageDataCallbackQuery).message
+    val text = (callback.message.content as TextContent).text
     edit(
-        message.chat,
-        message.messageId,
-        InlineKeyboardMarkup(matrix {
-            row {
-                +CallbackDataInlineKeyboardButton(
-                    "Fixed",
-                    callbackData = "xxxxxxxxxx"
-                )
-            }
-        })
+        chatId = message.chat.id,
+        messageId = message.messageId,
+        text = "ИСПРАВЛЕНО\n$text",
+        replyMarkup = null
     )
 }
 

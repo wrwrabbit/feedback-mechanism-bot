@@ -19,10 +19,10 @@ class PollPostScheduler {
 
     private val logger = KotlinLogging.logger {}
 
-    @Scheduled(fixedRate = 20, timeUnit = TimeUnit.SECONDS)
+    @Scheduled(fixedRate = 30, timeUnit = TimeUnit.SECONDS)
     fun process() {
-        PollVoteRepository.findInVoting().forEach { poll ->
-            runBlocking {
+        runBlocking {
+            PollVoteRepository.findInVoting().forEach { poll ->
                 try {
                     bot.edit(
                         chatId = postChatId.toChatId(),

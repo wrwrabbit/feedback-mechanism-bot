@@ -12,13 +12,10 @@ import by.cp.feedback.mechanism.bot.repository.PollUserReviewRepository
 import dev.inmo.tgbotapi.extensions.api.edit.edit
 import dev.inmo.tgbotapi.extensions.behaviour_builder.BehaviourContext
 import dev.inmo.tgbotapi.requests.send.SendTextMessage
-import dev.inmo.tgbotapi.types.buttons.InlineKeyboardButtons.CallbackDataInlineKeyboardButton
-import dev.inmo.tgbotapi.types.buttons.InlineKeyboardMarkup
+import dev.inmo.tgbotapi.types.message.content.TextContent
 import dev.inmo.tgbotapi.types.queries.callback.DataCallbackQuery
 import dev.inmo.tgbotapi.types.queries.callback.MessageDataCallbackQuery
 import dev.inmo.tgbotapi.types.toChatId
-import dev.inmo.tgbotapi.utils.matrix
-import dev.inmo.tgbotapi.utils.row
 
 fun moderatorApprove(): suspend BehaviourContext.(DataCallbackQuery) -> Unit = { callback ->
     val id = callback.data.substring(moderatorApproveDC.length).toLong()
@@ -33,17 +30,12 @@ fun moderatorApprove(): suspend BehaviourContext.(DataCallbackQuery) -> Unit = {
         PollUserReviewRepository.save(poll.id)
         execute(SendTextMessage(poll.userId.toChatId(), sentToUsersReviewText()))
         val message = (callback as MessageDataCallbackQuery).message
+        val text = (callback.message.content as TextContent).text
         edit(
-            message.chat,
-            message.messageId,
-            InlineKeyboardMarkup(matrix {
-                row {
-                    +CallbackDataInlineKeyboardButton(
-                        "Approved",
-                        callbackData = "xxxxxxxxxx"
-                    )
-                }
-            })
+            chatId = message.chat.id,
+            messageId = message.messageId,
+            text = "УТВЕРЖДЕНО\n$text",
+            replyMarkup = null
         )
     } else {
         val message = (callback as MessageDataCallbackQuery).message

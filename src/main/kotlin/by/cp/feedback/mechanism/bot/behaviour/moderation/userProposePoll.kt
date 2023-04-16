@@ -1,6 +1,8 @@
 package by.cp.feedback.mechanism.bot.behaviour.moderation
 
-import by.cp.feedback.mechanism.bot.behaviour.utils.tryF
+import by.cp.feedback.mechanism.bot.behaviour.utils.tryFUser
+import by.cp.feedback.mechanism.bot.botCommands
+import by.cp.feedback.mechanism.bot.exception.CancelPollCreationException
 import by.cp.feedback.mechanism.bot.exception.FromNotFoundException
 import by.cp.feedback.mechanism.bot.exception.LessSevenDaysFromLastPollException
 import by.cp.feedback.mechanism.bot.model.*
@@ -20,51 +22,79 @@ import java.time.Duration
 import java.time.LocalDateTime
 import java.time.ZoneOffset
 
-fun userProposePoll(): suspend BehaviourContext.(CommonMessage<TextContent>) -> Unit = tryF { message ->
+fun userProposePoll(): suspend BehaviourContext.(CommonMessage<TextContent>) -> Unit = tryFUser { message ->
     val userId: Long = message.from?.id?.chatId ?: throw FromNotFoundException()
-    val lastUserPollTime = PollRepository.lastUserPoll(userId)?.createdAt
-    if (lastUserPollTime != null) {
-        val duration = Duration.between(lastUserPollTime, LocalDateTime.now(ZoneOffset.UTC))
-        if (duration.toSeconds() < secondsBetweenPolls) {
-            throw LessSevenDaysFromLastPollException(
-                timeTillNexPollText(duration)
-            )
-        }
-    }
-    val question = waitTextMessage(
-        SendTextMessage(userId.toChatId(), "Отправьте вопрос")
-    ).filter { msg -> msg.sameThread(message) }.first().content.text
+    checkTime(userId)
+    val question = getQuestion(userId, message)
+    if (question == cancelPollCreation) throw CancelPollCreationException()
     val options = mutableListOf<String>()
     var option = ""
     for (i in 0..10) {
-        option = waitTextMessage(
-            SendTextMessage(
-                userId.toChatId(),
-                "Отправьте вариант ответа №${options.size + 1}",
-                replyMarkup = endMarkup().takeIf { options.size > 1 }
-            )
-        ).filter { msg -> msg.sameThread(message) }.first().content.text
-        if (options.size > 1 && option == "Завершить") {
-            break
-        }
+        option = getOption(userId, options, message)
+        if (option == cancelPollCreation) throw CancelPollCreationException()
+        if (options.size > 1 && option == "Завершить") break
         options.add(option)
     }
-    val allowMultipleAnswers = waitTextMessage(
-        SendTextMessage(
-            userId.toChatId(),
-            "Можно ли голосовать за больше чем один вариант?",
-            replyMarkup = yesNoMarkup()
-        )
-    ).filter { msg -> msg.sameThread(message) }.first().content.text.lowercase().fromAllowMultipleAnswers()
-    val savedPoll = PollRepository.save(userId, question, options.toTypedArray(), allowMultipleAnswers)
+    val allowMultipleAnswers = getAllowMultipleAnswers(userId, message)
+    if (allowMultipleAnswers == cancelPollCreation) throw CancelPollCreationException()
+    val savedPoll = PollRepository.save(
+        userId,
+        question,
+        options.toTypedArray(),
+        allowMultipleAnswers.lowercase().fromAllowMultipleAnswers()
+    )
     execute(
         SendTextMessage(
             moderatorsChatId.toChatId(),
-            savedPoll.toMessage(),
+            savedPoll.toModeratorsMessage(),
             replyMarkup = moderatorsReviewMarkup(savedPoll.id, 0)
         )
     )
     reply(message, sentToModeratorsText(), replyMarkup = menuMarkup())
+}
+
+private suspend fun BehaviourContext.getAllowMultipleAnswers(
+    userId: Long,
+    message: CommonMessage<TextContent>
+) = waitTextMessage(
+    SendTextMessage(
+        userId.toChatId(),
+        "Можно ли голосовать за больше чем один вариант?",
+        replyMarkup = yesNoMarkup()
+    )
+).filter { msg -> msg.sameThread(message) }.filter { msg -> msg.content.text !in botCommands }
+    .first().content.text
+
+private suspend fun BehaviourContext.getOption(
+    userId: Long,
+    options: MutableList<String>,
+    message: CommonMessage<TextContent>
+) = waitTextMessage(
+    SendTextMessage(
+        userId.toChatId(),
+        "Отправьте вариант ответа №${options.size + 1}",
+        replyMarkup = endMarkup().takeIf { options.size > 1 } ?: cancelPollCreationMarkup()
+    )
+).filter { msg -> msg.sameThread(message) }.filter { msg -> msg.content.text !in botCommands }.first().content.text
+
+private suspend fun BehaviourContext.getQuestion(
+    userId: Long,
+    message: CommonMessage<TextContent>
+) = waitTextMessage(
+    SendTextMessage(userId.toChatId(), "Отправьте вопрос", replyMarkup = cancelPollCreationMarkup())
+).filter { msg -> msg.sameThread(message) }.filter { msg -> msg.content.text !in botCommands }.first().content.text
+
+private fun checkTime(userId: Long) {
+    val lastUserPollTime = PollRepository.lastUserPoll(userId)?.createdAt
+    if (lastUserPollTime != null) {
+        val now = LocalDateTime.now(ZoneOffset.UTC)
+        val duration = Duration.between(lastUserPollTime, now)
+        if (duration.toSeconds() < secondsBetweenPolls) {
+            throw LessSevenDaysFromLastPollException(
+                timeTillNexPollText(Duration.between(now, lastUserPollTime.plusSeconds(secondsBetweenPolls)))
+            )
+        }
+    }
 }
 
 fun timeTillNexPollText(duration: Duration): String {
