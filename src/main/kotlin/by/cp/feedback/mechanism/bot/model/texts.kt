@@ -32,11 +32,11 @@ fun PollVoteDto.results(): String = results.reduce { acc, next -> acc + next }
         options.mapIndexed { index, option ->
             val answersCount = results[index]
             val percents = if (allAnswers == 0L) {
-                0
+                0f
             } else {
-                answersCount / allAnswers * 100
+                (answersCount.toFloat() / allAnswers.toFloat()) * 100f
             }
-            "- $answersCount/$allAnswers $percents% - $option"
+            "- $answersCount/$allAnswers ${String.format("%.2f", percents)}% - $option"
         }.joinToString("\n") + "\n"
     }
 

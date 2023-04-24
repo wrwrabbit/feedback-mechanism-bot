@@ -19,7 +19,7 @@ class PollPostScheduler {
 
     private val logger = KotlinLogging.logger {}
 
-    @Scheduled(fixedRate = 30, timeUnit = TimeUnit.SECONDS)
+    @Scheduled(fixedRate = 2, timeUnit = TimeUnit.SECONDS)
     fun process() {
         runBlocking {
             PollVoteRepository.findInVoting().forEach { poll ->
