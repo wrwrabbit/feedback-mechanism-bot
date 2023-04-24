@@ -43,7 +43,7 @@ fun tryFModerators(extracted: suspend BehaviourContext.(callback: DataCallbackQu
         } catch (exception: FeedbackBotException) {
             reply(
                 (callback as MessageDataCallbackQuery).message,
-                "${exception.message}\nПопробуйте отерадктировать ещё раз"
+                "${exception.message}\nНажмите ещё раз на кнопку редактировать"
             )
         }
     }
