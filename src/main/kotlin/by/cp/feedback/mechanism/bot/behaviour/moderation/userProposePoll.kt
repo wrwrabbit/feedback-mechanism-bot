@@ -29,7 +29,7 @@ fun userProposePoll(): suspend BehaviourContext.(CommonMessage<TextContent>) -> 
     if (question == cancelPollCreation) throw CancelPollCreationException()
     val options = mutableListOf<String>()
     var option = ""
-    for (i in 0..10) {
+    for (i in 1..10) {
         option = getOption(userId, options, message)
         if (option == cancelPollCreation) throw CancelPollCreationException()
         if (options.size > 1 && option == "Завершить") break
@@ -59,7 +59,7 @@ private suspend fun BehaviourContext.getAllowMultipleAnswers(
 ) = waitTextMessage(
     SendTextMessage(
         userId.toChatId(),
-        "Можно ли голосовать за больше чем один вариант?",
+        "Можно ли голосовать за больше чем один вариант? Нажмите на кнопку \"Да\" или \"Нет\"",
         replyMarkup = yesNoMarkup()
     )
 ).filter { msg -> msg.sameThread(message) }.filter { msg -> msg.content.text !in botCommands }
@@ -72,7 +72,7 @@ private suspend fun BehaviourContext.getOption(
 ) = waitTextMessage(
     SendTextMessage(
         userId.toChatId(),
-        "Отправьте вариант ответа №${options.size + 1}",
+        "Отправьте вариант ответа №${options.size + 1}(максимальное количество - 10)",
         replyMarkup = endMarkup().takeIf { options.size > 1 } ?: cancelPollCreationMarkup()
     )
 ).filter { msg -> msg.sameThread(message) }.filter { msg -> msg.content.text !in botCommands }.first().content.text

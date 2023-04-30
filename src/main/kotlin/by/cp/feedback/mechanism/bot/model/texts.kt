@@ -8,7 +8,7 @@ import dev.inmo.tgbotapi.types.chat.CommonUser
 import dev.inmo.tgbotapi.types.message.abstracts.CommonMessage
 import io.ktor.util.*
 
-const val changeCaptcha = "Изменить капчу"
+const val changeCaptcha = "Обновить код с картинки"
 const val cancelPollCreation = "Отменить создание опроса"
 
 fun CommonMessage<*>.langCode() =

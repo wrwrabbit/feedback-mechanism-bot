@@ -23,7 +23,7 @@ fun moderatorReject(): suspend BehaviourContext.(DataCallbackQuery) -> Unit = { 
     val poll = PollRepository.getById(id) ?: throw PollNotFoundInDbException()
     if (poll.rejectionReason != null) throw CantRejectRejectedException()
     val rejectionReason = waitTextMessage(
-        SendTextMessage(moderatorsChatId.toChatId(), "Отправьте причину отклонения")
+        SendTextMessage(moderatorsChatId.toChatId(), "Отправьте причину отклонения в ответ на это сообщение")
     ).filter { msg -> msg.sameThread(moderatorsChatId.toChatId()) }.first().content.text
     PollRepository.updateRejectionReason(id, rejectionReason)
     PollRepository.updateStatus(poll.id, PollStatus.REJECTED)
