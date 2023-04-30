@@ -64,8 +64,8 @@ fun BufferedImage.toPhoto() = ByteArrayOutputStream().let {
     it.toByteArray()
 }.asMultipartFile("captcha")
 
-fun sendMeCaptchaText() = "Отошлите капчу"
+fun sendMeCaptchaText() = "Введите код с картинки"
 
 fun wrongCaptchaText() = "Неправильная капча"
 
-fun helloText() = "Привет"
+fun helloText() = "Привет, давайте создадим опрос"
