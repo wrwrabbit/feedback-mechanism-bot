@@ -2,19 +2,20 @@ package by.cp.feedback.mechanism.bot.behaviour.moderation
 
 import by.cp.feedback.mechanism.bot.behaviour.utils.tryFUser
 import by.cp.feedback.mechanism.bot.botCommands
-import by.cp.feedback.mechanism.bot.exception.CancelPollCreationException
 import by.cp.feedback.mechanism.bot.exception.FromNotFoundException
 import by.cp.feedback.mechanism.bot.exception.LessSevenDaysFromLastPollException
 import by.cp.feedback.mechanism.bot.model.*
 import by.cp.feedback.mechanism.bot.repository.PollRepository
 import dev.inmo.tgbotapi.extensions.api.send.reply
 import dev.inmo.tgbotapi.extensions.behaviour_builder.BehaviourContext
+import dev.inmo.tgbotapi.extensions.behaviour_builder.expectations.waitPollMessage
 import dev.inmo.tgbotapi.extensions.behaviour_builder.expectations.waitTextMessage
 import dev.inmo.tgbotapi.extensions.utils.extensions.raw.from
 import dev.inmo.tgbotapi.extensions.utils.extensions.sameThread
 import dev.inmo.tgbotapi.requests.send.SendTextMessage
 import dev.inmo.tgbotapi.types.message.abstracts.CommonMessage
 import dev.inmo.tgbotapi.types.message.content.TextContent
+import dev.inmo.tgbotapi.types.polls.MultipleAnswersPoll
 import dev.inmo.tgbotapi.types.toChatId
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.first
@@ -25,23 +26,20 @@ import java.time.ZoneOffset
 fun userProposePoll(): suspend BehaviourContext.(CommonMessage<TextContent>) -> Unit = tryFUser { message ->
     val userId: Long = message.from?.id?.chatId ?: throw FromNotFoundException()
     checkTime(userId)
-    val question = getQuestion(userId, message)
-    if (question == cancelPollCreation) throw CancelPollCreationException()
-    val options = mutableListOf<String>()
-    var option = ""
-    for (i in 1..10) {
-        option = getOption(userId, options, message)
-        if (option == cancelPollCreation) throw CancelPollCreationException()
-        if (options.size > 1 && option == "Завершить") break
-        options.add(option)
+    val userPoll = waitPollMessage(SendTextMessage(userId.toChatId(), "Отправьте опрос"))
+        .filter { msg -> msg.sameThread(message) }.first().content.poll
+    val question = userPoll.question
+    val options = userPoll.options.map { it.text }.toTypedArray()
+    val allowMultipleAnswers = if (userPoll is MultipleAnswersPoll) {
+        userPoll.allowMultipleAnswers
+    } else {
+        false
     }
-    val allowMultipleAnswers = getAllowMultipleAnswers(userId, message)
-    if (allowMultipleAnswers == cancelPollCreation) throw CancelPollCreationException()
     val savedPoll = PollRepository.save(
         userId,
         question,
-        options.toTypedArray(),
-        allowMultipleAnswers.lowercase().fromAllowMultipleAnswers()
+        options,
+        allowMultipleAnswers
     )
     execute(
         SendTextMessage(
