@@ -1,3 +1,3 @@
 # feedback-mechanism-bot
 
-`docker compose up -d --build`
+`docker-compose -f docker-compose.local.yml up`
