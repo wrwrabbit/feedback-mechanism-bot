@@ -20,7 +20,7 @@ fun answer() = "Ответ"
 
 fun moreThanOneAnswer() = "Больше одного ответа"
 
-fun sentToModeratorsText() = "Ваш опрос отправлен модераторам"
+fun sentToModeratorsText(pollDto: PollDto) = "Ваш опрос отправлен модераторам\n" + pollDto.toMessage()
 
 fun PollVoteDto.toMessage(): String = "Опрос #$id\n" +
         "${question()}: $question\n" +
@@ -49,7 +49,7 @@ fun PollDto.toMessage(): String = "Опрос #$id\n" +
 fun PollDto.toModeratorsMessage(): String = "Опрос #$id\n" +
         "Статус #$status\n" +
         "${question()}: $question\n" +
-        "${options.map { option -> "${answer()}: $option" }.joinToString("\n")}\n" +
+        "${options.joinToString("\n") { option -> "${answer()}: $option" }}\n" +
         "${moreThanOneAnswer()}: ${allowMultipleAnswers.toAllowMultipleAnswers()}"
 
 fun Boolean.toAllowMultipleAnswers(): String = if (this) {

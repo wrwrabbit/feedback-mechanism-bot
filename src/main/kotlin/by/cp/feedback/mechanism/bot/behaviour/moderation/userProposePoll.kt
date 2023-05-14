@@ -6,6 +6,7 @@ import by.cp.feedback.mechanism.bot.exception.FromNotFoundException
 import by.cp.feedback.mechanism.bot.exception.LessSevenDaysFromLastPollException
 import by.cp.feedback.mechanism.bot.model.*
 import by.cp.feedback.mechanism.bot.repository.PollRepository
+import dev.inmo.tgbotapi.extensions.api.delete
 import dev.inmo.tgbotapi.extensions.api.send.reply
 import dev.inmo.tgbotapi.extensions.behaviour_builder.BehaviourContext
 import dev.inmo.tgbotapi.extensions.behaviour_builder.expectations.waitPollMessage
@@ -26,8 +27,9 @@ import java.time.ZoneOffset
 fun userProposePoll(): suspend BehaviourContext.(CommonMessage<TextContent>) -> Unit = tryFUser { message ->
     val userId: Long = message.from?.id?.chatId ?: throw FromNotFoundException()
     checkTime(userId)
-    val userPoll = waitPollMessage(SendTextMessage(userId.toChatId(), "Отправьте опрос"))
-        .filter { msg -> msg.sameThread(message) }.first().content.poll
+    val userPollMessage = waitPollMessage(SendTextMessage(userId.toChatId(), "Создайте опрос, нажав на значек \"Скрепка\" и оправьте созданный опрос. Опрос будет анонимным."))
+        .filter { msg -> msg.sameThread(message) }.first()
+    val userPoll = userPollMessage.content.poll
     val question = userPoll.question
     val options = userPoll.options.map { it.text }.toTypedArray()
     val allowMultipleAnswers = if (userPoll is MultipleAnswersPoll) {
@@ -48,7 +50,8 @@ fun userProposePoll(): suspend BehaviourContext.(CommonMessage<TextContent>) -> 
             replyMarkup = moderatorsReviewMarkup(savedPoll.id, 0)
         )
     )
-    reply(message, sentToModeratorsText(), replyMarkup = menuMarkup())
+    reply(message, sentToModeratorsText(savedPoll), replyMarkup = menuMarkup())
+    delete(userPollMessage)
 }
 
 private suspend fun BehaviourContext.getAllowMultipleAnswers(
