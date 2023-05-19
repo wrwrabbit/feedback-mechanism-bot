@@ -3,6 +3,7 @@ package by.cp.feedback.mechanism.bot
 import by.cp.feedback.mechanism.bot.behaviour.common.getChatId
 import by.cp.feedback.mechanism.bot.behaviour.common.getPoll
 import by.cp.feedback.mechanism.bot.behaviour.common.myPolls
+import by.cp.feedback.mechanism.bot.behaviour.common.myPollsDC
 import by.cp.feedback.mechanism.bot.behaviour.common.start
 import by.cp.feedback.mechanism.bot.behaviour.moderation.*
 import by.cp.feedback.mechanism.bot.behaviour.review.userApprove
@@ -64,6 +65,7 @@ suspend fun main(args: Array<String>) {
         onCommandWithArgs(getPollCommand, scenarioReceiver = getPoll())
         onCommand(startCommand, scenarioReceiver = start())
         onCommand(myPollsCommand, scenarioReceiver = myPolls())
+        onDataCallbackQuery(Regex("$myPollsDC.*"), scenarioReceiver = myPollsDC())
         onText(initialFilter = { it.content.text == "\uD83D\uDDC2 мои опросы" }, scenarioReceiver = myPolls())
         //MODERATION
         onCommand(moderationPollsCommand, scenarioReceiver = moderationPolls())

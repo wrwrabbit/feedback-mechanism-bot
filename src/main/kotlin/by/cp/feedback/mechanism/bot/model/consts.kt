@@ -11,6 +11,9 @@ val usersApprovalsRequired = System.getenv("USERS_APPROVALS_REQUIRED").toLong()
 val secondsBetweenPolls = System.getenv("SECONDS_BETWEEN_POLLS").toLong()
 val secondsTillFinish = System.getenv("SECONDS_TILL_FINISH").toLong()
 
+//COMMON
+const val myPollsDC = "MyPollsDC"
+
 //MODERATION
 const val moderatorApproveDC = "ModeratorsApproveDC"
 const val moderatorFixDC = "ModeratorsFixDC"
