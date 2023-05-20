@@ -50,7 +50,7 @@ fun moderatorsReviewMarkup(pollId: Long, approvalsCount: Int) = InlineKeyboardMa
                 callbackData = "$moderatorApproveDC$pollId"
             )
             +CallbackDataInlineKeyboardButton(
-                "✍️ Редактировать",
+                "✍️",
                 callbackData = "$moderatorFixDC$pollId"
             )
             +CallbackDataInlineKeyboardButton(

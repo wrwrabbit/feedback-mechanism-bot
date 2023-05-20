@@ -4,6 +4,8 @@ import by.cp.feedback.mechanism.bot.database.DatabaseConfiguration
 import by.cp.feedback.mechanism.bot.model.PollDto
 import by.cp.feedback.mechanism.bot.model.PollStatus
 import by.cp.feedback.mechanism.bot.table.Polls
+import by.cp.feedback.mechanism.bot.util.PagedDto
+import by.cp.feedback.mechanism.bot.util.toLimitOffsetTotalPages
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.transactions.transaction
 import java.time.LocalDateTime
@@ -95,9 +97,21 @@ object PollRepository {
         }
     }
 
-    fun getByUserId(userId: Long): List<PollDto> = transaction {
-        Polls.select { Polls.userId eq userId }
+    fun getByUserId(userId: Long, page: Int): PagedDto<PollDto> = transaction {
+        val size = 8
+        val totalElements = Polls.select { Polls.userId eq userId }.count()
+        val (limit, offset, totalPages) = toLimitOffsetTotalPages(page, size, totalElements)
+        val polls = Polls.select { Polls.userId eq userId }
+            .orderBy(Polls.id)
+            .limit(limit, offset)
             .map(::pollDto)
+        PagedDto(
+            polls,
+            page,
+            size,
+            totalPages,
+            totalElements
+        )
     }
 
     fun getByStatus(status: PollStatus): List<PollDto> = transaction {
