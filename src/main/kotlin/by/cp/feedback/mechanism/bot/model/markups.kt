@@ -92,6 +92,21 @@ fun userModerationReviewMarkup(pollId: Long, fixedPoll: String) = InlineKeyboard
     }
 )
 
+fun moderatorsFixMarkup(originalMessageId: Long, pollId: Long) = InlineKeyboardMarkup(
+    matrix {
+        row {
+            +CallbackDataInlineKeyboardButton(
+                "✅",
+                callbackData = "$moderatorFixApproveDC${originalMessageId}_${pollId}"
+            )
+            +CallbackDataInlineKeyboardButton(
+                "❎",
+                callbackData = "$moderatorFixRejectDC${originalMessageId}_${pollId}"
+            )
+        }
+    }
+)
+
 fun userVoteMultipleAnswersMarkup(options: Array<String>, pollId: Long) = InlineKeyboardMarkup(
     matrix {
         options.mapIndexed { index, it ->
