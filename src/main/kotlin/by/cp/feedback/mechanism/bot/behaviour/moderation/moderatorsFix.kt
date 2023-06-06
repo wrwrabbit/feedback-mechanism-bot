@@ -5,12 +5,10 @@ import by.cp.feedback.mechanism.bot.exception.CantRejectRejectedException
 import by.cp.feedback.mechanism.bot.exception.PollNotFoundInDbException
 import by.cp.feedback.mechanism.bot.model.*
 import by.cp.feedback.mechanism.bot.repository.PollRepository
-import dev.inmo.tgbotapi.extensions.api.edit.edit
 import dev.inmo.tgbotapi.extensions.behaviour_builder.BehaviourContext
 import dev.inmo.tgbotapi.extensions.behaviour_builder.expectations.waitTextMessage
 import dev.inmo.tgbotapi.extensions.utils.extensions.sameThread
 import dev.inmo.tgbotapi.requests.send.SendTextMessage
-import dev.inmo.tgbotapi.types.message.content.TextContent
 import dev.inmo.tgbotapi.types.queries.callback.DataCallbackQuery
 import dev.inmo.tgbotapi.types.queries.callback.MessageDataCallbackQuery
 import dev.inmo.tgbotapi.types.toChatId
@@ -28,21 +26,13 @@ fun moderatorFix(): suspend BehaviourContext.(DataCallbackQuery) -> Unit = tryFM
         )
     ).filter { msg -> msg.sameThread(moderatorsChatId.toChatId()) }.first().content.text
     parsePoll(fixedPoll)
+    val message = (callback as MessageDataCallbackQuery).message
     execute(
         SendTextMessage(
-            poll.userId.toChatId(),
-            "Модераторы предложили другую версию вашего опроса:\n$fixedPoll",
-            replyMarkup = userModerationReviewMarkup(id, fixedPoll)
+            moderatorsChatId.toChatId(),
+            "Ваша исправленная версия:\n$fixedPoll",
+            replyMarkup = moderatorsFixMarkup(message.messageId, id)
         )
-    )
-    execute(SendTextMessage(moderatorsChatId.toChatId(), "Вы предложили исправленную версию опроса"))
-    val message = (callback as MessageDataCallbackQuery).message
-    val text = (callback.message.content as TextContent).text
-    edit(
-        chatId = message.chat.id,
-        messageId = message.messageId,
-        text = "ИСПРАВЛЕНО\n$text",
-        replyMarkup = null
     )
 }
 

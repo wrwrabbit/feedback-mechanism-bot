@@ -17,6 +17,8 @@ const val myPollsDC = "MyPollsDC"
 //MODERATION
 const val moderatorApproveDC = "ModeratorsApproveDC"
 const val moderatorFixDC = "ModeratorsFixDC"
+const val moderatorFixApproveDC = "ModeratorsFixApproveDC"
+const val moderatorFixRejectDC = "ModeratorsFixRejectDC"
 const val moderatorRejectDC = "ModeratorsRejectDC"
 const val userApproveModerationDC = "UserApproveModerationDC"
 const val userRejectModerationDC = "UserRejectModerationDC"
