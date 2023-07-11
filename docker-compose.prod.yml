@@ -1,26 +1,24 @@
 services:
-  feedback-mechanism-db:
+  votebot-db-prod:
     image: postgres:15.0
     restart: always
-    container_name: feedback-mechanism-db
+    container_name: votebot-db-prod
     environment:
       POSTGRES_USER: "${DB_USER}"
       POSTGRES_PASSWORD: "${DB_PASSWORD}"
       POSTGRES_DB: "${DB_DATABASE}"
     volumes:
       - ./docker:/docker-entrypoint-initdb.d
-    ports:
-      - "5432:5432"
     networks:
       - cpdata-network
 
-  feedback-mechanism-bot:
+  votebot-prod:
     image: feedback-mechanism-bot:0.1
     build:
       context: .
-    container_name: feedback-mechanism-bot
+    container_name: votebot-prod
     depends_on:
-      - feedback-mechanism-db
+      - votebot-db-prod
     environment:
       DB_HOST: "${DB_HOST}"
       DB_DATABASE: "${DB_DATABASE}"
