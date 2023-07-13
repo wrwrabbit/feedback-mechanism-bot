@@ -1,0 +1,47 @@
+services:
+  feedback-mechanism-db:
+    image: postgres:15.0
+    restart: always
+    container_name: feedback-mechanism-db
+    environment:
+      POSTGRES_USER: "${DB_USER}"
+      POSTGRES_PASSWORD: "${DB_PASSWORD}"
+      POSTGRES_DB: "${DB_DATABASE}"
+    volumes:
+      - ./docker:/docker-entrypoint-initdb.d
+    ports:
+      - "5432:5432"
+    networks:
+      - cpdata-network
+
+  feedback-mechanism-bot:
+    image: feedback-mechanism-bot:0.1
+    build:
+      context: .
+    container_name: feedback-mechanism-bot
+    depends_on:
+      - feedback-mechanism-db
+    environment:
+      DB_HOST: "${DB_HOST}"
+      DB_DATABASE: "${DB_DATABASE}"
+      DB_USER: "${DB_USER}"
+      DB_PASSWORD: "${DB_PASSWORD}"
+      TOKEN: "${TOKEN}"
+      WEBHOOK_URL: "${WEBHOOK_URL}"
+      WEBHOOK_ROUTE: "${WEBHOOK_ROUTE}"
+      BOT_PORT: "${BOT_PORT}"
+      MODERATORS_CHAT_ID: "${MODERATORS_CHAT_ID}"
+      POST_CHAT_ID: "${POST_CHAT_ID}"
+      MODERATORS_APPROVALS_REQUIRED: "${MODERATORS_APPROVALS_REQUIRED}"
+      USERS_APPROVALS_REQUIRED: "${USERS_APPROVALS_REQUIRED}"
+      SECONDS_BETWEEN_POLLS: "${SECONDS_BETWEEN_POLLS}"
+      SECONDS_TILL_FINISH: "${SECONDS_TILL_FINISH}"
+    networks:
+      - cpdata-network
+    ports:
+      - "${BOT_PORT}:8888"
+
+networks:
+  cpdata-network:
+    name: cpdata-network
+    driver: bridge
