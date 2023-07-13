@@ -5,6 +5,7 @@ import by.cp.feedback.mechanism.bot.model.menuMarkup
 import dev.inmo.tgbotapi.extensions.api.send.reply
 import dev.inmo.tgbotapi.extensions.behaviour_builder.BehaviourContext
 import dev.inmo.tgbotapi.types.message.abstracts.CommonMessage
+import dev.inmo.tgbotapi.types.message.content.PollContent
 import dev.inmo.tgbotapi.types.message.content.TextContent
 import dev.inmo.tgbotapi.types.queries.callback.DataCallbackQuery
 import dev.inmo.tgbotapi.types.queries.callback.MessageDataCallbackQuery
@@ -18,7 +19,7 @@ fun tryF(extracted: suspend BehaviourContext.(message: CommonMessage<TextContent
         }
     }
 
-fun tryFUser(extracted: suspend BehaviourContext.(message: CommonMessage<TextContent>) -> Unit): suspend BehaviourContext.(CommonMessage<TextContent>) -> Unit =
+fun tryFUser(extracted: suspend BehaviourContext.(message: CommonMessage<PollContent>) -> Unit): suspend BehaviourContext.(CommonMessage<PollContent>) -> Unit =
     { message ->
         try {
             extracted(message)
