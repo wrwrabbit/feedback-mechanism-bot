@@ -3,6 +3,8 @@ package by.cp.feedback.mechanism.bot.model
 import dev.inmo.tgbotapi.types.buttons.InlineKeyboardButtons.CallbackDataInlineKeyboardButton
 import dev.inmo.tgbotapi.types.buttons.InlineKeyboardMarkup
 import dev.inmo.tgbotapi.types.buttons.ReplyKeyboardMarkup
+import dev.inmo.tgbotapi.types.buttons.RequestPollKeyboardButton
+import dev.inmo.tgbotapi.types.buttons.RegularKeyboardButtonPollType
 import dev.inmo.tgbotapi.types.buttons.SimpleKeyboardButton
 import dev.inmo.tgbotapi.utils.matrix
 import dev.inmo.tgbotapi.utils.row
@@ -10,7 +12,7 @@ import dev.inmo.tgbotapi.utils.row
 fun menuMarkup() = ReplyKeyboardMarkup(
     keyboard = matrix {
         row {
-            +SimpleKeyboardButton("✍️ создать опрос")
+            +RequestPollKeyboardButton("✍️ создать опрос",requestPoll = RegularKeyboardButtonPollType)
         }
         row {
             +SimpleKeyboardButton("\uD83D\uDDC2 мои опросы")

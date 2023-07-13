@@ -1,10 +1,6 @@
 package by.cp.feedback.mechanism.bot
 
-import by.cp.feedback.mechanism.bot.behaviour.common.getChatId
-import by.cp.feedback.mechanism.bot.behaviour.common.getPoll
-import by.cp.feedback.mechanism.bot.behaviour.common.myPolls
-import by.cp.feedback.mechanism.bot.behaviour.common.myPollsDC
-import by.cp.feedback.mechanism.bot.behaviour.common.start
+import by.cp.feedback.mechanism.bot.behaviour.common.*
 import by.cp.feedback.mechanism.bot.behaviour.moderation.*
 import by.cp.feedback.mechanism.bot.behaviour.review.userApprove
 import by.cp.feedback.mechanism.bot.behaviour.review.userUnApprove
@@ -15,11 +11,9 @@ import by.cp.feedback.mechanism.bot.exception.FeedbackBotException
 import by.cp.feedback.mechanism.bot.model.*
 import dev.inmo.tgbotapi.extensions.api.bot.setMyCommands
 import dev.inmo.tgbotapi.extensions.behaviour_builder.buildBehaviour
-import dev.inmo.tgbotapi.extensions.behaviour_builder.triggers_handling.onCommand
-import dev.inmo.tgbotapi.extensions.behaviour_builder.triggers_handling.onCommandWithArgs
-import dev.inmo.tgbotapi.extensions.behaviour_builder.triggers_handling.onDataCallbackQuery
-import dev.inmo.tgbotapi.extensions.behaviour_builder.triggers_handling.onText
+import dev.inmo.tgbotapi.extensions.behaviour_builder.triggers_handling.*
 import dev.inmo.tgbotapi.extensions.utils.updates.retrieving.setWebhookInfoAndStartListenWebhooks
+import dev.inmo.tgbotapi.extensions.utils.updates.retrieving.startGettingOfUpdatesByLongPolling
 import dev.inmo.tgbotapi.requests.webhook.SetWebhook
 import dev.inmo.tgbotapi.types.BotCommand
 import io.ktor.server.netty.*
@@ -35,16 +29,9 @@ class FeedbackMechanismBot
 
 const val startCommand = "start"
 const val moderationPollsCommand = "moderation_polls"
-const val getChatIdCommand = "get_chat_id"
+const val getChatIdCommand = "get_my_id"
 const val myPollsCommand = "my_polls"
 const val getPollCommand = "get_poll"
-val botCommands = listOf(
-    startCommand,
-    moderationPollsCommand,
-    getChatIdCommand,
-    myPollsCommand,
-    getPollCommand
-).map { "/$it" }
 
 private val logger = KotlinLogging.logger { }
 
@@ -70,11 +57,12 @@ suspend fun main(args: Array<String>) {
         //MODERATION
         onCommand(moderationPollsCommand, scenarioReceiver = moderationPolls())
         onDataCallbackQuery(Regex("$showModerationDC\\d*"), scenarioReceiver = showModeration())
+        onDataCallbackQuery(Regex("$moderatorRejectDC.*"), scenarioReceiver = moderatorReject())
         onDataCallbackQuery(Regex("$moderatorApproveDC\\d*"), scenarioReceiver = moderatorApprove())
         onDataCallbackQuery(Regex("$moderatorFixDC.*"), scenarioReceiver = moderatorFix())
         onDataCallbackQuery(Regex("$moderatorFixApproveDC.*"), scenarioReceiver = moderatorFixApprove())
         onDataCallbackQuery(Regex("$moderatorFixRejectDC.*"), scenarioReceiver = moderatorFixReject())
-        onText(initialFilter = { it.content.text == "✍️ создать опрос" }, scenarioReceiver = userProposePoll())
+        onPoll(scenarioReceiver = userProposePoll())
         onDataCallbackQuery(Regex("$userApproveModerationDC.*"), scenarioReceiver = userApproveModeration())
         onDataCallbackQuery(Regex("$userRejectModerationDC.*"), scenarioReceiver = userRejectModeration())
         //REVIEW
@@ -90,20 +78,24 @@ suspend fun main(args: Array<String>) {
 
         setMyCommands(
             BotCommand(startCommand, "Пример: /start"),
-            BotCommand(getChatIdCommand, "Пример: /get_chat_id"),
+            BotCommand(getChatIdCommand, "Пример: /get_my_id"),
             BotCommand(getPollCommand, "Пример: /get_poll 20"),
             BotCommand(myPollsCommand, "Пример: /my_polls")
         )
     }
-    bot.setWebhookInfoAndStartListenWebhooks(
-        listenPort = 8888,
-        listenRoute = System.getenv("WEBHOOK_ROUTE"),
-        engineFactory = Netty,
-        setWebhookRequest = SetWebhook(url = System.getenv("WEBHOOK_URL")),
-        exceptionsHandler = {
-            it.printStackTrace()
-        },
-        block = behaviour.asUpdateReceiver
-    )
+    if (System.getenv("WEBHOOK_ROUTE").isNullOrBlank() || System.getenv("WEBHOOK_URL").isNullOrBlank()) {
+        bot.startGettingOfUpdatesByLongPolling(behaviour)
+    } else {
+        bot.setWebhookInfoAndStartListenWebhooks(
+            listenPort = 8888,
+            listenRoute = System.getenv("WEBHOOK_ROUTE"),
+            engineFactory = Netty,
+            setWebhookRequest = SetWebhook(url = System.getenv("WEBHOOK_URL")),
+            exceptionsHandler = {
+                it.printStackTrace()
+            },
+            block = behaviour.asUpdateReceiver
+        )
+    }
     runApplication<FeedbackMechanismBot>(*args)
 }

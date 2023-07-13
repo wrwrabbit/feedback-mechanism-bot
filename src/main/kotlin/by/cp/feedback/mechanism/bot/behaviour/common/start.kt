@@ -30,7 +30,7 @@ fun start(): suspend BehaviourContext.(CommonMessage<TextContent>) -> Unit = try
     if (!UserRepository.exists(userId)) {
         var imageText = CaptchaService.getCaptcha()
         var userCaptchaMessage = waitCaptcha(userId, imageText, message)
-        while (userCaptchaMessage.content.text != imageText.second) {
+        while (userCaptchaMessage.content.text.lowercase() != imageText.second.lowercase()) {
             if (userCaptchaMessage.content.text == changeCaptcha) {
                 imageText = CaptchaService.getCaptcha()
                 userCaptchaMessage = waitCaptcha(userId, imageText, message)
@@ -68,4 +68,4 @@ fun sendMeCaptchaText() = "Введите код с картинки"
 
 fun wrongCaptchaText() = "Неправильная капча"
 
-fun helloText() = "Создайте опрос, нажав на значёк \"Скрепка\" - иконка Опрос внизу; или через меню три точки в правом верхнем углу чата. Опрос будет анонимным."
+fun helloText() = """Создайте опрос, нажав на кнопку "✍️ создать опрос" - иконка Опрос внизу; или через меню три точки в правом верхнем углу чата. Опрос будет анонимным."""
