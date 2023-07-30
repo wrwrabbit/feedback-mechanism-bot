@@ -1,5 +1,6 @@
 package by.cp.feedback.mechanism.bot.scheduler
 
+import by.cp.feedback.mechanism.bot.behaviour.utils.botLinkMarkup
 import by.cp.feedback.mechanism.bot.model.bot
 import by.cp.feedback.mechanism.bot.model.postChatId
 import by.cp.feedback.mechanism.bot.model.toMessage
@@ -27,7 +28,8 @@ class PollPostScheduler {
                     bot.edit(
                         chatId = postChatId.toChatId(),
                         messageId = poll.messageId!!,
-                        text = poll.toMessage()
+                        text = poll.toMessage(),
+                        replyMarkup = botLinkMarkup()
                     )
                 } catch (e: MessageIsNotModifiedException) {
                 } catch (e: Exception) {

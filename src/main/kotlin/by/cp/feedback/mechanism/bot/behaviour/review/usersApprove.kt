@@ -1,5 +1,6 @@
 package by.cp.feedback.mechanism.bot.behaviour.review
 
+import by.cp.feedback.mechanism.bot.behaviour.utils.botLinkMarkup
 import by.cp.feedback.mechanism.bot.exception.PollNotFoundInDbException
 import by.cp.feedback.mechanism.bot.model.*
 import by.cp.feedback.mechanism.bot.repository.PollRepository
@@ -24,7 +25,8 @@ fun userApprove(): suspend BehaviourContext.(DataCallbackQuery) -> Unit = { call
         PollUserVoteRepository.save(poll.id)
         val message1 = execute(
             SendTextMessage(
-                postChatId.toChatId(), PollVoteDto(
+                chatId = postChatId.toChatId(),
+                text = PollVoteDto(
                     id = poll.id,
                     question = poll.question,
                     allowMultipleAnswers = poll.allowMultipleAnswers,
@@ -32,8 +34,9 @@ fun userApprove(): suspend BehaviourContext.(DataCallbackQuery) -> Unit = { call
                     startedAt = null,
                     finishedAt = null,
                     options = poll.options,
-                    results = poll.options.map { 0 }).toMessage()
-            )
+                    results = poll.options.map { 0 }).toMessage(),
+                replyMarkup = botLinkMarkup()
+            ),
         )
         PollRepository.updateMessageId(id, message1.messageId)
         execute(

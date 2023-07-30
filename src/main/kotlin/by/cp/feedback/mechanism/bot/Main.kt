@@ -9,6 +9,7 @@ import by.cp.feedback.mechanism.bot.behaviour.vote.userVoteCheckAnswer
 import by.cp.feedback.mechanism.bot.behaviour.vote.userVoteMultipleAnswers
 import by.cp.feedback.mechanism.bot.exception.FeedbackBotException
 import by.cp.feedback.mechanism.bot.model.*
+import dev.inmo.tgbotapi.extensions.api.bot.getMe
 import dev.inmo.tgbotapi.extensions.api.bot.setMyCommands
 import dev.inmo.tgbotapi.extensions.behaviour_builder.buildBehaviour
 import dev.inmo.tgbotapi.extensions.behaviour_builder.triggers_handling.*
