@@ -1,10 +1,12 @@
 package by.cp.feedback.mechanism.bot.behaviour.moderation
 
+import by.cp.feedback.mechanism.bot.behaviour.captcha.captchaRequest
 import by.cp.feedback.mechanism.bot.behaviour.utils.tryFUser
 import by.cp.feedback.mechanism.bot.exception.FromNotFoundException
 import by.cp.feedback.mechanism.bot.exception.LessSevenDaysFromLastPollException
 import by.cp.feedback.mechanism.bot.model.*
 import by.cp.feedback.mechanism.bot.repository.PollRepository
+import by.cp.feedback.mechanism.bot.repository.UserRepository
 import dev.inmo.tgbotapi.extensions.api.delete
 import dev.inmo.tgbotapi.extensions.api.send.reply
 import dev.inmo.tgbotapi.extensions.behaviour_builder.BehaviourContext
@@ -36,6 +38,9 @@ fun userProposePoll(): suspend BehaviourContext.(CommonMessage<PollContent>) -> 
         options,
         allowMultipleAnswers
     )
+    if(UserRepository.captchaRequired(userId)){
+        captchaRequest(userId, message.chat.id)
+    }
     execute(
         SendTextMessage(
             moderatorsChatId.toChatId(),
@@ -44,6 +49,7 @@ fun userProposePoll(): suspend BehaviourContext.(CommonMessage<PollContent>) -> 
         )
     )
     reply(message, sentToModeratorsText(savedPoll), replyMarkup = menuMarkup())
+    UserRepository.pollCountInc(userId)
     delete(message)
 }
 
