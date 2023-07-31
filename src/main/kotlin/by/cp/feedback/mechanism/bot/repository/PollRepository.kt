@@ -1,6 +1,5 @@
 package by.cp.feedback.mechanism.bot.repository
 
-import by.cp.feedback.mechanism.bot.database.DatabaseConfiguration
 import by.cp.feedback.mechanism.bot.model.PollDto
 import by.cp.feedback.mechanism.bot.model.PollStatus
 import by.cp.feedback.mechanism.bot.table.Polls
@@ -12,8 +11,6 @@ import java.time.LocalDateTime
 import java.time.ZoneOffset
 
 object PollRepository {
-
-    private val db = DatabaseConfiguration.database
 
     fun save(userId: Long, question: String, options: Array<String>, allowMultipleAnswers: Boolean): PollDto =
         transaction {

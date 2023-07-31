@@ -1,6 +1,5 @@
 package by.cp.feedback.mechanism.bot.repository
 
-import by.cp.feedback.mechanism.bot.database.DatabaseConfiguration
 import by.cp.feedback.mechanism.bot.model.PollForUserReviewDto
 import by.cp.feedback.mechanism.bot.model.PollStatus
 import by.cp.feedback.mechanism.bot.table.PollUserVote
@@ -11,8 +10,6 @@ import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.transactions.transaction
 
 object PollUserVoteRepository {
-
-    private val db = DatabaseConfiguration.database
 
     fun save(pollId: Long) = transaction {
         PollUserVote.insert(

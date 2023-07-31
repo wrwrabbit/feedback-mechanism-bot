@@ -1,0 +1,14 @@
+spring:
+  liquibase:
+    change-log: "classpath:db/changelog/db.changelog-master.yaml"
+  datasource:
+    driverClassName: org.postgresql.Driver
+    url: jdbc:postgresql://${DB_HOST}/${DB_DATABASE}
+    username: ${DB_USER}
+    password: ${DB_PASSWORD}
+    type: com.zaxxer.hikari.HikariDataSource
+    hikari:
+      minimum-idle: 3
+      maximum-pool-size: 7
+  jpa:
+    database-platform: org.hibernate.dialect.PostgreSQLDialect

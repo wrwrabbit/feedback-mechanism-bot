@@ -1,6 +1,5 @@
 package by.cp.feedback.mechanism.bot.repository
 
-import by.cp.feedback.mechanism.bot.database.DatabaseConfiguration
 import by.cp.feedback.mechanism.bot.table.Users
 import org.jetbrains.exposed.sql.SqlExpressionBuilder
 import org.jetbrains.exposed.sql.insertAndGetId
@@ -10,14 +9,12 @@ import org.jetbrains.exposed.sql.update
 
 object UserRepository {
 
-    private val db = DatabaseConfiguration.database
-
     fun save(userId: Long, langCode: String) = transaction {
         Users.insertAndGetId {
             it[Users.id] = userId
             it[Users.langCode] = langCode
-            it[Users.pollCount] = 0
-            it[Users.voteCount] = 0
+            it[pollCount] = 0
+            it[voteCount] = 0
         }.value
     }
 
