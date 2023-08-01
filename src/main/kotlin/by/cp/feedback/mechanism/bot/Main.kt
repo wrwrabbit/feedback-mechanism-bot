@@ -84,6 +84,7 @@ suspend fun main(args: Array<String>) {
             BotCommand(myPollsCommand, "Пример: /my_polls")
         )
     }
+    runApplication<FeedbackMechanismBot>(*args)
     if (System.getenv("WEBHOOK_ROUTE").isNullOrBlank() || System.getenv("WEBHOOK_URL").isNullOrBlank()) {
         bot.startGettingOfUpdatesByLongPolling(behaviour)
     } else {
@@ -98,5 +99,4 @@ suspend fun main(args: Array<String>) {
             block = behaviour.asUpdateReceiver
         )
     }
-    runApplication<FeedbackMechanismBot>(*args)
 }
