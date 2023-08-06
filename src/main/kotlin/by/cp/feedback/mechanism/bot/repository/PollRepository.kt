@@ -54,10 +54,11 @@ object PollRepository {
         }
     }
 
-    fun start(id: Long) = transaction {
+    fun start(id: Long, messageId: Long) = transaction {
         Polls.update({ Polls.id eq id }) {
             it[status] = PollStatus.VOTING
             it[startedAt] = LocalDateTime.now(ZoneOffset.UTC)
+            it[Polls.messageId] = messageId
         }
     }
 
@@ -65,12 +66,6 @@ object PollRepository {
         Polls.update({ Polls.id eq id }) {
             it[status] = PollStatus.FINISHED
             it[finishedAt] = LocalDateTime.now(ZoneOffset.UTC)
-        }
-    }
-
-    fun updateMessageId(id: Long, messageId: Long) = transaction {
-        Polls.update({ Polls.id eq id }) {
-            it[Polls.messageId] = messageId
         }
     }
 
