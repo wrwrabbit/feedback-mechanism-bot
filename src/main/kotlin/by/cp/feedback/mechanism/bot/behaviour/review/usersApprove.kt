@@ -19,11 +19,7 @@ fun userApprove(): suspend BehaviourContext.(DataCallbackQuery) -> Unit = { call
     val poll = PollRepository.getById(id) ?: throw PollNotFoundInDbException()
     PollRepository.addUserApprove(id)
     if (poll.userApproves + 1 == usersApprovalsRequired) {
-        PollUserReviewRepository.delete(poll.id)
-        PollRepository.start(poll.id)
-        PollVoteRepository.save(poll.id)
-        PollUserVoteRepository.save(poll.id)
-        val message1 = execute(
+        val message = execute(
             SendTextMessage(
                 chatId = postChatId.toChatId(),
                 text = PollVoteDto(
@@ -38,7 +34,10 @@ fun userApprove(): suspend BehaviourContext.(DataCallbackQuery) -> Unit = { call
                 replyMarkup = botLinkMarkup()
             ),
         )
-        PollRepository.updateMessageId(id, message1.messageId)
+        PollUserReviewRepository.delete(poll.id)
+        PollRepository.start(poll.id, message.messageId)
+        PollVoteRepository.save(poll.id)
+        PollUserVoteRepository.save(poll.id)
         execute(
             SendTextMessage(
                 poll.userId.toChatId(),
