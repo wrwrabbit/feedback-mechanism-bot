@@ -20,23 +20,20 @@ class SendToUserVoteScheduler {
     @Scheduled(fixedRate = 5, timeUnit = TimeUnit.SECONDS)
     fun process() {
         runBlocking {
-            val reviews = PollUserVoteRepository.select15()
-            if (reviews.isNotEmpty()) {
-                reviews.forEach { review ->
-                    val poll = PollRepository.getById(review.pollId)!!
-                    bot.execute(
-                        SendTextMessage(
-                            chatId = review.userId.toChatId(),
-                            text = poll.toMessage(),
-                            replyMarkup = if (poll.allowMultipleAnswers) {
-                                userVoteMultipleAnswersMarkup(poll.options, poll.id)
-                            } else {
-                                userVoteSingleAnswerMarkup(poll.options, poll.id)
-                            }
-                        )
+            PollUserVoteRepository.select15().forEach { polltoVote ->
+                val poll = PollRepository.getById(polltoVote.pollId)!!
+                bot.execute(
+                    SendTextMessage(
+                        chatId = polltoVote.userId.toChatId(),
+                        text = poll.toMessage(),
+                        replyMarkup = if (poll.allowMultipleAnswers) {
+                            userVoteMultipleAnswersMarkup(poll.options, poll.id)
+                        } else {
+                            userVoteSingleAnswerMarkup(poll.options, poll.id)
+                        }
                     )
-                    PollUserVoteRepository.delete(review)
-                }
+                )
+                PollUserVoteRepository.delete(polltoVote)
             }
         }
     }
