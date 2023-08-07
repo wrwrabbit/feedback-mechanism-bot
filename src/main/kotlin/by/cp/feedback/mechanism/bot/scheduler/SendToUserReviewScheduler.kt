@@ -18,18 +18,15 @@ class SendToUserReviewScheduler {
     @Scheduled(fixedRate = 5, timeUnit = TimeUnit.SECONDS)
     fun process() {
         runBlocking {
-            val reviews = PollUserReviewRepository.select15()
-            if (reviews.isNotEmpty()) {
-                reviews.forEach { review ->
-                    bot.execute(
-                        SendTextMessage(
-                            chatId = review.userId.toChatId(),
-                            text = PollRepository.getById(review.pollId)!!.toMessage(),
-                            replyMarkup = sendToUserReviewMarkup(review.pollId)
-                        )
+            PollUserReviewRepository.select15().forEach { review ->
+                bot.execute(
+                    SendTextMessage(
+                        chatId = review.userId.toChatId(),
+                        text = PollRepository.getById(review.pollId)!!.toMessage(),
+                        replyMarkup = sendToUserReviewMarkup(review.pollId)
                     )
-                    PollUserReviewRepository.delete(review)
-                }
+                )
+                PollUserReviewRepository.delete(review)
             }
         }
     }
