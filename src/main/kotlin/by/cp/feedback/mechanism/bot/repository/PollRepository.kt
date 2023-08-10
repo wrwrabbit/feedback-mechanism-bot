@@ -25,16 +25,17 @@ object PollRepository {
                 it[Polls.createdAt] = createdAt
             }.value
             PollDto(
-                id,
-                userId,
-                status,
-                question,
-                options,
-                allowMultipleAnswers,
-                createdAt,
-                arrayOf(),
-                0,
-                null
+                id = id,
+                userId = userId,
+                status = status,
+                question = question,
+                options = options,
+                allowMultipleAnswers = allowMultipleAnswers,
+                createdAt = createdAt,
+                startedAt = null,
+                moderatorApproves = arrayOf(),
+                rejectionReason = null,
+                messageId = null,
             )
         }
 
@@ -72,14 +73,6 @@ object PollRepository {
     fun updateApproves(id: Long, approves: Array<Long>) = transaction {
         Polls.update({ Polls.id eq id }) {
             it[moderatorApproves] = approves
-        }
-    }
-
-    fun addUserApprove(id: Long) = transaction {
-        Polls.update({ Polls.id eq id }) {
-            with(SqlExpressionBuilder) {
-                it.update(userApproves, userApproves + 1)
-            }
         }
     }
 
@@ -126,16 +119,17 @@ object PollRepository {
     }
 
     private fun pollDto(it: ResultRow) = PollDto(
-        it[Polls.id].value,
-        it[Polls.userId],
-        it[Polls.status],
-        it[Polls.question],
-        it[Polls.options],
-        it[Polls.allowMultipleAnswers],
-        it[Polls.createdAt],
-        it[Polls.moderatorApproves],
-        it[Polls.userApproves],
-        it[Polls.rejectionReason]
+        id = it[Polls.id].value,
+        userId = it[Polls.userId],
+        status = it[Polls.status],
+        question = it[Polls.question],
+        options = it[Polls.options],
+        allowMultipleAnswers = it[Polls.allowMultipleAnswers],
+        createdAt = it[Polls.createdAt],
+        startedAt = it[Polls.startedAt],
+        moderatorApproves = it[Polls.moderatorApproves],
+        rejectionReason = it[Polls.rejectionReason],
+        messageId = it[Polls.messageId]
     )
 
 }

@@ -19,7 +19,6 @@ object Polls : LongIdTable(name = "polls") {
     val startedAt: Column<LocalDateTime?> = datetime("started_at").nullable()
     val finishedAt: Column<LocalDateTime?> = datetime("finished_at").nullable()
     val moderatorApproves: Column<Array<Long>> = array("moderator_approves", columnType = LongColumnType())
-    val userApproves: Column<Long> = long("user_approves")
     val rejectionReason: Column<String?> = text("rejection_reason").nullable()
     val messageId: Column<Long?> = long("message_id").nullable()
 }

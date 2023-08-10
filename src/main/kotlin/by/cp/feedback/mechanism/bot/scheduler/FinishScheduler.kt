@@ -1,12 +1,8 @@
 package by.cp.feedback.mechanism.bot.scheduler
 
 import by.cp.feedback.mechanism.bot.behaviour.utils.botLinkMarkup
-import by.cp.feedback.mechanism.bot.model.bot
-import by.cp.feedback.mechanism.bot.model.postChatId
-import by.cp.feedback.mechanism.bot.model.secondsTillFinish
-import by.cp.feedback.mechanism.bot.model.toMessage
+import by.cp.feedback.mechanism.bot.model.*
 import by.cp.feedback.mechanism.bot.repository.PollRepository
-import by.cp.feedback.mechanism.bot.repository.PollVoteRepository
 import dev.inmo.tgbotapi.bot.exceptions.MessageIsNotModifiedException
 import dev.inmo.tgbotapi.extensions.api.edit.edit
 import dev.inmo.tgbotapi.types.toChatId
@@ -28,7 +24,7 @@ class FinishScheduler {
     @Scheduled(fixedRate = 30, timeUnit = TimeUnit.SECONDS)
     fun process() {
         runBlocking {
-            PollVoteRepository.findInVoting().forEach { poll ->
+            PollRepository.getByStatus(PollStatus.VOTING).forEach { poll ->
                 try {
                     val between = Duration.between(poll.startedAt, LocalDateTime.now(ZoneOffset.UTC))
                     if (between.toSeconds() > secondsTillFinish) {

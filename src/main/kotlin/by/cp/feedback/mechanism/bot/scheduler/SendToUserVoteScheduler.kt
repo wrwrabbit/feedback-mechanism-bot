@@ -5,7 +5,7 @@ import by.cp.feedback.mechanism.bot.model.toMessage
 import by.cp.feedback.mechanism.bot.model.userVoteMultipleAnswersMarkup
 import by.cp.feedback.mechanism.bot.model.userVoteSingleAnswerMarkup
 import by.cp.feedback.mechanism.bot.repository.PollRepository
-import by.cp.feedback.mechanism.bot.repository.PollUserVoteRepository
+import by.cp.feedback.mechanism.bot.repository.PollUserVoteQueueRepository
 import dev.inmo.tgbotapi.requests.send.SendTextMessage
 import dev.inmo.tgbotapi.types.toChatId
 import kotlinx.coroutines.runBlocking
@@ -20,7 +20,7 @@ class SendToUserVoteScheduler {
     @Scheduled(fixedRate = 5, timeUnit = TimeUnit.SECONDS)
     fun process() {
         runBlocking {
-            PollUserVoteRepository.select15().forEach { polltoVote ->
+            PollUserVoteQueueRepository.select15().forEach { polltoVote ->
                 val poll = PollRepository.getById(polltoVote.pollId)!!
                 bot.execute(
                     SendTextMessage(
@@ -33,7 +33,7 @@ class SendToUserVoteScheduler {
                         }
                     )
                 )
-                PollUserVoteRepository.delete(polltoVote)
+                PollUserVoteQueueRepository.delete(polltoVote)
             }
         }
     }

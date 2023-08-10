@@ -1,7 +1,6 @@
 package by.cp.feedback.mechanism.bot.model
 
 import dev.inmo.tgbotapi.bot.ktor.telegramBot
-import dev.inmo.tgbotapi.extensions.api.bot.getMe
 
 val bot = telegramBot(System.getenv("TOKEN"))
 

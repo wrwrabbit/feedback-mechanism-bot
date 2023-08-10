@@ -2,7 +2,7 @@ package by.cp.feedback.mechanism.bot.behaviour.vote
 
 import by.cp.feedback.mechanism.bot.behaviour.captcha.captchaRequest
 import by.cp.feedback.mechanism.bot.model.userVoteMultipleAnswersDC
-import by.cp.feedback.mechanism.bot.repository.PollVoteRepository
+import by.cp.feedback.mechanism.bot.repository.PollUserVoteRepository
 import by.cp.feedback.mechanism.bot.repository.UserRepository
 import dev.inmo.tgbotapi.extensions.api.delete
 import dev.inmo.tgbotapi.extensions.behaviour_builder.BehaviourContext
@@ -20,10 +20,10 @@ fun userVoteMultipleAnswers(): suspend BehaviourContext.(DataCallbackQuery) -> U
     }.filter {
         it.second
     }.map { it.first }
-    if(UserRepository.captchaRequired(userId)){
+    if (UserRepository.captchaRequired(userId)) {
         captchaRequest(userId, callback.user.id)
     }
-    PollVoteRepository.vote(pollId, options)
+    PollUserVoteRepository.vote(pollId, userId, options)
     UserRepository.voteCountInc(userId)
     delete(callback.message)
 }

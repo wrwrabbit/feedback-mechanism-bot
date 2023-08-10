@@ -8,7 +8,7 @@ import by.cp.feedback.mechanism.bot.model.moderatorApproveDC
 import by.cp.feedback.mechanism.bot.model.moderatorsApprovalsRequired
 import by.cp.feedback.mechanism.bot.model.moderatorsReviewMarkup
 import by.cp.feedback.mechanism.bot.repository.PollRepository
-import by.cp.feedback.mechanism.bot.repository.PollUserReviewRepository
+import by.cp.feedback.mechanism.bot.repository.PollUserReviewQueueRepository
 import dev.inmo.tgbotapi.extensions.api.edit.edit
 import dev.inmo.tgbotapi.extensions.behaviour_builder.BehaviourContext
 import dev.inmo.tgbotapi.requests.send.SendTextMessage
@@ -27,7 +27,7 @@ fun moderatorApprove(): suspend BehaviourContext.(DataCallbackQuery) -> Unit = {
     PollRepository.updateApproves(id, resultArray)
     if (resultArray.size == moderatorsApprovalsRequired) {
         PollRepository.updateStatus(poll.id, PollStatus.ON_USER_REVIEW)
-        PollUserReviewRepository.save(poll.id)
+        PollUserReviewQueueRepository.save(poll.id)
         execute(SendTextMessage(poll.userId.toChatId(), sentToUsersReviewText()))
         val message = (callback as MessageDataCallbackQuery).message
         val text = (callback.message.content as TextContent).text

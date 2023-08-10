@@ -4,7 +4,7 @@ import by.cp.feedback.mechanism.bot.behaviour.utils.botLinkMarkup
 import by.cp.feedback.mechanism.bot.model.bot
 import by.cp.feedback.mechanism.bot.model.postChatId
 import by.cp.feedback.mechanism.bot.model.toMessage
-import by.cp.feedback.mechanism.bot.repository.PollVoteRepository
+import by.cp.feedback.mechanism.bot.repository.PollUserVoteRepository
 import dev.inmo.tgbotapi.bot.exceptions.MessageIsNotModifiedException
 import dev.inmo.tgbotapi.extensions.api.edit.edit
 import dev.inmo.tgbotapi.types.toChatId
@@ -23,7 +23,7 @@ class PollPostScheduler {
     @Scheduled(fixedRate = 2, timeUnit = TimeUnit.SECONDS)
     fun process() {
         runBlocking {
-            PollVoteRepository.findInVoting().forEach { poll ->
+            PollUserVoteRepository.findResultsInVoting().forEach { poll ->
                 try {
                     bot.edit(
                         chatId = postChatId.toChatId(),

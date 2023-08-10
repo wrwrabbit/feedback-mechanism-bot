@@ -1,11 +1,10 @@
 package by.cp.feedback.mechanism.bot.behaviour.common
 
-import by.cp.feedback.mechanism.bot.behaviour.captcha.captchaRequest
 import by.cp.feedback.mechanism.bot.behaviour.utils.tryF
 import by.cp.feedback.mechanism.bot.exception.FromNotFoundException
 import by.cp.feedback.mechanism.bot.model.menuMarkup
-import by.cp.feedback.mechanism.bot.repository.PollUserReviewRepository
-import by.cp.feedback.mechanism.bot.repository.PollUserVoteRepository
+import by.cp.feedback.mechanism.bot.repository.PollUserReviewQueueRepository
+import by.cp.feedback.mechanism.bot.repository.PollUserVoteQueueRepository
 import by.cp.feedback.mechanism.bot.repository.UserRepository
 import dev.inmo.tgbotapi.extensions.api.send.reply
 import dev.inmo.tgbotapi.extensions.behaviour_builder.BehaviourContext
@@ -17,10 +16,11 @@ fun start(): suspend BehaviourContext.(CommonMessage<TextContent>) -> Unit = try
     val userId: Long = message.from?.id?.chatId ?: throw FromNotFoundException()
     if (!UserRepository.exists(userId)) {
         UserRepository.save(userId, "ru")
-        PollUserReviewRepository.saveByUserId(userId)
-        PollUserVoteRepository.saveByUserId(userId)
+        PollUserReviewQueueRepository.saveByUserId(userId)
+        PollUserVoteQueueRepository.saveByUserId(userId)
     }
     reply(message, helloText(), replyMarkup = menuMarkup())
 }
 
-fun helloText() = """Создайте опрос, нажав на кнопку "✍️ создать опрос" - иконка Опрос внизу; или через меню три точки в правом верхнем углу чата. Опрос будет анонимным."""
+fun helloText() =
+    """Создайте опрос, нажав на кнопку "✍️ создать опрос" - иконка Опрос внизу; или через меню три точки в правом верхнем углу чата. Опрос будет анонимным."""
