@@ -18,6 +18,13 @@ object PollUserVoteQueueRepository {
         )
     }
 
+    fun save(pollId: Long, userId: Long) = transaction {
+        PollUserVoteQueue.insert {
+            it[PollUserVoteQueue.pollId] = pollId
+            it[PollUserVoteQueue.userId] = userId
+        }
+    }
+
     fun saveByUserId(userId: Long) = transaction {
         PollUserVoteQueue.insert(
             Polls.slice(longParam(userId), Polls.id).select { Polls.status eq PollStatus.VOTING },

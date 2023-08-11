@@ -4,6 +4,7 @@ import by.cp.feedback.mechanism.bot.model.PollStatus
 import by.cp.feedback.mechanism.bot.model.PollVoteDto
 import by.cp.feedback.mechanism.bot.table.PollUserVote
 import by.cp.feedback.mechanism.bot.table.Polls
+import org.jetbrains.exposed.exceptions.ExposedSQLException
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.transactions.transaction
@@ -88,29 +89,10 @@ object PollUserVoteRepository {
     }
 
     fun vote(pollId: Long, userId: Long, option: Int) = transaction {
-        PollUserVote.insertAndGetId {
-            it[PollUserVote.id] = pollId
-            it[PollUserVote.userId] = userId
-            when (option) {
-                1 -> it[option_1] = 1
-                2 -> it[option_2] = 1
-                3 -> it[option_3] = 1
-                4 -> it[option_4] = 1
-                5 -> it[option_5] = 1
-                6 -> it[option_6] = 1
-                7 -> it[option_7] = 1
-                8 -> it[option_8] = 1
-                9 -> it[option_9] = 1
-                10 -> it[option_10] = 1
-            }
-        }.value
-    }
-
-    fun vote(pollId: Long, userId: Long, options: List<Int>) = transaction {
-        PollUserVote.insertAndGetId {
-            it[PollUserVote.id] = pollId
-            it[PollUserVote.userId] = userId
-            options.forEach { option ->
+        try {
+            PollUserVote.insertAndGetId {
+                it[PollUserVote.id] = pollId
+                it[PollUserVote.userId] = userId
                 when (option) {
                     1 -> it[option_1] = 1
                     2 -> it[option_2] = 1
@@ -123,8 +105,33 @@ object PollUserVoteRepository {
                     9 -> it[option_9] = 1
                     10 -> it[option_10] = 1
                 }
-            }
-        }.value
+            }.value
+        } catch (ex: ExposedSQLException) {
+        }
+    }
+
+    fun vote(pollId: Long, userId: Long, options: List<Int>) = transaction {
+        try {
+            PollUserVote.insertAndGetId {
+                it[PollUserVote.id] = pollId
+                it[PollUserVote.userId] = userId
+                options.forEach { option ->
+                    when (option) {
+                        1 -> it[option_1] = 1
+                        2 -> it[option_2] = 1
+                        3 -> it[option_3] = 1
+                        4 -> it[option_4] = 1
+                        5 -> it[option_5] = 1
+                        6 -> it[option_6] = 1
+                        7 -> it[option_7] = 1
+                        8 -> it[option_8] = 1
+                        9 -> it[option_9] = 1
+                        10 -> it[option_10] = 1
+                    }
+                }
+            }.value
+        } catch (ex: ExposedSQLException) {
+        }
     }
 
 }

@@ -1,6 +1,5 @@
 package by.cp.feedback.mechanism.bot.scheduler
 
-import by.cp.feedback.mechanism.bot.behaviour.utils.botLinkMarkup
 import by.cp.feedback.mechanism.bot.model.*
 import by.cp.feedback.mechanism.bot.repository.PollRepository
 import dev.inmo.tgbotapi.bot.exceptions.MessageIsNotModifiedException
@@ -34,7 +33,7 @@ class FinishScheduler {
                         chatId = postChatId.toChatId(),
                         messageId = poll.messageId!!,
                         text = "ЗАВЕРШЁН\n" + poll.toMessage(),
-                        replyMarkup = botLinkMarkup()
+                        replyMarkup = null
                     )
                 } catch (e: MessageIsNotModifiedException) {
                 } catch (e: Exception) {

@@ -12,12 +12,16 @@ import dev.inmo.tgbotapi.extensions.utils.extensions.raw.from
 import dev.inmo.tgbotapi.types.message.abstracts.CommonMessage
 import dev.inmo.tgbotapi.types.message.content.TextContent
 
-fun start(): suspend BehaviourContext.(CommonMessage<TextContent>) -> Unit = tryF { message ->
+fun start(): suspend BehaviourContext.(CommonMessage<TextContent>, Array<String>) -> Unit = tryF { message, args ->
     val userId: Long = message.from?.id?.chatId ?: throw FromNotFoundException()
     if (!UserRepository.exists(userId)) {
         UserRepository.save(userId, "ru")
         PollUserReviewQueueRepository.saveByUserId(userId)
         PollUserVoteQueueRepository.saveByUserId(userId)
+    }
+    if (args.isNotEmpty()) {
+        val pollId = args[0].toLong()
+        PollUserVoteQueueRepository.save(pollId, userId)
     }
     reply(message, helloText(), replyMarkup = menuMarkup())
 }

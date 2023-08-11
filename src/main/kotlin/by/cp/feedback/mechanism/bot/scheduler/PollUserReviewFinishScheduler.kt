@@ -35,7 +35,7 @@ class PollUserReviewFinishScheduler {
                                 allowMultipleAnswers = poll.allowMultipleAnswers,
                                 options = poll.options,
                                 results = poll.options.map { 0 }).toMessage(),
-                            replyMarkup = botLinkMarkup()
+                            replyMarkup = botLinkMarkup(poll.id)
                         ),
                     )
                     PollRepository.start(poll.id, message.messageId)

@@ -33,7 +33,8 @@ create table poll_user_vote_queue(
 create table poll_user_review(
     poll_id bigint not null,
     user_id bigint not null,
-    approved boolean not null
+    approved boolean not null,
+    primary key (poll_id, user_id)
 );
 
 create table poll_user_vote(
@@ -48,5 +49,6 @@ create table poll_user_vote(
     option_7 bigint default 0 not null,
     option_8 bigint default 0 not null,
     option_9 bigint default 0 not null,
-    option_10 bigint default 0 not null
+    option_10 bigint default 0 not null,
+    primary key (poll_id, user_id)
 );

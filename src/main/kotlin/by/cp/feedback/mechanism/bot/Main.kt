@@ -50,7 +50,7 @@ suspend fun main(args: Array<String>) {
         //COMMON
         onCommand(getChatIdCommand, scenarioReceiver = getChatId())
         onCommandWithArgs(getPollCommand, scenarioReceiver = getPoll())
-        onCommand(startCommand, scenarioReceiver = start())
+        onCommandWithArgs(startCommand, scenarioReceiver = start())
         onCommand(myPollsCommand, scenarioReceiver = myPolls())
         onDataCallbackQuery(Regex("$myPollsDC.*"), scenarioReceiver = myPollsDC())
         onText(initialFilter = { it.content.text == "\uD83D\uDDC2 мои опросы" }, scenarioReceiver = myPolls())

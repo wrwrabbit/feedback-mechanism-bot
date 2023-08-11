@@ -29,7 +29,7 @@ class PollPostScheduler {
                         chatId = postChatId.toChatId(),
                         messageId = poll.messageId!!,
                         text = poll.toMessage(),
-                        replyMarkup = botLinkMarkup()
+                        replyMarkup = botLinkMarkup(poll.id)
                     )
                 } catch (e: MessageIsNotModifiedException) {
                 } catch (e: Exception) {
