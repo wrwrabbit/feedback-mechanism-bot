@@ -9,7 +9,6 @@ import by.cp.feedback.mechanism.bot.behaviour.vote.userVoteCheckAnswer
 import by.cp.feedback.mechanism.bot.behaviour.vote.userVoteMultipleAnswers
 import by.cp.feedback.mechanism.bot.exception.FeedbackBotException
 import by.cp.feedback.mechanism.bot.model.*
-import dev.inmo.tgbotapi.extensions.api.bot.getMe
 import dev.inmo.tgbotapi.extensions.api.bot.setMyCommands
 import dev.inmo.tgbotapi.extensions.behaviour_builder.buildBehaviour
 import dev.inmo.tgbotapi.extensions.behaviour_builder.triggers_handling.*
@@ -51,7 +50,7 @@ suspend fun main(args: Array<String>) {
         //COMMON
         onCommand(getChatIdCommand, scenarioReceiver = getChatId())
         onCommandWithArgs(getPollCommand, scenarioReceiver = getPoll())
-        onCommand(startCommand, scenarioReceiver = start())
+        onCommandWithArgs(startCommand, scenarioReceiver = start())
         onCommand(myPollsCommand, scenarioReceiver = myPolls())
         onDataCallbackQuery(Regex("$myPollsDC.*"), scenarioReceiver = myPollsDC())
         onText(initialFilter = { it.content.text == "\uD83D\uDDC2 мои опросы" }, scenarioReceiver = myPolls())

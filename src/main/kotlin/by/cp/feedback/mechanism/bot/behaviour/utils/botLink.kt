@@ -17,10 +17,10 @@ private suspend fun botLink() = if (botName == null) {
     botName
 }!!
 
-suspend fun botLinkMarkup() = InlineKeyboardMarkup(
+suspend fun botLinkMarkup(pollId: Long) = InlineKeyboardMarkup(
     matrix {
         row {
-            +URLInlineKeyboardButton("Проголосовать", url = botLink())
+            +URLInlineKeyboardButton("Проголосовать", url = botLink() + "?start=$pollId")
         }
     }
 )

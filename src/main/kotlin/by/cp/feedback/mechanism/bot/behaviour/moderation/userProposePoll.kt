@@ -38,7 +38,7 @@ fun userProposePoll(): suspend BehaviourContext.(CommonMessage<PollContent>) -> 
         options,
         allowMultipleAnswers
     )
-    if(UserRepository.captchaRequired(userId)){
+    if (UserRepository.captchaRequired(userId)) {
         captchaRequest(userId, message.chat.id)
     }
     execute(
