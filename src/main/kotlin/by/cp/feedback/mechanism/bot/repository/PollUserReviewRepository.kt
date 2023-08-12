@@ -1,6 +1,8 @@
 package by.cp.feedback.mechanism.bot.repository
 
 import by.cp.feedback.mechanism.bot.table.PollUserReview
+import mu.KotlinLogging
+import org.jetbrains.exposed.exceptions.ExposedSQLException
 import org.jetbrains.exposed.sql.and
 import org.jetbrains.exposed.sql.insertAndGetId
 import org.jetbrains.exposed.sql.select
@@ -8,12 +10,22 @@ import org.jetbrains.exposed.sql.transactions.transaction
 
 object PollUserReviewRepository {
 
+    private val logger = KotlinLogging.logger {}
+
     fun save(pollId: Long, userId: Long, approved: Boolean) = transaction {
-        PollUserReview.insertAndGetId {
-            it[PollUserReview.id] = pollId
-            it[PollUserReview.userId] = userId
-            it[PollUserReview.approved] = approved
-        }.value
+        try {
+            PollUserReview.insertAndGetId {
+                it[PollUserReview.id] = pollId
+                it[PollUserReview.userId] = userId
+                it[PollUserReview.approved] = approved
+            }.value
+        } catch (ex: ExposedSQLException) {
+            if (ex.message?.contains("duplicate key") != true) {
+                logger.error(ex) { "Error while insert" }
+            } else {
+
+            }
+        }
     }
 
     fun approvalsCount(pollId: Long) = transaction {
