@@ -4,12 +4,15 @@ import by.cp.feedback.mechanism.bot.model.PollStatus
 import by.cp.feedback.mechanism.bot.model.PollVoteDto
 import by.cp.feedback.mechanism.bot.table.PollUserVote
 import by.cp.feedback.mechanism.bot.table.Polls
+import mu.KotlinLogging
 import org.jetbrains.exposed.exceptions.ExposedSQLException
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.transactions.transaction
 
 object PollUserVoteRepository {
+
+    private val logger = KotlinLogging.logger {}
 
     fun findResultsInVoting() = transaction {
         val pollIdAl = PollUserVote.id.alias("poll_id")
@@ -107,6 +110,11 @@ object PollUserVoteRepository {
                 }
             }.value
         } catch (ex: ExposedSQLException) {
+            if (ex.message?.contains("duplicate key") != true) {
+                logger.error(ex) { "Error while insert" }
+            } else {
+
+            }
         }
     }
 
@@ -131,6 +139,11 @@ object PollUserVoteRepository {
                 }
             }.value
         } catch (ex: ExposedSQLException) {
+            if (ex.message?.contains("duplicate key") != true) {
+                logger.error(ex) { "Error while insert" }
+            } else {
+
+            }
         }
     }
 

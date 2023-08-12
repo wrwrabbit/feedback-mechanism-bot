@@ -31,10 +31,6 @@ object PollUserReviewQueueRepository {
             .map(::pollForUserReviewDto)
     }
 
-    fun delete(pollId: Long) = transaction {
-        PollUserReviewQueue.deleteWhere { PollUserReviewQueue.pollId eq pollId }
-    }
-
     fun delete(reviewDto: PollForUserReviewDto) = transaction {
         PollUserReviewQueue.deleteWhere { (pollId eq reviewDto.pollId) and (userId eq reviewDto.userId) }
     }
