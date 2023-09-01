@@ -2,9 +2,9 @@ package by.cp.feedback.mechanism.bot.behaviour.common
 
 import by.cp.feedback.mechanism.bot.behaviour.utils.tryF
 import by.cp.feedback.mechanism.bot.exception.FromNotFoundException
+import by.cp.feedback.mechanism.bot.model.MessageQueueType
 import by.cp.feedback.mechanism.bot.model.menuMarkup
-import by.cp.feedback.mechanism.bot.repository.PollUserReviewQueueRepository
-import by.cp.feedback.mechanism.bot.repository.PollUserVoteQueueRepository
+import by.cp.feedback.mechanism.bot.repository.MessageQueueRepository
 import by.cp.feedback.mechanism.bot.repository.UserRepository
 import dev.inmo.tgbotapi.extensions.api.send.reply
 import dev.inmo.tgbotapi.extensions.behaviour_builder.BehaviourContext
@@ -16,12 +16,12 @@ fun start(): suspend BehaviourContext.(CommonMessage<TextContent>, Array<String>
     val userId: Long = message.from?.id?.chatId ?: throw FromNotFoundException()
     if (!UserRepository.exists(userId)) {
         UserRepository.save(userId, "ru")
-        PollUserReviewQueueRepository.saveByUserId(userId)
-        PollUserVoteQueueRepository.saveByUserId(userId)
+        MessageQueueRepository.saveReviewByUserId(userId, MessageQueueType.REVIEW)
+        MessageQueueRepository.saveVoteByUserId(userId, MessageQueueType.VOTE)
     }
     if (args.isNotEmpty()) {
         val pollId = args[0].toLong()
-        PollUserVoteQueueRepository.save(pollId, userId)
+        MessageQueueRepository.save(pollId, userId, MessageQueueType.VOTE)
     }
     reply(message, helloText(), replyMarkup = menuMarkup())
 }

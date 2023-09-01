@@ -1,11 +1,12 @@
 package by.cp.feedback.mechanism.bot.behaviour.moderation
 
 import by.cp.feedback.mechanism.bot.exception.PollNotFoundInDbException
+import by.cp.feedback.mechanism.bot.model.MessageQueueType
 import by.cp.feedback.mechanism.bot.model.PollStatus
 import by.cp.feedback.mechanism.bot.model.parsePoll
 import by.cp.feedback.mechanism.bot.model.userApproveModerationDC
 import by.cp.feedback.mechanism.bot.repository.PollRepository
-import by.cp.feedback.mechanism.bot.repository.PollUserReviewQueueRepository
+import by.cp.feedback.mechanism.bot.repository.MessageQueueRepository
 import dev.inmo.tgbotapi.extensions.api.edit.edit
 import dev.inmo.tgbotapi.extensions.behaviour_builder.BehaviourContext
 import dev.inmo.tgbotapi.extensions.utils.textContentOrThrow
@@ -22,7 +23,7 @@ fun userApproveModeration(): suspend BehaviourContext.(DataCallbackQuery) -> Uni
         val (question, options, allowMultipleAnswers) = parsePoll(fixedPoll)
         PollRepository.updatePoll(id, question, options, allowMultipleAnswers)
         PollRepository.updateStatus(poll.id, PollStatus.ON_USER_REVIEW)
-        PollUserReviewQueueRepository.save(poll.id)
+        MessageQueueRepository.save(poll.id, MessageQueueType.REVIEW)
         val message = callback.message
         val text = (callback.message.content as TextContent).text
         edit(

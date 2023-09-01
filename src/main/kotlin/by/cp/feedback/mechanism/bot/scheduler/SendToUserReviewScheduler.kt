@@ -4,7 +4,7 @@ import by.cp.feedback.mechanism.bot.model.bot
 import by.cp.feedback.mechanism.bot.model.sendToUserReviewMarkup
 import by.cp.feedback.mechanism.bot.model.toMessage
 import by.cp.feedback.mechanism.bot.repository.PollRepository
-import by.cp.feedback.mechanism.bot.repository.PollUserReviewQueueRepository
+import by.cp.feedback.mechanism.bot.repository.MessageQueueRepository
 import dev.inmo.tgbotapi.requests.send.SendTextMessage
 import dev.inmo.tgbotapi.types.toChatId
 import kotlinx.coroutines.runBlocking
@@ -15,10 +15,10 @@ import java.util.concurrent.TimeUnit
 @Component
 class SendToUserReviewScheduler {
 
-    @Scheduled(fixedRate = 5, timeUnit = TimeUnit.SECONDS)
+    @Scheduled(fixedRate = 3, timeUnit = TimeUnit.SECONDS)
     fun process() {
         runBlocking {
-            PollUserReviewQueueRepository.select15().forEach { review ->
+            MessageQueueRepository.select15().forEach { review ->
                 bot.execute(
                     SendTextMessage(
                         chatId = review.userId.toChatId(),
@@ -26,7 +26,7 @@ class SendToUserReviewScheduler {
                         replyMarkup = sendToUserReviewMarkup(review.pollId)
                     )
                 )
-                PollUserReviewQueueRepository.delete(review)
+                MessageQueueRepository.delete(review)
             }
         }
     }

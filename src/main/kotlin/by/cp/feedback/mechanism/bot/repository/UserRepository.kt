@@ -1,5 +1,6 @@
 package by.cp.feedback.mechanism.bot.repository
 
+import by.cp.feedback.mechanism.bot.model.UserStatus
 import by.cp.feedback.mechanism.bot.table.Users
 import org.jetbrains.exposed.sql.SqlExpressionBuilder
 import org.jetbrains.exposed.sql.insertAndGetId
@@ -13,9 +14,16 @@ object UserRepository {
         Users.insertAndGetId {
             it[Users.id] = userId
             it[Users.langCode] = langCode
+            it[Users.status] = UserStatus.UNMUTED
             it[pollCount] = 0
             it[voteCount] = 0
         }.value
+    }
+
+    fun changeUserStatus(userId: Long, status: UserStatus) = transaction {
+        Users.update({ Users.id eq userId }) {
+            it[Users.status] = status
+        }
     }
 
     fun exists(userId: Long): Boolean = transaction {

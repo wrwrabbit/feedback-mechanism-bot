@@ -3,9 +3,9 @@ package by.cp.feedback.mechanism.bot.scheduler
 import by.cp.feedback.mechanism.bot.behaviour.review.sentToUsersVoteText
 import by.cp.feedback.mechanism.bot.behaviour.utils.botLinkMarkup
 import by.cp.feedback.mechanism.bot.model.*
+import by.cp.feedback.mechanism.bot.repository.MessageQueueRepository
 import by.cp.feedback.mechanism.bot.repository.PollRepository
 import by.cp.feedback.mechanism.bot.repository.PollUserReviewRepository
-import by.cp.feedback.mechanism.bot.repository.PollUserVoteQueueRepository
 import dev.inmo.tgbotapi.requests.send.SendTextMessage
 import dev.inmo.tgbotapi.types.toChatId
 import kotlinx.coroutines.runBlocking
@@ -39,7 +39,7 @@ class PollUserReviewFinishScheduler {
                         ),
                     )
                     PollRepository.start(poll.id, message.messageId)
-                    PollUserVoteQueueRepository.save(poll.id)
+                    MessageQueueRepository.save(poll.id, MessageQueueType.VOTE)
                     bot.execute(
                         SendTextMessage(
                             poll.userId.toChatId(),

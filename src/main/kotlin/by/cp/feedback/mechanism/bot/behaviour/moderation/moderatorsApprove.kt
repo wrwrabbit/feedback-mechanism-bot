@@ -3,12 +3,9 @@ package by.cp.feedback.mechanism.bot.behaviour.moderation
 import by.cp.feedback.mechanism.bot.exception.AlreadyApprovedException
 import by.cp.feedback.mechanism.bot.exception.CantApproveRejectedException
 import by.cp.feedback.mechanism.bot.exception.PollNotFoundInDbException
-import by.cp.feedback.mechanism.bot.model.PollStatus
-import by.cp.feedback.mechanism.bot.model.moderatorApproveDC
-import by.cp.feedback.mechanism.bot.model.moderatorsApprovalsRequired
-import by.cp.feedback.mechanism.bot.model.moderatorsReviewMarkup
+import by.cp.feedback.mechanism.bot.model.*
 import by.cp.feedback.mechanism.bot.repository.PollRepository
-import by.cp.feedback.mechanism.bot.repository.PollUserReviewQueueRepository
+import by.cp.feedback.mechanism.bot.repository.MessageQueueRepository
 import dev.inmo.tgbotapi.extensions.api.edit.edit
 import dev.inmo.tgbotapi.extensions.behaviour_builder.BehaviourContext
 import dev.inmo.tgbotapi.requests.send.SendTextMessage
@@ -27,7 +24,7 @@ fun moderatorApprove(): suspend BehaviourContext.(DataCallbackQuery) -> Unit = {
     PollRepository.updateApproves(id, resultArray)
     if (resultArray.size == moderatorsApprovalsRequired) {
         PollRepository.updateStatus(poll.id, PollStatus.ON_USER_REVIEW)
-        PollUserReviewQueueRepository.save(poll.id)
+        MessageQueueRepository.save(poll.id, MessageQueueType.REVIEW)
         execute(SendTextMessage(poll.userId.toChatId(), sentToUsersReviewText()))
         val message = (callback as MessageDataCallbackQuery).message
         val text = (callback.message.content as TextContent).text
