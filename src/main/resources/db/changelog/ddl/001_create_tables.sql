@@ -1,6 +1,7 @@
 create table users(
     id bigint primary key,
     lang_code text not null,
+    status text not null,
     vote_count bigint not null,
     poll_count bigint not null
 );
@@ -20,14 +21,10 @@ create table polls(
     message_id bigint null
 );
 
-create table poll_user_review_queue(
+create table message_queue(
     user_id bigint not null,
-    poll_id bigint not null
-);
-
-create table poll_user_vote_queue(
-    user_id bigint not null,
-    poll_id bigint not null
+    poll_id bigint not null,
+    type text not null
 );
 
 create table poll_user_review(
