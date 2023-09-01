@@ -24,11 +24,11 @@ import dev.inmo.tgbotapi.utils.row
 fun mute(): suspend BehaviourContext.(CommonMessage<TextContent>) -> Unit = tryF { message ->
     val userId: Long = message.from?.id?.chatId ?: throw FromNotFoundException()
     UserRepository.changeUserStatus(userId, UserStatus.MUTED)
-    reply(message, "Muted")
+    reply(message, "Уведомления отключены. Вы от меня больше не будете получать сообщения")
 }
 
 fun unmute(): suspend BehaviourContext.(CommonMessage<TextContent>) -> Unit = tryF { message ->
     val userId: Long = message.from?.id?.chatId ?: throw FromNotFoundException()
     UserRepository.changeUserStatus(userId, UserStatus.UNMUTED)
-    reply(message, "Unmuted")
+    reply(message, "Уведомления ВКЛючены")
 }
