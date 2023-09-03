@@ -3,6 +3,8 @@ package by.cp.feedback.mechanism.bot.behaviour.captcha
 import by.cp.feedback.mechanism.bot.captcha.CaptchaService
 import by.cp.feedback.mechanism.bot.model.changeCaptcha
 import by.cp.feedback.mechanism.bot.model.changeCaptchaMarkup
+import by.cp.feedback.mechanism.bot.model.sendMeCaptchaText
+import by.cp.feedback.mechanism.bot.model.wrongCaptchaText
 import dev.inmo.tgbotapi.extensions.api.send.reply
 import dev.inmo.tgbotapi.extensions.behaviour_builder.BehaviourContext
 import dev.inmo.tgbotapi.extensions.behaviour_builder.expectations.waitTextMessage
@@ -51,7 +53,3 @@ fun BufferedImage.toPhoto() = ByteArrayOutputStream().let {
     ImageIO.write(this, "jpg", it)
     it.toByteArray()
 }.asMultipartFile("captcha")
-
-fun sendMeCaptchaText() = "Введите код с картинки"
-
-fun wrongCaptchaText() = "Неправильная капча"

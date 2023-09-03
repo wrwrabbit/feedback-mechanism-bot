@@ -11,7 +11,8 @@ import dev.inmo.tgbotapi.types.queries.callback.MessageDataCallbackQuery
 
 fun userUnApprove(): suspend BehaviourContext.(DataCallbackQuery) -> Unit = { callback ->
     val id = callback.data.substring(userUnApproveDC.length).toLong()
+    val userId = callback.user.id.chatId
     val poll = PollRepository.getById(id) ?: throw PollNotFoundInDbException()
-    PollUserReviewRepository.save(poll.id, poll.userId, false)
+    PollUserReviewRepository.save(poll.id, userId, false)
     delete((callback as MessageDataCallbackQuery).message)
 }

@@ -1,7 +1,7 @@
 package by.cp.feedback.mechanism.bot.scheduler
 
-import by.cp.feedback.mechanism.bot.behaviour.review.sentToUsersVoteText
 import by.cp.feedback.mechanism.bot.behaviour.utils.botLinkMarkup
+import by.cp.feedback.mechanism.bot.behaviour.utils.executeIfNotMuted
 import by.cp.feedback.mechanism.bot.model.*
 import by.cp.feedback.mechanism.bot.repository.MessageQueueRepository
 import by.cp.feedback.mechanism.bot.repository.PollRepository
@@ -40,12 +40,7 @@ class PollUserReviewFinishScheduler {
                     )
                     PollRepository.start(poll.id, message.messageId)
                     MessageQueueRepository.save(poll.id, MessageQueueType.VOTE)
-                    bot.execute(
-                        SendTextMessage(
-                            poll.userId.toChatId(),
-                            sentToUsersVoteText()
-                        )
-                    )
+                    executeIfNotMuted(poll.userId, SendTextMessage(poll.userId!!.toChatId(), sentToUsersVoteText()))
                 }
             }
         }

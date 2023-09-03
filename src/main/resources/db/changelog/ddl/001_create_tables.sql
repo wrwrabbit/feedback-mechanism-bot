@@ -6,9 +6,14 @@ create table users(
     poll_count bigint not null
 );
 
+create table user_deletions(
+    user_id bigint not null,
+    created_at timestamp not null
+);
+
 create table polls(
     id bigserial primary key,
-    user_id bigint not null,
+    user_id bigint,
     status text not null,
     question text not null,
     options text[] not null,

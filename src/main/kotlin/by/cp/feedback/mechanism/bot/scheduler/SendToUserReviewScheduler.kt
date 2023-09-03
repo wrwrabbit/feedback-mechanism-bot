@@ -3,8 +3,8 @@ package by.cp.feedback.mechanism.bot.scheduler
 import by.cp.feedback.mechanism.bot.model.bot
 import by.cp.feedback.mechanism.bot.model.sendToUserReviewMarkup
 import by.cp.feedback.mechanism.bot.model.toMessage
-import by.cp.feedback.mechanism.bot.repository.PollRepository
 import by.cp.feedback.mechanism.bot.repository.MessageQueueRepository
+import by.cp.feedback.mechanism.bot.repository.PollRepository
 import dev.inmo.tgbotapi.requests.send.SendTextMessage
 import dev.inmo.tgbotapi.types.toChatId
 import kotlinx.coroutines.runBlocking

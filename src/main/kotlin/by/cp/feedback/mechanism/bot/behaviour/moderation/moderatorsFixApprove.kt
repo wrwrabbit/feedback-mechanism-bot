@@ -1,5 +1,6 @@
 package by.cp.feedback.mechanism.bot.behaviour.moderation
 
+import by.cp.feedback.mechanism.bot.behaviour.utils.executeIfNotMuted
 import by.cp.feedback.mechanism.bot.behaviour.utils.tryFModerators
 import by.cp.feedback.mechanism.bot.exception.PollNotFoundInDbException
 import by.cp.feedback.mechanism.bot.model.moderatorFixApproveDC
@@ -23,9 +24,10 @@ fun moderatorFixApprove(): suspend BehaviourContext.(DataCallbackQuery) -> Unit 
     val fixedPoll = (callback.message.content as TextContent).text.let { text ->
         text.substring(text.indexOf("\n") + 1)
     }
-    execute(
+    executeIfNotMuted(
+        poll.userId,
         SendTextMessage(
-            poll.userId.toChatId(),
+            poll.userId!!.toChatId(),
             "Модераторы предложили другую версию вашего опроса:\n$fixedPoll",
             replyMarkup = userModerationReviewMarkup(pollId, fixedPoll)
         )

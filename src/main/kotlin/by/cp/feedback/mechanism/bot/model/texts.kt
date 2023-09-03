@@ -18,6 +18,12 @@ fun question() = "Вопрос"
 
 fun answer() = "Ответ"
 
+fun sentToUsersVoteText() = "Ваш опрос отправлен на голосование пользователям"
+
+fun sendMeCaptchaText() = "Введите код с картинки"
+
+fun wrongCaptchaText() = "Неправильная капча"
+
 fun moreThanOneAnswer() = "Больше одного ответа"
 
 fun sentToModeratorsText(pollDto: PollDto) = "Ваш опрос отправлен модераторам\n" + pollDto.toMessage()

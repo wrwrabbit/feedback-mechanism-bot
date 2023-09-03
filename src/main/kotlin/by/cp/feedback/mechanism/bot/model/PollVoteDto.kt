@@ -2,7 +2,7 @@ package by.cp.feedback.mechanism.bot.model
 
 data class PollVoteDto(
     val id: Long,
-    val userId: Long,
+    val userId: Long?,
     val messageId: Long? = null,
     val question: String,
     val allowMultipleAnswers: Boolean,
