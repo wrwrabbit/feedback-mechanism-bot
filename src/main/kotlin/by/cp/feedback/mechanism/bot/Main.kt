@@ -34,6 +34,7 @@ const val myPollsCommand = "my_polls"
 const val getPollCommand = "get_poll"
 const val muteCommand = "mute"
 const val unmuteCommand = "unmute"
+const val deleteCommand = "delete"
 
 private val logger = KotlinLogging.logger { }
 
@@ -56,6 +57,7 @@ suspend fun main(args: Array<String>) {
         onCommand(myPollsCommand, scenarioReceiver = myPolls())
         onCommand(muteCommand, scenarioReceiver = mute())
         onCommand(unmuteCommand, scenarioReceiver = unmute())
+        onCommand(deleteCommand, scenarioReceiver = delete())
         onDataCallbackQuery(Regex("$myPollsDC.*"), scenarioReceiver = myPollsDC())
         onText(initialFilter = { it.content.text == "\uD83D\uDDC2 мои опросы" }, scenarioReceiver = myPolls())
         //MODERATION
@@ -86,7 +88,8 @@ suspend fun main(args: Array<String>) {
             BotCommand(getPollCommand, "Пример: /get_poll 20"),
             BotCommand(myPollsCommand, "Пример: /my_polls"),
             BotCommand(muteCommand, "Пример: /mute"),
-            BotCommand(unmuteCommand, "Пример: /unmute")
+            BotCommand(unmuteCommand, "Пример: /unmute"),
+            BotCommand(deleteCommand, "Пример: /delete"),
         )
     }
     runApplication<FeedbackMechanismBot>(*args)

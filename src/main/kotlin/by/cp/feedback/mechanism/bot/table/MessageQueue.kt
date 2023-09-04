@@ -1,6 +1,5 @@
 package by.cp.feedback.mechanism.bot.table
 
-import by.cp.feedback.mechanism.bot.model.UserStatus
 import by.cp.feedback.mechanism.bot.model.MessageQueueType
 import org.jetbrains.exposed.sql.Column
 import org.jetbrains.exposed.sql.Table

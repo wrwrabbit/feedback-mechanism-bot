@@ -1,12 +1,13 @@
 package by.cp.feedback.mechanism.bot.repository
 
+import by.cp.feedback.mechanism.bot.model.UserDto
 import by.cp.feedback.mechanism.bot.model.UserStatus
+import by.cp.feedback.mechanism.bot.table.MessageQueue
+import by.cp.feedback.mechanism.bot.table.Polls
 import by.cp.feedback.mechanism.bot.table.Users
-import org.jetbrains.exposed.sql.SqlExpressionBuilder
-import org.jetbrains.exposed.sql.insertAndGetId
-import org.jetbrains.exposed.sql.select
+import org.jetbrains.exposed.sql.*
+import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.transactions.transaction
-import org.jetbrains.exposed.sql.update
 
 object UserRepository {
 
@@ -14,7 +15,7 @@ object UserRepository {
         Users.insertAndGetId {
             it[Users.id] = userId
             it[Users.langCode] = langCode
-            it[Users.status] = UserStatus.UNMUTED
+            it[status] = UserStatus.UNMUTED
             it[pollCount] = 0
             it[voteCount] = 0
         }.value
@@ -28,6 +29,16 @@ object UserRepository {
 
     fun exists(userId: Long): Boolean = transaction {
         !Users.select { Users.id eq userId }.empty()
+    }
+
+    fun getById(userId: Long) = transaction {
+        Users.select { Users.id eq userId }.map {
+            UserDto(
+                id = it[Users.id].value,
+                langCode = it[Users.langCode],
+                status = it[Users.status],
+            )
+        }.firstOrNull()
     }
 
     fun pollCountInc(userId: Long) = transaction {
@@ -49,6 +60,14 @@ object UserRepository {
                 it.update(voteCount, voteCount + 1)
             }
         }
+    }
+
+    fun deleteDataByUserId(userId: Long) = transaction {
+        Users.deleteWhere { Users.id eq userId }
+        Polls.update({ Polls.userId eq userId }) {
+            it[Polls.userId] = null
+        }
+        MessageQueue.deleteWhere { MessageQueue.userId eq userId }
     }
 
 }

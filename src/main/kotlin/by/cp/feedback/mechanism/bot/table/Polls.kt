@@ -10,7 +10,7 @@ import org.jetbrains.exposed.sql.javatime.datetime
 import java.time.LocalDateTime
 
 object Polls : LongIdTable(name = "polls") {
-    val userId: Column<Long> = long("user_id")
+    val userId: Column<Long?> = long("user_id").nullable()
     val status: Column<PollStatus> = enumerationByName("status", 255, PollStatus::class)
     val question: Column<String> = text("question")
     val options: Column<Array<String>> = array("options", columnType = TextColumnType())

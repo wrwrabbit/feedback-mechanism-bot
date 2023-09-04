@@ -4,7 +4,7 @@ import java.time.LocalDateTime
 
 data class PollDto(
     val id: Long,
-    val userId: Long,
+    val userId: Long?,
     val status: PollStatus,
     val question: String,
     val options: Array<String>,
