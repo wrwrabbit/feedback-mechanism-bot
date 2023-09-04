@@ -24,7 +24,7 @@ fun myPolls(): suspend BehaviourContext.(CommonMessage<TextContent>) -> Unit = t
     val polls = PollRepository.getByUserId(userId, 1)
     val pollsResponse = polls.content.joinToString("\n") { it.toStatusMessage() }
     val response = pollsResponse.ifEmpty { emptyPollsMessage() }
-    reply(message, response, replyMarkup = pollsMarkup(userId, polls.page, polls.totalPages))
+    reply(message, response, replyMarkup = pollsMarkup(userId, polls.page, polls.totalPages, polls.totalElements))
 }
 
 fun myPollsDC(): suspend BehaviourContext.(DataCallbackQuery) -> Unit = { callback ->
@@ -34,39 +34,51 @@ fun myPollsDC(): suspend BehaviourContext.(DataCallbackQuery) -> Unit = { callba
     val pollsResponse = polls.content.joinToString("\n") { it.toStatusMessage() }
     val response = pollsResponse.ifEmpty { emptyPollsMessage() }
     val message = (callback as MessageDataCallbackQuery).message
-    edit(message.chat.id, message.messageId, response, replyMarkup = pollsMarkup(userId, polls.page, polls.totalPages))
+    edit(
+        message.chat.id, message.messageId, response, replyMarkup = pollsMarkup(
+            userId,
+            polls.page,
+            polls.totalPages,
+            polls.totalElements
+        )
+    )
 }
 
-fun pollsMarkup(userId: Long, page: Int, totalPages: Int) = InlineKeyboardMarkup(
-    matrix {
-        row {
-            if (page != 1) {
-                +CallbackDataInlineKeyboardButton(
-                    "<<",
-                    callbackData = "$myPollsDC${userId}_1"
-                )
-                +CallbackDataInlineKeyboardButton(
-                    "<",
-                    callbackData = "$myPollsDC${userId}_${page - 1}"
-                )
+fun pollsMarkup(userId: Long, page: Int, totalPages: Int, totalElements: Long) =
+    if (totalElements > 0L && totalPages > 1) {
+        InlineKeyboardMarkup(
+            matrix {
+                row {
+                    if (page != 1) {
+                        +CallbackDataInlineKeyboardButton(
+                            "<<",
+                            callbackData = "$myPollsDC${userId}_1"
+                        )
+                        +CallbackDataInlineKeyboardButton(
+                            "<",
+                            callbackData = "$myPollsDC${userId}_${page - 1}"
+                        )
+                    }
+                    +CallbackDataInlineKeyboardButton(
+                        page.toString(),
+                        callbackData = "____________________"
+                    )
+                    if (page != totalPages) {
+                        +CallbackDataInlineKeyboardButton(
+                            ">",
+                            callbackData = "$myPollsDC${userId}_${page + 1}"
+                        )
+                        +CallbackDataInlineKeyboardButton(
+                            ">>",
+                            callbackData = "$myPollsDC${userId}_${totalPages}"
+                        )
+                    }
+                }
             }
-            +CallbackDataInlineKeyboardButton(
-                page.toString(),
-                callbackData = "____________________"
-            )
-            if (page != totalPages) {
-                +CallbackDataInlineKeyboardButton(
-                    ">",
-                    callbackData = "$myPollsDC${userId}_${page + 1}"
-                )
-                +CallbackDataInlineKeyboardButton(
-                    ">>",
-                    callbackData = "$myPollsDC${userId}_${totalPages}"
-                )
-            }
-        }
+        )
+    } else {
+        null
     }
-)
 
 fun emptyPollsMessage(): String = "У вас нет опросов"
 
