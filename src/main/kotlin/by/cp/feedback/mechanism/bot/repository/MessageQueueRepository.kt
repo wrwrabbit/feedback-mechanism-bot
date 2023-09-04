@@ -1,7 +1,7 @@
 package by.cp.feedback.mechanism.bot.repository
 
 import by.cp.feedback.mechanism.bot.model.MessageQueueType
-import by.cp.feedback.mechanism.bot.model.PollForUserReviewDto
+import by.cp.feedback.mechanism.bot.model.MessageQueueDto
 import by.cp.feedback.mechanism.bot.model.PollStatus
 import by.cp.feedback.mechanism.bot.model.UserStatus
 import by.cp.feedback.mechanism.bot.table.MessageQueue
@@ -51,13 +51,14 @@ object MessageQueueRepository {
             .map(::pollForUserReviewDto)
     }
 
-    fun delete(reviewDto: PollForUserReviewDto) = transaction {
+    fun delete(reviewDto: MessageQueueDto) = transaction {
         MessageQueue.deleteWhere { (pollId eq reviewDto.pollId) and (userId eq reviewDto.userId) }
     }
 
-    private fun pollForUserReviewDto(it: ResultRow) = PollForUserReviewDto(
+    private fun pollForUserReviewDto(it: ResultRow) = MessageQueueDto(
         it[MessageQueue.userId],
         it[MessageQueue.pollId],
+        it[MessageQueue.type],
     )
 
 }
