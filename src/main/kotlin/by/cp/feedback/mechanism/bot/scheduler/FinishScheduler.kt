@@ -28,13 +28,13 @@ class FinishScheduler {
                     val between = Duration.between(poll.startedAt, LocalDateTime.now(ZoneOffset.UTC))
                     if (between.toSeconds() > secondsTillFinish) {
                         PollRepository.finish(poll.id)
+                        bot.edit(
+                            chatId = postChatId.toChatId(),
+                            messageId = poll.messageId!!,
+                            text = "ЗАВЕРШЁН\n" + poll.toMessage(),
+                            replyMarkup = null
+                        )
                     }
-                    bot.edit(
-                        chatId = postChatId.toChatId(),
-                        messageId = poll.messageId!!,
-                        text = "ЗАВЕРШЁН\n" + poll.toMessage(),
-                        replyMarkup = null
-                    )
                 } catch (e: MessageIsNotModifiedException) {
                 } catch (e: Exception) {
                     logger.error(e) { "Exception while edit post" }

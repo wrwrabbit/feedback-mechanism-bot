@@ -21,7 +21,7 @@ fun start(): suspend BehaviourContext.(CommonMessage<TextContent>, Array<String>
     }
     if (args.isNotEmpty()) {
         val pollId = args[0].toLong()
-        MessageQueueRepository.save(pollId, userId, MessageQueueType.VOTE)
+        MessageQueueRepository.save(userId = userId, pollId = pollId, type = MessageQueueType.VOTE)
     }
     reply(message, helloText(), replyMarkup = menuMarkup())
 }
