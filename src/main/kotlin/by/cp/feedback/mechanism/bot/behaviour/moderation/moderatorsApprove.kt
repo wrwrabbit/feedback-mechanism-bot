@@ -26,7 +26,9 @@ fun moderatorApprove(): suspend BehaviourContext.(DataCallbackQuery) -> Unit = {
     if (resultArray.size == moderatorsApprovalsRequired) {
         PollRepository.updateStatus(poll.id, PollStatus.ON_USER_REVIEW)
         MessageQueueRepository.save(poll.id, MessageQueueType.REVIEW)
-        executeIfNotMuted(poll.userId, SendTextMessage(userId.toChatId(), sentToUsersReviewText()))
+        poll.userId?.let { pollUserId ->
+            executeIfNotMuted(pollUserId, SendTextMessage(pollUserId.toChatId(), sentToUsersReviewText()))
+        }
         val message = (callback as MessageDataCallbackQuery).message
         val text = (callback.message.content as TextContent).text
         edit(

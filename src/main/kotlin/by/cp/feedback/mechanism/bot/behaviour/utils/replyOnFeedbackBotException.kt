@@ -14,14 +14,14 @@ import dev.inmo.tgbotapi.types.message.content.TextContent
 import dev.inmo.tgbotapi.types.queries.callback.DataCallbackQuery
 import dev.inmo.tgbotapi.types.queries.callback.MessageDataCallbackQuery
 
-suspend fun BehaviourContext.executeIfNotMuted(userId: Long?, request: Request<*>) {
-    if (userId != null && UserRepository.getById(userId)?.status == UserStatus.UNMUTED) {
+suspend fun BehaviourContext.executeIfNotMuted(userId: Long, request: Request<*>) {
+    if (UserRepository.getById(userId)?.status == UserStatus.UNMUTED) {
         execute(request)
     }
 }
 
-suspend fun executeIfNotMuted(userId: Long?, request: Request<*>) {
-    if (userId != null && UserRepository.getById(userId)?.status == UserStatus.UNMUTED) {
+suspend fun executeIfNotMuted(userId: Long, request: Request<*>) {
+    if (UserRepository.getById(userId)?.status == UserStatus.UNMUTED) {
         bot.execute(request)
     }
 }

@@ -24,14 +24,16 @@ fun moderatorFixApprove(): suspend BehaviourContext.(DataCallbackQuery) -> Unit 
     val fixedPoll = (callback.message.content as TextContent).text.let { text ->
         text.substring(text.indexOf("\n") + 1)
     }
-    executeIfNotMuted(
-        poll.userId,
-        SendTextMessage(
-            poll.userId!!.toChatId(),
-            "Модераторы предложили другую версию вашего опроса:\n$fixedPoll",
-            replyMarkup = userModerationReviewMarkup(pollId, fixedPoll)
+    poll.userId?.let { pollUserId ->
+        executeIfNotMuted(
+            pollUserId,
+            SendTextMessage(
+                pollUserId.toChatId(),
+                "Модераторы предложили другую версию вашего опроса:\n$fixedPoll",
+                replyMarkup = userModerationReviewMarkup(pollId, fixedPoll)
+            )
         )
-    )
+    }
     execute(SendTextMessage(moderatorsChatId.toChatId(), "Вы предложили исправленную версию опроса"))
     edit(
         chatId = moderatorsChatId.toChatId(),
