@@ -1,15 +1,13 @@
 package by.cp.feedback.mechanism.bot.behaviour.captcha
 
 import by.cp.feedback.mechanism.bot.captcha.CaptchaService
-import by.cp.feedback.mechanism.bot.model.changeCaptcha
-import by.cp.feedback.mechanism.bot.model.changeCaptchaMarkup
-import by.cp.feedback.mechanism.bot.model.sendMeCaptchaText
-import by.cp.feedback.mechanism.bot.model.wrongCaptchaText
+import by.cp.feedback.mechanism.bot.model.*
 import dev.inmo.tgbotapi.extensions.api.send.reply
 import dev.inmo.tgbotapi.extensions.behaviour_builder.BehaviourContext
 import dev.inmo.tgbotapi.extensions.behaviour_builder.expectations.waitTextMessage
 import dev.inmo.tgbotapi.extensions.utils.extensions.sameThread
 import dev.inmo.tgbotapi.requests.abstracts.asMultipartFile
+import dev.inmo.tgbotapi.requests.send.SendTextMessage
 import dev.inmo.tgbotapi.requests.send.media.SendPhoto
 import dev.inmo.tgbotapi.types.ChatIdentifier
 import dev.inmo.tgbotapi.types.toChatId
@@ -34,6 +32,7 @@ suspend fun BehaviourContext.captchaRequest(
             userCaptchaMessage = waitCaptcha(userId, imageText, chatId)
         }
     }
+    execute(SendTextMessage(userId.toChatId(), "Вы успешно прошли проверку", replyMarkup = menuMarkup()))
 }
 
 private suspend fun BehaviourContext.waitCaptcha(

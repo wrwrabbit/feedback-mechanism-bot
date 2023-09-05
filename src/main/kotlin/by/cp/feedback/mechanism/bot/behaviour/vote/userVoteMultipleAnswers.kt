@@ -2,13 +2,16 @@ package by.cp.feedback.mechanism.bot.behaviour.vote
 
 import by.cp.feedback.mechanism.bot.behaviour.captcha.captchaRequest
 import by.cp.feedback.mechanism.bot.model.userVoteMultipleAnswersDC
+import by.cp.feedback.mechanism.bot.model.voteResultText
 import by.cp.feedback.mechanism.bot.repository.PollUserVoteRepository
 import by.cp.feedback.mechanism.bot.repository.UserRepository
 import dev.inmo.tgbotapi.extensions.api.delete
 import dev.inmo.tgbotapi.extensions.behaviour_builder.BehaviourContext
 import dev.inmo.tgbotapi.extensions.utils.extensions.raw.reply_markup
+import dev.inmo.tgbotapi.requests.send.SendTextMessage
 import dev.inmo.tgbotapi.types.queries.callback.DataCallbackQuery
 import dev.inmo.tgbotapi.types.queries.callback.MessageDataCallbackQuery
+import dev.inmo.tgbotapi.types.toChatId
 
 fun userVoteMultipleAnswers(): suspend BehaviourContext.(DataCallbackQuery) -> Unit = { callback ->
     val userId = callback.user.id.chatId
@@ -25,5 +28,6 @@ fun userVoteMultipleAnswers(): suspend BehaviourContext.(DataCallbackQuery) -> U
     }
     PollUserVoteRepository.vote(pollId, userId, options)
     UserRepository.voteCountInc(userId)
+    execute(SendTextMessage(userId.toChatId(), voteResultText()))
     delete(callback.message)
 }

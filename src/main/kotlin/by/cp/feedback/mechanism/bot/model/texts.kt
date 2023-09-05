@@ -20,9 +20,11 @@ fun answer() = "Ответ"
 
 fun sentToUsersVoteText() = "Ваш опрос отправлен на голосование пользователям"
 
-fun sendMeCaptchaText() = "Введите код с картинки"
+fun sendMeCaptchaText() = "Чтобы убедиться, что вы не робот, введите код с картинки"
 
 fun wrongCaptchaText() = "Неправильная капча"
+
+fun voteResultText() = "Вы проголосовали в опросе"
 
 fun moreThanOneAnswer() = "Больше одного ответа"
 
