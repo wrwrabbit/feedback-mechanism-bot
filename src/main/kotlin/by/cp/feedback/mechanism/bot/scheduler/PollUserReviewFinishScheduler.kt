@@ -40,7 +40,9 @@ class PollUserReviewFinishScheduler {
                     )
                     PollRepository.start(poll.id, message.messageId)
                     MessageQueueRepository.save(poll.id, MessageQueueType.VOTE)
-                    executeIfNotMuted(poll.userId, SendTextMessage(poll.userId!!.toChatId(), sentToUsersVoteText()))
+                    poll.userId?.let { pollUserId ->
+                        executeIfNotMuted(pollUserId, SendTextMessage(pollUserId.toChatId(), sentToUsersVoteText()))
+                    }
                 }
             }
         }
