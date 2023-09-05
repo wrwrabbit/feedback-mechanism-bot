@@ -51,7 +51,7 @@ object UserRepository {
 
     fun captchaRequired(userId: Long) = transaction {
         Users.select { Users.id eq userId }.map { it[Users.pollCount] to it[Users.voteCount] }.first()
-            .let { it.first < 1 && it.second < 2 }
+            .let { it.first < 1 && it.second < 1 }
     }
 
     fun voteCountInc(userId: Long) = transaction {
