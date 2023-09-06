@@ -22,7 +22,7 @@ class MessageQueueProccessor {
     fun process() {
         runBlocking {
             MessageQueueRepository.select15().forEach { entry ->
-                try{
+                try {
                     when (entry.type) {
                         REVIEW -> bot.execute(
                             SendTextMessage(
@@ -46,10 +46,9 @@ class MessageQueueProccessor {
                             )
                         }
                     }
-                }catch (ex: Exception){
+                } catch (ex: Exception) {
                     logger.error(ex) { "Exception while sending message from queue" }
-                }
-                finally {
+                } finally {
                     MessageQueueRepository.delete(entry)
                 }
             }
