@@ -23,7 +23,6 @@ fun delete(): suspend BehaviourContext.(CommonMessage<TextContent>) -> Unit = tr
     if (count <= getOrRandomAndPut(userId)) {
         UserRepository.deleteDataByUserId(userId)
         UserDeletionRepository.save(userId)
-        UserRepository.changeUserStatus(userId, UserStatus.MUTED)
         reply(message, "Все ваши данные удалены")
     } else {
         reply(message, "Лимит удалений исчерпан")
