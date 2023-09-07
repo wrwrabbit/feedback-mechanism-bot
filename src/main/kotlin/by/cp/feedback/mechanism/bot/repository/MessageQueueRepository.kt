@@ -39,7 +39,7 @@ object MessageQueueRepository {
     fun saveVoteByUserId(userId: Long, type: MessageQueueType) = transaction {
         MessageQueue.insert(
             Polls.slice(longParam(userId), Polls.id, stringParam(type.toString()))
-                .select { Polls.status eq PollStatus.ON_USER_REVIEW },
+                .select { Polls.status eq PollStatus.VOTING },
             columns = listOf(MessageQueue.userId, MessageQueue.pollId, MessageQueue.type)
         )
     }
