@@ -16,6 +16,7 @@ import dev.inmo.tgbotapi.extensions.utils.updates.retrieving.setWebhookInfoAndSt
 import dev.inmo.tgbotapi.extensions.utils.updates.retrieving.startGettingOfUpdatesByLongPolling
 import dev.inmo.tgbotapi.requests.webhook.SetWebhook
 import dev.inmo.tgbotapi.types.BotCommand
+import io.ktor.client.network.sockets.*
 import io.ktor.server.netty.*
 import kotlinx.coroutines.CancellationException
 import mu.KotlinLogging
@@ -44,6 +45,7 @@ suspend fun main(args: Array<String>) {
             when (it) {
                 is CancellationException -> {}
                 is FeedbackBotException -> {}
+                is ConnectTimeoutException -> logger.error { "Connect timeout has expired" }
                 else -> {
                     logger.error(it) { "Exception in bot" }
                 }
