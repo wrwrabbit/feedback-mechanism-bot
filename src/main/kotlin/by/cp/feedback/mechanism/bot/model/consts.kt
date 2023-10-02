@@ -1,8 +1,17 @@
 package by.cp.feedback.mechanism.bot.model
 
 import dev.inmo.tgbotapi.bot.ktor.telegramBot
+import io.ktor.client.*
+import io.ktor.client.plugins.*
 
-val bot = telegramBot(System.getenv("TOKEN"))
+val bot = telegramBot(System.getenv("TOKEN")){
+    client = HttpClient {
+        install(HttpRequestRetry) {
+            retryOnServerErrors(maxRetries = 5)
+            exponentialDelay()
+        }
+    }
+}
 
 val moderatorsChatId = System.getenv("MODERATORS_CHAT_ID").toLong()
 val postChatId = System.getenv("POST_CHAT_ID").toLong()
