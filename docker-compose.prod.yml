@@ -9,6 +9,7 @@ services:
       POSTGRES_DB: "${DB_DATABASE}"
     volumes:
       - ./docker:/docker-entrypoint-initdb.d
+      - ./postgresql:/var/lib/postgresql
     networks:
       - cpdata-network
 
