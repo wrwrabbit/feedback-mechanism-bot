@@ -18,8 +18,7 @@ fun start(): suspend BehaviourContext.(CommonMessage<TextContent>, Array<String>
         UserRepository.save(userId, "ru")
         MessageQueueRepository.saveReviewByUserId(userId, MessageQueueType.REVIEW)
         MessageQueueRepository.saveVoteByUserId(userId, MessageQueueType.VOTE)
-    }
-    if (args.isNotEmpty()) {
+    } else if (args.isNotEmpty()) {
         val pollId = args[0].toLong()
         MessageQueueRepository.save(userId = userId, pollId = pollId, type = MessageQueueType.VOTE)
     }
