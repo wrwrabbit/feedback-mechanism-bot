@@ -39,4 +39,4 @@ out/
 .env
 
 ## 
-./postgresql
+postgresql
