@@ -2,6 +2,7 @@ package by.cp.feedback.mechanism.bot.scheduler
 
 import by.cp.feedback.mechanism.bot.model.*
 import by.cp.feedback.mechanism.bot.repository.PollRepository
+import by.cp.feedback.mechanism.bot.repository.PollUserVoteRepository
 import dev.inmo.tgbotapi.bot.exceptions.MessageIsNotModifiedException
 import dev.inmo.tgbotapi.extensions.api.edit.edit
 import dev.inmo.tgbotapi.types.toChatId
@@ -20,10 +21,10 @@ class FinishScheduler {
 
     private val logger = KotlinLogging.logger {}
 
-    @Scheduled(fixedRate = 30, timeUnit = TimeUnit.SECONDS)
+    @Scheduled(fixedRate = 10, timeUnit = TimeUnit.SECONDS)
     fun process() {
         runBlocking {
-            PollRepository.getByStatus(PollStatus.VOTING).forEach { poll ->
+            PollUserVoteRepository.findResults(PollStatus.VOTING).forEach { poll ->
                 try {
                     val between = Duration.between(poll.startedAt, LocalDateTime.now(ZoneOffset.UTC))
                     if (between.toSeconds() > secondsTillFinish) {
@@ -31,7 +32,7 @@ class FinishScheduler {
                         bot.edit(
                             chatId = postChatId.toChatId(),
                             messageId = poll.messageId!!,
-                            text = "ЗАВЕРШЁН\n" + poll.toMessage(),
+                            text = "ЗАВЕРШЁН\n" + poll.toChannelMessage(),
                             replyMarkup = null
                         )
                     }

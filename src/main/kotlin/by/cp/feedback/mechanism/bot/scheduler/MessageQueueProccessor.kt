@@ -27,7 +27,7 @@ class MessageQueueProccessor {
                         REVIEW -> bot.execute(
                             SendTextMessage(
                                 chatId = entry.userId.toChatId(),
-                                text = PollRepository.getById(entry.pollId)!!.toMessage(),
+                                text = PollRepository.getById(entry.pollId)!!.toMessage("Хотите ли вы, чтобы этот опрос опубликовали"),
                                 replyMarkup = sendToUserReviewMarkup(entry.pollId)
                             )
                         )
@@ -36,7 +36,7 @@ class MessageQueueProccessor {
                             bot.execute(
                                 SendTextMessage(
                                     chatId = entry.userId.toChatId(),
-                                    text = poll.toMessage(),
+                                    text = poll.toMessage("Проголосуйте"),
                                     replyMarkup = if (poll.allowMultipleAnswers) {
                                         userVoteMultipleAnswersMarkup(poll.options, poll.id)
                                     } else {

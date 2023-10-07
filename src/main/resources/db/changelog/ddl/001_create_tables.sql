@@ -42,15 +42,6 @@ create table poll_user_review(
 create table poll_user_vote(
     poll_id bigint not null,
     user_id bigint not null,
-    option_1 bigint default 0 not null,
-    option_2 bigint default 0 not null,
-    option_3 bigint default 0 not null,
-    option_4 bigint default 0 not null,
-    option_5 bigint default 0 not null,
-    option_6 bigint default 0 not null,
-    option_7 bigint default 0 not null,
-    option_8 bigint default 0 not null,
-    option_9 bigint default 0 not null,
-    option_10 bigint default 0 not null,
+    options bigint[] default array[]::bigint[] not null,
     primary key (poll_id, user_id)
 );

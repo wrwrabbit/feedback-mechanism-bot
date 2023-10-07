@@ -1,9 +1,10 @@
 package by.cp.feedback.mechanism.bot.scheduler
 
 import by.cp.feedback.mechanism.bot.behaviour.utils.botLinkMarkup
+import by.cp.feedback.mechanism.bot.model.PollStatus
 import by.cp.feedback.mechanism.bot.model.bot
 import by.cp.feedback.mechanism.bot.model.postChatId
-import by.cp.feedback.mechanism.bot.model.toMessage
+import by.cp.feedback.mechanism.bot.model.toChannelMessage
 import by.cp.feedback.mechanism.bot.repository.PollUserVoteRepository
 import dev.inmo.tgbotapi.bot.exceptions.MessageIsNotModifiedException
 import dev.inmo.tgbotapi.extensions.api.edit.edit
@@ -20,15 +21,15 @@ class PollPostScheduler {
 
     private val logger = KotlinLogging.logger {}
 
-    @Scheduled(fixedRate = 2, timeUnit = TimeUnit.MINUTES)
+    @Scheduled(fixedRate = 10, timeUnit = TimeUnit.SECONDS)
     fun process() {
         runBlocking {
-            PollUserVoteRepository.findResultsInVoting().forEach { poll ->
+            PollUserVoteRepository.findResults(PollStatus.VOTING).forEach { poll ->
                 try {
                     bot.edit(
                         chatId = postChatId.toChatId(),
                         messageId = poll.messageId!!,
-                        text = poll.toMessage(),
+                        text = poll.toChannelMessage(),
                         replyMarkup = botLinkMarkup(poll.id)
                     )
                 } catch (e: MessageIsNotModifiedException) {
