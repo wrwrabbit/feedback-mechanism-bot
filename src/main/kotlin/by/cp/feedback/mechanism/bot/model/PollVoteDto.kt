@@ -1,5 +1,7 @@
 package by.cp.feedback.mechanism.bot.model
 
+import java.time.LocalDateTime
+
 data class PollVoteDto(
     val id: Long,
     val userId: Long?,
@@ -7,5 +9,6 @@ data class PollVoteDto(
     val question: String,
     val allowMultipleAnswers: Boolean,
     val options: Array<String>,
-    val results: List<Long>
+    val results: List<Float>,
+    val startedAt: LocalDateTime?
 )

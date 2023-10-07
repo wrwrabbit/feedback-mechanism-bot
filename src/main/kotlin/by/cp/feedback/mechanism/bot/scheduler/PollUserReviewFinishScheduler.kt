@@ -6,6 +6,7 @@ import by.cp.feedback.mechanism.bot.model.*
 import by.cp.feedback.mechanism.bot.repository.MessageQueueRepository
 import by.cp.feedback.mechanism.bot.repository.PollRepository
 import by.cp.feedback.mechanism.bot.repository.PollUserReviewRepository
+import dev.inmo.tgbotapi.extensions.utils.formatting.messageLink
 import dev.inmo.tgbotapi.requests.send.SendTextMessage
 import dev.inmo.tgbotapi.types.toChatId
 import kotlinx.coroutines.runBlocking
@@ -34,7 +35,8 @@ class PollUserReviewFinishScheduler {
                                 question = poll.question,
                                 allowMultipleAnswers = poll.allowMultipleAnswers,
                                 options = poll.options,
-                                results = poll.options.map { 0 }).toMessage(),
+                                results = poll.options.map { 0f },
+                                startedAt = null).toChannelMessage(),
                             replyMarkup = botLinkMarkup(poll.id)
                         ),
                     )
