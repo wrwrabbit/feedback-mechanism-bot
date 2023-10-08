@@ -33,4 +33,4 @@ fun emptyPollsMessage(): String = "Нет вопросов для модерац
 
 fun PollDto.toStatusMessage(): String = "Опрос #$id," + "\n" +
         "Вопрос $question," + "\n" +
-        "Статус #${status.toMessage()}" + "\n"
+        "Статус ${status.toMessage()}" + "\n"
