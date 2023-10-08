@@ -55,7 +55,7 @@ fun PollVoteDto.results(): String = results.reduce { acc, next -> acc + next }
     }
 
 fun PollDto.toMessage(messageToUser: String): String = "Опрос #$id\n" +
-        "Статус ${status.toMessage()}\n" +
+        "Статус: ${status.toMessage()}\n" +
         "=====\n" +
         "$messageToUser\n" +
         "=====\n" +
