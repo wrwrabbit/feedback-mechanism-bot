@@ -72,7 +72,7 @@ fun PollStatus.toMessage(): String = when (this) {
 }
 
 fun PollDto.toModeratorsMessage(): String = "Опрос #$id\n" +
-        "Статус #${status.toMessage()}\n" +
+        "Статус ${status.toMessage()}\n" +
         "${question()}: $question\n" +
         "${options.joinToString("\n") { option -> "${answer()}: $option" }}\n" +
         "${moreThanOneAnswer()}: ${allowMultipleAnswers.toAllowMultipleAnswers()}"
