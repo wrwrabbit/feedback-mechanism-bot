@@ -1,10 +1,7 @@
 package by.cp.feedback.mechanism.bot.behaviour.moderation
 
 import by.cp.feedback.mechanism.bot.behaviour.utils.tryF
-import by.cp.feedback.mechanism.bot.model.PollDto
-import by.cp.feedback.mechanism.bot.model.PollStatus
-import by.cp.feedback.mechanism.bot.model.moderatorsChatId
-import by.cp.feedback.mechanism.bot.model.showModerationMarkup
+import by.cp.feedback.mechanism.bot.model.*
 import by.cp.feedback.mechanism.bot.repository.PollRepository
 import dev.inmo.tgbotapi.extensions.api.send.reply
 import dev.inmo.tgbotapi.extensions.behaviour_builder.BehaviourContext
@@ -36,4 +33,4 @@ fun emptyPollsMessage(): String = "Нет вопросов для модерац
 
 fun PollDto.toStatusMessage(): String = "Опрос #$id," + "\n" +
         "Вопрос $question," + "\n" +
-        "Статус #$status" + "\n"
+        "Статус #${status.toMessage()}" + "\n"

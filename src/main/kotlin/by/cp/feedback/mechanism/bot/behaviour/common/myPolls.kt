@@ -5,6 +5,7 @@ import by.cp.feedback.mechanism.bot.exception.FromNotFoundException
 import by.cp.feedback.mechanism.bot.model.PollDto
 import by.cp.feedback.mechanism.bot.model.PollStatus
 import by.cp.feedback.mechanism.bot.model.myPollsDC
+import by.cp.feedback.mechanism.bot.model.toMessage
 import by.cp.feedback.mechanism.bot.repository.PollRepository
 import dev.inmo.tgbotapi.extensions.api.edit.edit
 import dev.inmo.tgbotapi.extensions.api.send.reply
@@ -84,5 +85,5 @@ fun emptyPollsMessage(): String = "У вас нет опросов"
 
 fun PollDto.toStatusMessage(): String = "Опрос #$id," + "\n" +
         "Вопрос $question," + "\n" +
-        "Статус #$status" + "\n" +
+        "Статус #${status.toMessage()}" + "\n" +
         if (status == PollStatus.REJECTED) ",Причина отказа: $rejectionReason" else ""
