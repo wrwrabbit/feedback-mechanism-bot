@@ -85,5 +85,5 @@ fun emptyPollsMessage(): String = "У вас нет опросов"
 
 fun PollDto.toStatusMessage(): String = "Опрос #$id," + "\n" +
         "Вопрос $question," + "\n" +
-        "Статус ${status.toMessage()}" + "\n" +
+        "Статус: ${status.toMessage()}" + "\n" +
         if (status == PollStatus.REJECTED) ",Причина отказа: $rejectionReason" else ""
