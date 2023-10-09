@@ -45,12 +45,12 @@ fun PollVoteDto.results(): String = results.reduce { acc, next -> acc + next }
     .let { allAnswers ->
         options.mapIndexed { index, option ->
             val answersCount = results[index]
-            val percents = if (allAnswers == 0F) {
+            val percents = if (allAnswers == 0L) {
                 0f
             } else {
-                (answersCount / allAnswers) * 100f
+                (answersCount.toFloat() / allAnswers.toFloat()) * 100f
             }
-            "- ${String.format("%.2f", answersCount)}/${this.voteCount} ${String.format("%.2f", percents)}% - $option"
+            "- $answersCount/$allAnswers ${String.format("%.2f", percents)}% - $option"
         }.joinToString("\n") + "\n"
     }
 
@@ -84,7 +84,7 @@ fun Boolean.toAllowMultipleAnswers(): String = if (this) {
 }
 
 fun Boolean.toAllowMultipleAnswersChannel(): String = if (this) {
-    "Да (сумма > 100%)"
+    "Да"
 } else {
     "Нет"
 }
