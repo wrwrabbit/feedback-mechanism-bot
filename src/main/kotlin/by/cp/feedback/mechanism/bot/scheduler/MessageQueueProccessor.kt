@@ -27,7 +27,7 @@ class MessageQueueProccessor {
                         REVIEW -> bot.execute(
                             SendTextMessage(
                                 chatId = entry.userId.toChatId(),
-                                text = PollRepository.getById(entry.pollId)!!.toMessage("Хотите ли вы, чтобы этот опрос опубликовали"),
+                                text = PollRepository.getById(entry.pollId)!!.toMessage("Хотите ли вы, чтобы этот опрос опубликовали?"),
                                 replyMarkup = sendToUserReviewMarkup(entry.pollId)
                             )
                         )
