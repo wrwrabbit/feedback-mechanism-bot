@@ -23,13 +23,12 @@ object PollUserVoteRepository {
             }
             .map {
                 val pollResultRow = it.value.first()
-                val results = pollResultRow[Polls.options].map { 0f }.toMutableList()
+                val results = pollResultRow[Polls.options].map { 0L }.toMutableList()
                 it.value.map { pollVoteResultRow ->
                     pollVoteResultRow[PollUserVote.options].toList()
                 }.forEach { userVotes ->
-                    val voteCost = 1f / userVotes.count()
                     userVotes.forEach { userVote ->
-                        results[userVote.toInt() - 1] = results[userVote.toInt() - 1] + voteCost
+                        results[userVote.toInt() - 1] = results[userVote.toInt() - 1] + 1
                     }
                 }
                 PollVoteDto(
@@ -40,7 +39,6 @@ object PollUserVoteRepository {
                     allowMultipleAnswers = pollResultRow[Polls.allowMultipleAnswers],
                     options = pollResultRow[Polls.options],
                     results = results,
-                    voteCount = it.value.size,
                     startedAt = pollResultRow[Polls.startedAt]
                 )
             }
