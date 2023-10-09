@@ -9,6 +9,7 @@ import by.cp.feedback.mechanism.bot.behaviour.vote.userVoteCheckAnswer
 import by.cp.feedback.mechanism.bot.behaviour.vote.userVoteMultipleAnswers
 import by.cp.feedback.mechanism.bot.exception.FeedbackBotException
 import by.cp.feedback.mechanism.bot.model.*
+import dev.inmo.tgbotapi.bot.exceptions.CommonRequestException
 import dev.inmo.tgbotapi.extensions.api.bot.setMyCommands
 import dev.inmo.tgbotapi.extensions.behaviour_builder.buildBehaviour
 import dev.inmo.tgbotapi.extensions.behaviour_builder.triggers_handling.*
@@ -42,10 +43,12 @@ private val logger = KotlinLogging.logger { }
 suspend fun main(args: Array<String>) {
     val behaviour = bot.buildBehaviour(
         defaultExceptionsHandler = {
-            when (it) {
-                is CancellationException -> {}
-                is FeedbackBotException -> {}
-                is ConnectTimeoutException -> logger.error { "Connect timeout has expired" }
+            when {
+                it is CancellationException -> {}
+                it is FeedbackBotException -> {}
+                it is ConnectTimeoutException -> logger.error { "Connect timeout has expired" }
+                (it is CommonRequestException) &&
+                        (it.message?.contains("message to delete not found") ?: false) ->{}
                 else -> {
                     logger.error(it) { "Exception in bot" }
                 }
