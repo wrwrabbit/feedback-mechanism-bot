@@ -39,7 +39,7 @@ fun sentToModeratorsText(pollDto: PollDto) = pollDto.toMessage("Ваш опро�
 fun PollVoteDto.toChannelMessage(): String = "Опрос #$id\n" +
         "${question()}: $question\n" +
         this.results() +
-        "${moreThanOneAnswer()}: ${allowMultipleAnswers.toAllowMultipleAnswers()}\n"
+        "${moreThanOneAnswer()}: ${allowMultipleAnswers.toAllowMultipleAnswersChannel()}\n"
 
 fun PollVoteDto.results(): String = results.reduce { acc, next -> acc + next }
     .let { allAnswers ->
@@ -79,6 +79,12 @@ fun PollDto.toModeratorsMessage(): String = "Опрос #$id\n" +
 
 fun Boolean.toAllowMultipleAnswers(): String = if (this) {
     "Да"
+} else {
+    "Нет"
+}
+
+fun Boolean.toAllowMultipleAnswersChannel(): String = if (this) {
+    "Да (сумма > 100%)"
 } else {
     "Нет"
 }
