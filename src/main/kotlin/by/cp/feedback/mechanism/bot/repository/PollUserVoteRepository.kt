@@ -40,6 +40,7 @@ object PollUserVoteRepository {
                     allowMultipleAnswers = pollResultRow[Polls.allowMultipleAnswers],
                     options = pollResultRow[Polls.options],
                     results = results,
+                    voteCount = it.value.size,
                     startedAt = pollResultRow[Polls.startedAt]
                 )
             }

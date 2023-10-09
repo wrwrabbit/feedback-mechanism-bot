@@ -36,6 +36,7 @@ class PollUserReviewFinishScheduler {
                                 allowMultipleAnswers = poll.allowMultipleAnswers,
                                 options = poll.options,
                                 results = poll.options.map { 0f },
+                                voteCount = 0,
                                 startedAt = null).toChannelMessage(),
                             replyMarkup = botLinkMarkup(poll.id)
                         ),

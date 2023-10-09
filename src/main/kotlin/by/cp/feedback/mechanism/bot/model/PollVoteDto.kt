@@ -9,6 +9,7 @@ data class PollVoteDto(
     val question: String,
     val allowMultipleAnswers: Boolean,
     val options: Array<String>,
+    val voteCount: Int,
     val results: List<Float>,
     val startedAt: LocalDateTime?
 )
