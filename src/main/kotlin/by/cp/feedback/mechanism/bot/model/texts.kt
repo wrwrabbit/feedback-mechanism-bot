@@ -84,7 +84,7 @@ fun Boolean.toAllowMultipleAnswers(): String = if (this) {
 }
 
 fun Boolean.toAllowMultipleAnswersChannel(): String = if (this) {
-    "Да"
+    "Да (сумма > 100%)"
 } else {
     "Нет"
 }
