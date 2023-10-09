@@ -50,7 +50,7 @@ fun PollVoteDto.results(): String = results.reduce { acc, next -> acc + next }
             } else {
                 (answersCount / allAnswers) * 100f
             }
-            "- ${String.format("%.2f", answersCount)}/$allAnswers ${String.format("%.2f", percents)}% - $option"
+            "- ${String.format("%.2f", answersCount)}/${this.voteCount} ${String.format("%.2f", percents)}% - $option"
         }.joinToString("\n") + "\n"
     }
 
