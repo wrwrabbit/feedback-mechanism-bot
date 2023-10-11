@@ -34,6 +34,8 @@ fun voteResultText(messageId: Long?) = "Вы проголосовали в оп�
 
 fun moreThanOneAnswer() = "Больше одного ответа"
 
+fun writeStart() = "Вы не зарегистрированы, пожалуйста, напишите команду /start"
+
 fun sentToModeratorsText(pollDto: PollDto) = pollDto.toMessage("Ваш опрос отправлен модераторам")
 
 fun PollVoteDto.toChannelMessage(): String = "Опрос #$id\n" +
