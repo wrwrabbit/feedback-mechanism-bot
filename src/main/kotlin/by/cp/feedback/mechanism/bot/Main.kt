@@ -49,6 +49,10 @@ suspend fun main(args: Array<String>) {
                 it is ConnectTimeoutException -> logger.error { "Connect timeout has expired" }
                 (it is CommonRequestException) &&
                         (it.message?.contains("message to delete not found") ?: false) ->{}
+                (it is CommonRequestException) &&
+                        (it.message?.contains("bot was blocked by the user") ?: false) ->{}
+                (it is CommonRequestException) &&
+                        (it.message?.contains("message is not modified") ?: false) ->{}
                 else -> {
                     logger.error(it) { "Exception in bot" }
                 }

@@ -32,25 +32,30 @@ fun userProposePoll(): suspend BehaviourContext.(CommonMessage<PollContent>) -> 
     } else {
         false
     }
-    val savedPoll = PollRepository.save(
-        userId,
-        question,
-        options,
-        allowMultipleAnswers
-    )
-    if (UserRepository.captchaRequired(userId)) {
-        captchaRequest(userId, message.chat.id)
-    }
-    execute(
-        SendTextMessage(
-            moderatorsChatId.toChatId(),
-            savedPoll.toModeratorsMessage(),
-            replyMarkup = moderatorsReviewMarkup(savedPoll.id, 0)
+    val captchaRequired = UserRepository.captchaRequired(userId)
+    if (captchaRequired != null) {
+        if (captchaRequired) {
+            captchaRequest(userId, message.chat.id)
+        }
+        val savedPoll = PollRepository.save(
+            userId,
+            question,
+            options,
+            allowMultipleAnswers
         )
-    )
-    reply(message, sentToModeratorsText(savedPoll), replyMarkup = menuMarkup())
-    UserRepository.pollCountInc(userId)
-    delete(message)
+        execute(
+            SendTextMessage(
+                moderatorsChatId.toChatId(),
+                savedPoll.toModeratorsMessage(),
+                replyMarkup = moderatorsReviewMarkup(savedPoll.id, 0)
+            )
+        )
+        reply(message, sentToModeratorsText(savedPoll), replyMarkup = menuMarkup())
+        UserRepository.pollCountInc(userId)
+        delete(message)
+    } else {
+        reply(message, writeStart(), replyMarkup = menuMarkup())
+    }
 }
 
 private fun checkTime(userId: Long) {
