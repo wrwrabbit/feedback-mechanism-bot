@@ -30,7 +30,7 @@ fun moderatorFix(): suspend BehaviourContext.(DataCallbackQuery) -> Unit = tryFM
     execute(
         SendTextMessage(
             moderatorsChatId.toChatId(),
-            "Ваша исправленная версия:\n$fixedPoll",
+            "Ваша исправленная версия опроса #${poll.id}:\n$fixedPoll",
             replyMarkup = moderatorsFixMarkup(message.messageId, id)
         )
     )

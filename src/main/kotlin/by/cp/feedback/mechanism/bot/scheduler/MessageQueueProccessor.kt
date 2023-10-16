@@ -1,5 +1,6 @@
 package by.cp.feedback.mechanism.bot.scheduler
 
+import by.cp.feedback.mechanism.bot.exceptionLogging
 import by.cp.feedback.mechanism.bot.model.*
 import by.cp.feedback.mechanism.bot.model.MessageQueueType.REVIEW
 import by.cp.feedback.mechanism.bot.model.MessageQueueType.VOTE
@@ -27,7 +28,8 @@ class MessageQueueProccessor {
                         REVIEW -> bot.execute(
                             SendTextMessage(
                                 chatId = entry.userId.toChatId(),
-                                text = PollRepository.getById(entry.pollId)!!.toMessage("Хотите ли вы, чтобы этот опрос опубликовали?"),
+                                text = PollRepository.getById(entry.pollId)!!
+                                    .toMessage("Хотите ли вы, чтобы этот опрос опубликовали?"),
                                 replyMarkup = sendToUserReviewMarkup(entry.pollId)
                             )
                         )
@@ -47,7 +49,7 @@ class MessageQueueProccessor {
                         }
                     }
                 } catch (ex: Exception) {
-                    logger.error(ex) { "Exception while sending message from queue" }
+                    exceptionLogging(ex, "Exception while sending message from queue")
                 } finally {
                     MessageQueueRepository.delete(entry)
                 }

@@ -1,6 +1,7 @@
 package by.cp.feedback.mechanism.bot.scheduler
 
 import by.cp.feedback.mechanism.bot.behaviour.utils.botLinkMarkup
+import by.cp.feedback.mechanism.bot.exceptionLogging
 import by.cp.feedback.mechanism.bot.model.PollStatus
 import by.cp.feedback.mechanism.bot.model.bot
 import by.cp.feedback.mechanism.bot.model.postChatId
@@ -34,7 +35,7 @@ class PollPostScheduler {
                     )
                 } catch (e: MessageIsNotModifiedException) {
                 } catch (e: Exception) {
-                    logger.error(e) { "Exception while edit post" }
+                    exceptionLogging(e, "Exception while edit post")
                 }
             }
         }

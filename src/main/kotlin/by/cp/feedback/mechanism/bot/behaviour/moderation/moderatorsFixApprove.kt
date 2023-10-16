@@ -34,7 +34,7 @@ fun moderatorFixApprove(): suspend BehaviourContext.(DataCallbackQuery) -> Unit 
             )
         )
     }
-    execute(SendTextMessage(moderatorsChatId.toChatId(), "Вы предложили исправленную версию опроса"))
+    execute(SendTextMessage(moderatorsChatId.toChatId(), "Вы предложили исправленную версию опроса #${poll.id}"))
     edit(
         chatId = moderatorsChatId.toChatId(),
         messageId = originalMessageId,
