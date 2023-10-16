@@ -18,6 +18,7 @@ import dev.inmo.tgbotapi.extensions.utils.updates.retrieving.startGettingOfUpdat
 import dev.inmo.tgbotapi.requests.webhook.SetWebhook
 import dev.inmo.tgbotapi.types.BotCommand
 import io.ktor.client.network.sockets.*
+import io.ktor.client.plugins.*
 import io.ktor.server.netty.*
 import kotlinx.coroutines.CancellationException
 import mu.KotlinLogging
@@ -47,6 +48,7 @@ suspend fun main(args: Array<String>) {
                 it is CancellationException -> {}
                 it is FeedbackBotException -> {}
                 it is ConnectTimeoutException -> logger.error { "Connect timeout has expired" }
+                it is HttpRequestTimeoutException -> logger.error { "Connect timeout has expired" }
                 (it is CommonRequestException) &&
                         (it.message?.contains("message to delete not found") ?: false) ->{}
                 (it is CommonRequestException) &&
