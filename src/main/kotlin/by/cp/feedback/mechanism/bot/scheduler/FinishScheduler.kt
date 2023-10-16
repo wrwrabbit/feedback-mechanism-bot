@@ -1,5 +1,6 @@
 package by.cp.feedback.mechanism.bot.scheduler
 
+import by.cp.feedback.mechanism.bot.exceptionLogging
 import by.cp.feedback.mechanism.bot.model.*
 import by.cp.feedback.mechanism.bot.repository.PollRepository
 import by.cp.feedback.mechanism.bot.repository.PollUserVoteRepository
@@ -38,7 +39,7 @@ class FinishScheduler {
                     }
                 } catch (e: MessageIsNotModifiedException) {
                 } catch (e: Exception) {
-                    logger.error(e) { "Exception while edit post" }
+                    exceptionLogging(e, "Exception while finish post")
                 }
             }
         }

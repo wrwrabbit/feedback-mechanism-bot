@@ -41,24 +41,29 @@ const val deleteCommand = "delete"
 
 private val logger = KotlinLogging.logger { }
 
+private fun Throwable.isCommonRequest(message: String) =
+    (this is CommonRequestException) && (this.message?.contains(message) ?: false)
+
+fun exceptionLogging(throwable: Throwable, message: String) = throwable.let {
+    when {
+        it is CancellationException -> {}
+        it is FeedbackBotException -> {}
+        it is ConnectTimeoutException -> logger.error { "Connect timeout has expired" }
+        it is HttpRequestTimeoutException -> logger.error { "Connect timeout has expired" }
+        it.isCommonRequest("message to delete not found") -> {}
+        it.isCommonRequest("bot was blocked by the user") -> {}
+        it.isCommonRequest("message is not modified") -> {}
+        it.isCommonRequest("message can't be deleted") -> {}
+        else -> {
+            logger.error(it) { message }
+        }
+    }
+}
+
 suspend fun main(args: Array<String>) {
     val behaviour = bot.buildBehaviour(
         defaultExceptionsHandler = {
-            when {
-                it is CancellationException -> {}
-                it is FeedbackBotException -> {}
-                it is ConnectTimeoutException -> logger.error { "Connect timeout has expired" }
-                it is HttpRequestTimeoutException -> logger.error { "Connect timeout has expired" }
-                (it is CommonRequestException) &&
-                        (it.message?.contains("message to delete not found") ?: false) ->{}
-                (it is CommonRequestException) &&
-                        (it.message?.contains("bot was blocked by the user") ?: false) ->{}
-                (it is CommonRequestException) &&
-                        (it.message?.contains("message is not modified") ?: false) ->{}
-                else -> {
-                    logger.error(it) { "Exception in bot" }
-                }
-            }
+            exceptionLogging(it, "Exception in bot")
         }
     ) {
         //COMMON
