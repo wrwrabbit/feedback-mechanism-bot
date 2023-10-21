@@ -21,7 +21,6 @@ dependencies {
     implementation("io.github.microutils:kotlin-logging-jvm:3.0.5")
     implementation("dev.inmo:tgbotapi:7.0.1")
     implementation("io.ktor:ktor-server-netty:2.2.3")
-    implementation("org.liquibase:liquibase-core")
     implementation("org.jetbrains.exposed:exposed-spring-boot-starter:0.41.1")
     implementation("org.jetbrains.exposed:exposed-java-time:0.41.1")
     implementation("org.jetbrains.exposed:exposed-jdbc:0.41.1")
