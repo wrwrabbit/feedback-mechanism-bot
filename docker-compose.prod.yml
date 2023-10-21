@@ -46,3 +46,4 @@ networks:
   cpdata-network:
     name: cpdata-network
     driver: bridge
+    external: true
