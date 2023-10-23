@@ -41,6 +41,3 @@ const val userApproveDC = "UsersApproveDC"
 const val userVoteDC = "UserVoteDC"
 const val userVoteMultipleAnswersDC = "UserVoteMultipleAnswersDC"
 const val userVoteCheckAnswerDC = "UserVoteCheckAnswerDC"
-
-const val contactAdministrationDC = "ContactAdministrationDC"
-const val contactAdministrationInitDC = "ContactAdministrationInitDC"

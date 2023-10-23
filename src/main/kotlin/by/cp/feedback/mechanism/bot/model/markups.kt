@@ -108,28 +108,6 @@ fun moderatorsFixMarkup(originalMessageId: Long, pollId: Long) = InlineKeyboardM
     }
 )
 
-fun contactAdministrationInitMarkup(lastUserPollId: Long) = InlineKeyboardMarkup(
-    matrix {
-        row {
-            +CallbackDataInlineKeyboardButton(
-                "D",
-                callbackData = "$contactAdministrationInitDC$lastUserPollId"
-            )
-        }
-    }
-)
-
-fun contactAdministrationMarkup(lastUserPollId: Long) = InlineKeyboardMarkup(
-    matrix {
-        row {
-            +CallbackDataInlineKeyboardButton(
-                "D",
-                callbackData = "$contactAdministrationDC$lastUserPollId"
-            )
-        }
-    }
-)
-
 fun userVoteMultipleAnswersMarkup(options: Array<String>, pollId: Long) = InlineKeyboardMarkup(
     matrix {
         options.mapIndexed { index, it ->
