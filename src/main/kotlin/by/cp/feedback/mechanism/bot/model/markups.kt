@@ -11,7 +11,10 @@ fun menuMarkup() = ReplyKeyboardMarkup(
             +RequestPollKeyboardButton("✍️ создать опрос", requestPoll = RegularKeyboardButtonPollType)
         }
         row {
-            +SimpleKeyboardButton("\uD83D\uDDC2 мои опросы")
+            +SimpleKeyboardButton(contactAdministrationButtonText)
+        }
+        row {
+            +SimpleKeyboardButton(myPollsButtonText)
         }
     },
     resizeKeyboard = true
@@ -100,6 +103,28 @@ fun moderatorsFixMarkup(originalMessageId: Long, pollId: Long) = InlineKeyboardM
             +CallbackDataInlineKeyboardButton(
                 "❎",
                 callbackData = "$moderatorFixRejectDC${originalMessageId}_${pollId}"
+            )
+        }
+    }
+)
+
+fun contactAdministrationInitMarkup(lastUserPollId: Long) = InlineKeyboardMarkup(
+    matrix {
+        row {
+            +CallbackDataInlineKeyboardButton(
+                "D",
+                callbackData = "$contactAdministrationInitDC$lastUserPollId"
+            )
+        }
+    }
+)
+
+fun contactAdministrationMarkup(lastUserPollId: Long) = InlineKeyboardMarkup(
+    matrix {
+        row {
+            +CallbackDataInlineKeyboardButton(
+                "D",
+                callbackData = "$contactAdministrationDC$lastUserPollId"
             )
         }
     }

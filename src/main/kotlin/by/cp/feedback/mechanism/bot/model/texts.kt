@@ -13,6 +13,9 @@ import io.ktor.util.*
 const val changeCaptcha = "Обновить код с картинки"
 const val cancelPollCreation = "Отменить создание опроса"
 
+const val myPollsButtonText = "\uD83D\uDDC2 мои опросы"
+const val contactAdministrationButtonText = "\uD83E\uDE9B связь с администрацией"
+
 fun CommonMessage<*>.langCode() =
     (this.from!! as CommonUser).ietfLanguageCode?.code ?: "ru"
 

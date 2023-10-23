@@ -4,6 +4,7 @@ import by.cp.feedback.mechanism.bot.behaviour.common.*
 import by.cp.feedback.mechanism.bot.behaviour.moderation.*
 import by.cp.feedback.mechanism.bot.behaviour.review.userApprove
 import by.cp.feedback.mechanism.bot.behaviour.review.userUnApprove
+import by.cp.feedback.mechanism.bot.behaviour.utils.botId
 import by.cp.feedback.mechanism.bot.behaviour.vote.userVote
 import by.cp.feedback.mechanism.bot.behaviour.vote.userVoteCheckAnswer
 import by.cp.feedback.mechanism.bot.behaviour.vote.userVoteMultipleAnswers
@@ -13,6 +14,8 @@ import dev.inmo.tgbotapi.bot.exceptions.CommonRequestException
 import dev.inmo.tgbotapi.extensions.api.bot.setMyCommands
 import dev.inmo.tgbotapi.extensions.behaviour_builder.buildBehaviour
 import dev.inmo.tgbotapi.extensions.behaviour_builder.triggers_handling.*
+import dev.inmo.tgbotapi.extensions.utils.*
+import dev.inmo.tgbotapi.extensions.utils.extensions.raw.from
 import dev.inmo.tgbotapi.extensions.utils.updates.retrieving.setWebhookInfoAndStartListenWebhooks
 import dev.inmo.tgbotapi.extensions.utils.updates.retrieving.startGettingOfUpdatesByLongPolling
 import dev.inmo.tgbotapi.requests.webhook.SetWebhook
@@ -75,7 +78,35 @@ suspend fun main(args: Array<String>) {
         onCommand(unmuteCommand, scenarioReceiver = unmute())
         onCommand(deleteCommand, scenarioReceiver = delete())
         onDataCallbackQuery(Regex("$myPollsDC.*"), scenarioReceiver = myPollsDC())
-        onText(initialFilter = { it.content.text == "\uD83D\uDDC2 мои опросы" }, scenarioReceiver = myPolls())
+        onText(initialFilter = { it.content.text == myPollsButtonText }, scenarioReceiver = myPolls())
+        onText(
+            initialFilter = { it.content.text == contactAdministrationButtonText },
+            scenarioReceiver = contactAdministrationInit()
+        )
+        onText(
+            initialFilter = {
+                it.replyTo?.commonMessageOrNull()?.let { replyMessage ->
+                    val callbackData = replyMessage.replyMarkup?.keyboard?.firstOrNull()?.firstOrNull()
+                        ?.asCallbackDataInlineKeyboardButton()?.callbackData
+                    replyMessage.from?.id?.chatId == botId() &&
+                            callbackData != null &&
+                            callbackData.startsWith(contactAdministrationInitDC)
+                } ?: false
+            },
+            scenarioReceiver = contactAdministration()
+        )
+        onText(
+            initialFilter = {
+                it.replyTo?.commonMessageOrNull()?.let { replyMessage ->
+                    val callbackData = replyMessage.replyMarkup?.keyboard?.firstOrNull()?.firstOrNull()
+                        ?.asCallbackDataInlineKeyboardButton()?.callbackData
+                    replyMessage.from?.id?.chatId == botId() &&
+                            callbackData != null &&
+                            callbackData.startsWith(contactAdministrationDC)
+                } ?: false
+            },
+            scenarioReceiver = contactAdministrationReply()
+        )
         //MODERATION
         onCommand(moderationPollsCommand, scenarioReceiver = moderationPolls())
         onDataCallbackQuery(Regex("$showModerationDC\\d*"), scenarioReceiver = showModeration())
