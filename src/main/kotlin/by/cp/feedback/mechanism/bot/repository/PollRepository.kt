@@ -99,6 +99,19 @@ object PollRepository {
         )
     }
 
+    fun getLastPollByUserId(userId: Long): PollDto? = transaction {
+        Polls.select { Polls.userId eq userId }
+            .orderBy(Polls.id, SortOrder.DESC)
+            .map(::pollDto)
+            .firstOrNull()
+    }
+
+    fun getUserIdByPollId(pollId: Long): Long = transaction {
+        Polls.select { Polls.id eq pollId }
+            .map(::pollDto)
+            .firstOrNull()?.userId!!
+    }
+
     fun getByStatus(status: PollStatus): List<PollDto> = transaction {
         Polls.select { Polls.status eq status }
             .map(::pollDto)
