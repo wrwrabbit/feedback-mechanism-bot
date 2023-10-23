@@ -86,11 +86,11 @@ suspend fun main(args: Array<String>) {
         onText(
             initialFilter = {
                 it.replyTo?.commonMessageOrNull()?.let { replyMessage ->
-                    val callbackData = replyMessage.replyMarkup?.keyboard?.firstOrNull()?.firstOrNull()
-                        ?.asCallbackDataInlineKeyboardButton()?.callbackData
-                    replyMessage.from?.id?.chatId == botId() &&
-                            callbackData != null &&
-                            callbackData.startsWith(contactAdministrationInitDC)
+                    val textCondition = replyMessage.asContentMessage()?.content?.asTextContent()?.text?.let { text ->
+                        text.startsWith(contactAdministrationReplyText) ||
+                                text.startsWith(contactAdministrationModerStartText)
+                    } ?: false
+                    replyMessage.from?.id?.chatId == botId() && textCondition
                 } ?: false
             },
             scenarioReceiver = contactAdministration()
@@ -98,11 +98,10 @@ suspend fun main(args: Array<String>) {
         onText(
             initialFilter = {
                 it.replyTo?.commonMessageOrNull()?.let { replyMessage ->
-                    val callbackData = replyMessage.replyMarkup?.keyboard?.firstOrNull()?.firstOrNull()
-                        ?.asCallbackDataInlineKeyboardButton()?.callbackData
-                    replyMessage.from?.id?.chatId == botId() &&
-                            callbackData != null &&
-                            callbackData.startsWith(contactAdministrationDC)
+                    val textCondition = replyMessage.asContentMessage()?.content?.asTextContent()?.text?.let { text ->
+                        text.startsWith("$contactAdministrationUserStartText#")
+                    } ?: false
+                    replyMessage.from?.id?.chatId == botId() && textCondition
                 } ?: false
             },
             scenarioReceiver = contactAdministrationReply()
