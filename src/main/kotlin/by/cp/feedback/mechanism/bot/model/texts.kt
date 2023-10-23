@@ -14,9 +14,9 @@ const val changeCaptcha = "Обновить код с картинки"
 const val cancelPollCreation = "Отменить создание опроса"
 
 const val myPollsButtonText = "\uD83D\uDDC2 мои опросы"
-const val contactAdministrationReplyText = "Отправьте сообщение в ответ на это сообщение"
-const val contactAdministrationUserStartText = "Сообщение от создателя опроса "
-const val contactAdministrationModerStartText = "Сообщение от администрации:"
+const val contactAdministrationReplyText = "\uD83D\uDCDC Отправьте сообщение в ответ на это сообщение"
+const val contactAdministrationUserStartText = "\uD83D\uDCE9 Сообщение от создателя опроса "
+const val contactAdministrationModerStartText = "\uD83D\uDCE9 Сообщение от администрации:"
 const val contactAdministrationMessageSentText = "Вы отправили сообщение"
 const val contactAdministrationButtonText = "\uD83E\uDE9B связь с администрацией"
 

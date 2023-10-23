@@ -37,7 +37,7 @@ fun contactAdministration(): suspend BehaviourContext.(CommonMessage<TextContent
     execute(
         SendTextMessage(
             moderatorsChatId.toChatId(),
-            "*${contactAdministrationUserStartText}\\#${lastUserPollId}:*\n" + message.text + "\n" + contactAdministrationReplyText,
+            "*${contactAdministrationUserStartText}\\#${lastUserPollId}:*\n\n" + message.text + "\n\n" + contactAdministrationReplyText,
             parseMode = MarkdownV2ParseMode
         )
     )
@@ -51,7 +51,7 @@ fun contactAdministrationReply(): suspend BehaviourContext.(CommonMessage<TextCo
     execute(
         SendTextMessage(
             userId.toChatId(),
-            "*${contactAdministrationModerStartText}*\n" + message.text + "\n" + contactAdministrationReplyText,
+            "*${contactAdministrationModerStartText}*\n\n" + message.text + "\n\n" + contactAdministrationReplyText,
             parseMode = MarkdownV2ParseMode
         )
     )
