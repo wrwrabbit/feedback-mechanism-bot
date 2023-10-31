@@ -17,7 +17,7 @@ import dev.inmo.tgbotapi.types.toChatId
 
 fun moderatorApprove(): suspend BehaviourContext.(DataCallbackQuery) -> Unit = { callback ->
     val id = callback.data.substring(moderatorApproveDC.length).toLong()
-    val poll = PollRepository.getById(id) ?: throw PollNotFoundInDbException()
+    val poll = PollRepository.getById(id)
     if (poll.rejectionReason != null) throw CantApproveRejectedException()
     val userId = callback.user.id.chatId
     if (userId in poll.moderatorApproves) throw AlreadyApprovedException()

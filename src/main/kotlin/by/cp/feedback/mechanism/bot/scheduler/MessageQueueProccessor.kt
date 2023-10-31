@@ -28,13 +28,13 @@ class MessageQueueProccessor {
                         REVIEW -> bot.execute(
                             SendTextMessage(
                                 chatId = entry.userId.toChatId(),
-                                text = PollRepository.getById(entry.pollId)!!
+                                text = PollRepository.getById(entry.pollId)
                                     .toMessage("Хотите ли вы, чтобы этот опрос опубликовали?"),
                                 replyMarkup = sendToUserReviewMarkup(entry.pollId)
                             )
                         )
 
-                        VOTE -> PollRepository.getById(entry.pollId)!!.let { poll ->
+                        VOTE -> PollRepository.getById(entry.pollId).let { poll ->
                             bot.execute(
                                 SendTextMessage(
                                     chatId = entry.userId.toChatId(),

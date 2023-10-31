@@ -16,7 +16,7 @@ import dev.inmo.tgbotapi.types.queries.callback.MessageDataCallbackQuery
 
 fun userApproveModeration(): suspend BehaviourContext.(DataCallbackQuery) -> Unit = { callback ->
     val id = callback.data.substring(userApproveModerationDC.length).toLong()
-    val poll = PollRepository.getById(id) ?: throw PollNotFoundInDbException()
+    val poll = PollRepository.getById(id)
     if (poll.status == PollStatus.ON_MODERATOR_REVIEW) {
         val fixedPoll = (callback as MessageDataCallbackQuery).message.content.textContentOrThrow().text
             .split("\n").let { it.subList(1, it.size) }.joinToString("\n")

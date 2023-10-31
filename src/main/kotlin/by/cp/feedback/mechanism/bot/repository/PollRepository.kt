@@ -1,5 +1,6 @@
 package by.cp.feedback.mechanism.bot.repository
 
+import by.cp.feedback.mechanism.bot.exception.PollNotFoundInDbException
 import by.cp.feedback.mechanism.bot.model.PollDto
 import by.cp.feedback.mechanism.bot.model.PollStatus
 import by.cp.feedback.mechanism.bot.table.Polls
@@ -117,11 +118,11 @@ object PollRepository {
             .map(::pollDto)
     }
 
-    fun getById(id: Long): PollDto? = transaction {
+    fun getById(id: Long): PollDto = transaction {
         Polls.select { Polls.id eq id }
             .map(::pollDto)
             .firstOrNull()
-    }
+    } ?: throw PollNotFoundInDbException(id.toString())
 
     fun lastUserPoll(userId: Long): PollDto? = transaction {
         Polls.select { Polls.userId eq userId }

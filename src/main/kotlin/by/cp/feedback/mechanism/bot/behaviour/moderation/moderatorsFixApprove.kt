@@ -19,7 +19,7 @@ import dev.inmo.tgbotapi.types.toChatId
 fun moderatorFixApprove(): suspend BehaviourContext.(DataCallbackQuery) -> Unit = tryFModerators { callback ->
     val (originalMessageId, pollId) = callback.data.substring(moderatorFixApproveDC.length).split("_")
         .let { it[0].toLong() to it[1].toLong() }
-    val poll = PollRepository.getById(pollId) ?: throw PollNotFoundInDbException()
+    val poll = PollRepository.getById(pollId)
     val message = (callback as MessageDataCallbackQuery).message
     val fixedPoll = (callback.message.content as TextContent).text.let { text ->
         text.substring(text.indexOf("\n") + 1)

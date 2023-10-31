@@ -22,7 +22,7 @@ import kotlinx.coroutines.flow.first
 
 fun moderatorReject(): suspend BehaviourContext.(DataCallbackQuery) -> Unit = { callback ->
     val id = callback.data.substring(moderatorRejectDC.length).toLong()
-    val poll = PollRepository.getById(id) ?: throw PollNotFoundInDbException()
+    val poll = PollRepository.getById(id)
     if (poll.rejectionReason != null) throw CantRejectRejectedException()
     val rejectionReason = waitTextMessage(
         SendTextMessage(moderatorsChatId.toChatId(), "Отправьте причину отклонения в ответ на это сообщение")
