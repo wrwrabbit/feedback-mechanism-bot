@@ -50,6 +50,7 @@ class MessageQueueProccessor {
                     }
                 } catch (ex: Exception) {
                     exceptionLogging(ex, "Exception while sending message from queue")
+                    logger.warn { "Exception in queue $entry" }
                 } finally {
                     MessageQueueRepository.delete(entry)
                 }
