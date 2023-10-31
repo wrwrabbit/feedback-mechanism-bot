@@ -16,7 +16,7 @@ import dev.inmo.tgbotapi.types.message.content.TextContent
 fun getPoll(): suspend BehaviourContext.(CommonMessage<TextContent>, Array<String>) -> Unit = tryF { message, args ->
     if (args.size != 1) throw IdNotProvidedException()
     val id = args.first().toLong()
-    val poll = PollRepository.getById(id) ?: throw PollNotFoundInDbException()
+    val poll = PollRepository.getById(id)
     val userId: Long = message.from?.id?.chatId ?: throw FromNotFoundException()
     if (userId != poll.userId) throw YouAreNotOwnerOfPollException()
     reply(message, poll.toModeratorsMessage())

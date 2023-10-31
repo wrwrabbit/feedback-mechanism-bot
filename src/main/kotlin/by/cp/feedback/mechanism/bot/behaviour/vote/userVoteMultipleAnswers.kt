@@ -34,7 +34,7 @@ fun userVoteMultipleAnswers(): suspend BehaviourContext.(DataCallbackQuery) -> U
         }
         PollUserVoteRepository.vote(pollId, userId, options)
         UserRepository.voteCountInc(userId)
-        val messageId = PollRepository.getById(pollId)?.messageId
+        val messageId = PollRepository.getById(pollId).messageId
         execute(SendTextMessage(userId.toChatId(), voteResultText(messageId), parseMode = MarkdownParseMode))
         delete(callback.message)
     } else {

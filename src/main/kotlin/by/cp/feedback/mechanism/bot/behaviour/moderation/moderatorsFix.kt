@@ -17,7 +17,7 @@ import kotlinx.coroutines.flow.first
 
 fun moderatorFix(): suspend BehaviourContext.(DataCallbackQuery) -> Unit = tryFModerators { callback ->
     val id = callback.data.substring(moderatorFixDC.length).toLong()
-    val poll = PollRepository.getById(id) ?: throw PollNotFoundInDbException()
+    val poll = PollRepository.getById(id)
     if (poll.rejectionReason != null) throw CantRejectRejectedException()
     val fixedPoll = waitTextMessage(
         SendTextMessage(

@@ -13,7 +13,7 @@ import dev.inmo.tgbotapi.types.toChatId
 
 fun showModeration(): suspend BehaviourContext.(DataCallbackQuery) -> Unit = { callback ->
     val id = callback.data.substring(showModerationDC.length).toLong()
-    val poll = PollRepository.getById(id) ?: throw PollNotFoundInDbException()
+    val poll = PollRepository.getById(id)
     execute(
         SendTextMessage(
             moderatorsChatId.toChatId(),

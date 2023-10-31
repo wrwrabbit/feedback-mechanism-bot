@@ -25,7 +25,7 @@ fun userVote(): suspend BehaviourContext.(DataCallbackQuery) -> Unit = { callbac
         }
         PollUserVoteRepository.vote(pollId, userId, index)
         UserRepository.voteCountInc(userId)
-        val messageId = PollRepository.getById(pollId)?.messageId
+        val messageId = PollRepository.getById(pollId).messageId
         execute(SendTextMessage(userId.toChatId(), voteResultText(messageId), parseMode = MarkdownParseMode))
         delete((callback as MessageDataCallbackQuery).message)
     } else {

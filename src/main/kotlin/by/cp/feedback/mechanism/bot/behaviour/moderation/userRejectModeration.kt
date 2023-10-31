@@ -12,7 +12,7 @@ import dev.inmo.tgbotapi.types.queries.callback.MessageDataCallbackQuery
 
 fun userRejectModeration(): suspend BehaviourContext.(DataCallbackQuery) -> Unit = { callback ->
     val id = callback.data.substring(userRejectModerationDC.length).toLong()
-    val poll = PollRepository.getById(id) ?: throw PollNotFoundInDbException()
+    val poll = PollRepository.getById(id)
     if (poll.status == PollStatus.ON_MODERATOR_REVIEW) {
         PollRepository.updateStatus(poll.id, PollStatus.REJECTED)
         val message = (callback as MessageDataCallbackQuery).message
