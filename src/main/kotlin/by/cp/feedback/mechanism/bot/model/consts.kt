@@ -14,7 +14,7 @@ val bot = telegramBot(System.getenv("TOKEN")){
 }
 
 val tickEmoji = "✅"
-val crossEmoji = "❎"
+val crossEmoji = "☑️"
 
 val moderatorsChatId = System.getenv("MODERATORS_CHAT_ID").toLong()
 val postChatId = System.getenv("POST_CHAT_ID").toLong()
