@@ -47,7 +47,7 @@ fun moderatorsReviewMarkup(pollId: Long, approvalsCount: Int) = InlineKeyboardMa
     matrix {
         row {
             +CallbackDataInlineKeyboardButton(
-                "✅ $approvalsCount/$moderatorsApprovalsRequired",
+                "$tickEmoji $approvalsCount/$moderatorsApprovalsRequired",
                 callbackData = "$moderatorApproveDC$pollId"
             )
             +CallbackDataInlineKeyboardButton(
@@ -55,7 +55,7 @@ fun moderatorsReviewMarkup(pollId: Long, approvalsCount: Int) = InlineKeyboardMa
                 callbackData = "$moderatorFixDC$pollId"
             )
             +CallbackDataInlineKeyboardButton(
-                "❎",
+                crossEmoji,
                 callbackData = "$moderatorRejectDC$pollId"
             )
         }
@@ -66,11 +66,11 @@ fun sendToUserReviewMarkup(pollId: Long) = InlineKeyboardMarkup(
     matrix {
         row {
             +CallbackDataInlineKeyboardButton(
-                "✅",
+                tickEmoji,
                 callbackData = "$userApproveDC$pollId"
             )
             +CallbackDataInlineKeyboardButton(
-                "❎",
+                crossEmoji,
                 callbackData = "$userUnApproveDC$pollId"
             )
         }
@@ -82,11 +82,11 @@ fun userModerationReviewMarkup(pollId: Long, fixedPoll: String) = InlineKeyboard
     matrix {
         row {
             +CallbackDataInlineKeyboardButton(
-                "✅",
+                tickEmoji,
                 callbackData = "${userApproveModerationDC}${pollId}"
             )
             +CallbackDataInlineKeyboardButton(
-                "❎",
+                crossEmoji,
                 callbackData = "$userRejectModerationDC$pollId"
             )
         }
@@ -97,11 +97,11 @@ fun moderatorsFixMarkup(originalMessageId: Long, pollId: Long) = InlineKeyboardM
     matrix {
         row {
             +CallbackDataInlineKeyboardButton(
-                "✅",
+                tickEmoji,
                 callbackData = "$moderatorFixApproveDC${originalMessageId}_${pollId}"
             )
             +CallbackDataInlineKeyboardButton(
-                "❎",
+                crossEmoji,
                 callbackData = "$moderatorFixRejectDC${originalMessageId}_${pollId}"
             )
         }
@@ -113,7 +113,7 @@ fun userVoteMultipleAnswersMarkup(options: Array<String>, pollId: Long) = Inline
         options.mapIndexed { index, it ->
             row {
                 +CallbackDataInlineKeyboardButton(
-                    "❎${index + 1}",
+                    "$crossEmoji${index + 1}",
                     callbackData = "${userVoteCheckAnswerDC}${pollId}_${index + 1}"
                 )
             }

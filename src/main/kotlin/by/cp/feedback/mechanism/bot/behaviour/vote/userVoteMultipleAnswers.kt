@@ -1,10 +1,7 @@
 package by.cp.feedback.mechanism.bot.behaviour.vote
 
 import by.cp.feedback.mechanism.bot.behaviour.captcha.captchaRequest
-import by.cp.feedback.mechanism.bot.model.menuMarkup
-import by.cp.feedback.mechanism.bot.model.userVoteMultipleAnswersDC
-import by.cp.feedback.mechanism.bot.model.voteResultText
-import by.cp.feedback.mechanism.bot.model.writeStart
+import by.cp.feedback.mechanism.bot.model.*
 import by.cp.feedback.mechanism.bot.repository.PollRepository
 import by.cp.feedback.mechanism.bot.repository.PollUserVoteRepository
 import by.cp.feedback.mechanism.bot.repository.UserRepository
@@ -23,7 +20,7 @@ fun userVoteMultipleAnswers(): suspend BehaviourContext.(DataCallbackQuery) -> U
         .let { it[0].toLong() }
     val message = (callback as MessageDataCallbackQuery).message
     val options = message.reply_markup!!.keyboard.mapIndexed { index, inlineKeyboardButtons ->
-        index + 1 to inlineKeyboardButtons.first().text.contains("✅")
+        index + 1 to inlineKeyboardButtons.first().text.contains(tickEmoji)
     }.filter {
         it.second
     }.map { it.first }
