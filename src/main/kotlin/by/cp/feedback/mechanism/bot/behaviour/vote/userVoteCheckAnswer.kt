@@ -1,5 +1,7 @@
 package by.cp.feedback.mechanism.bot.behaviour.vote
 
+import by.cp.feedback.mechanism.bot.model.crossEmoji
+import by.cp.feedback.mechanism.bot.model.tickEmoji
 import by.cp.feedback.mechanism.bot.model.userVoteCheckAnswerDC
 import dev.inmo.tgbotapi.extensions.api.edit.edit
 import dev.inmo.tgbotapi.extensions.behaviour_builder.BehaviourContext
@@ -17,10 +19,10 @@ fun userVoteCheckAnswer(): suspend BehaviourContext.(DataCallbackQuery) -> Unit 
         buttons.map { button ->
             val b = button as CallbackDataInlineKeyboardButton
             if (index == ix + 1) {
-                val newText = if (b.text.contains("❎")) {
-                    b.text.replace("❎", "✅")
+                val newText = if (b.text.contains(crossEmoji)) {
+                    b.text.replace(crossEmoji, tickEmoji)
                 } else {
-                    b.text.replace("✅", "❎")
+                    b.text.replace(tickEmoji, crossEmoji)
                 }
                 CallbackDataInlineKeyboardButton(newText, b.callbackData)
             } else {
