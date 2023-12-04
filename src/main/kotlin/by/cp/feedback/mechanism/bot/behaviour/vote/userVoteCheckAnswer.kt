@@ -17,10 +17,10 @@ fun userVoteCheckAnswer(): suspend BehaviourContext.(DataCallbackQuery) -> Unit 
         buttons.map { button ->
             val b = button as CallbackDataInlineKeyboardButton
             if (index == ix + 1) {
-                val newText = if (b.text.contains("❎")) {
-                    b.text.replace("❎", "✅")
+                val newText = if (b.text.contains("✖️")) {
+                    b.text.replace("✖️", "✅")
                 } else {
-                    b.text.replace("✅", "❎")
+                    b.text.replace("✅", "✖️")
                 }
                 CallbackDataInlineKeyboardButton(newText, b.callbackData)
             } else {
