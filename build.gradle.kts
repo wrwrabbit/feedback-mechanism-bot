@@ -24,6 +24,8 @@ dependencies {
     implementation("org.jetbrains.exposed:exposed-spring-boot-starter:0.41.1")
     implementation("org.jetbrains.exposed:exposed-java-time:0.41.1")
     implementation("org.jetbrains.exposed:exposed-jdbc:0.41.1")
+    implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.3.0")
+    implementation("org.springframework.boot:spring-boot-starter-actuator")
     runtimeOnly("org.postgresql:postgresql")
     testImplementation(kotlin("test"))
 }
