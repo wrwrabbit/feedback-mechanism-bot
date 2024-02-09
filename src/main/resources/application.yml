@@ -10,3 +10,12 @@ spring:
       maximum-pool-size: 7
   jpa:
     database-platform: org.hibernate.dialect.PostgreSQLDialect
+
+management:
+  server:
+    port: 8080
+  endpoints:
+    web:
+      base-path: /actuator
+      exposure:
+        include: "*"
